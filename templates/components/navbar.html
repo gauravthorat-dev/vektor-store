@@ -1,0 +1,146 @@
+<!-- Navigation -->
+<nav>
+  <!-- Left: Back button (product pages only) + Logo -->
+  <div style="display:flex; align-items:center;">
+
+    {% if show_back %}
+    <button class="nav-back-btn" onclick="history.back()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      BACK
+    </button>
+    <div class="nav-divider"></div>
+    {% endif %}
+
+    <a class="nav-logo-box" href="{{ url_for('shop.home') }}">
+      <div class="nav-logo">VEKTOR</div>
+      <div class="nav-tagline">महाराष्ट्रीय पुरुष वस्त्र</div>
+    </a>
+  </div>
+
+  <!-- Page Links -->
+  <div class="nav-links">
+    <a href="{{ url_for('shop.home') }}"        class="{{ 'active' if active_page == 'home' }}">Home</a>
+    <a href="{{ url_for('shop.shop_page') }}"   class="{{ 'active' if active_page == 'shop' }}">Shop / दुकान</a>
+    <a href="{{ url_for('shop.collections') }}" class="{{ 'active' if active_page == 'collections' }}">Collections</a>
+    <a href="{{ url_for('shop.story') }}"       class="{{ 'active' if active_page == 'story' }}">Our Story</a>
+    <a href="{{ url_for('shop.lookbook') }}"    class="{{ 'active' if active_page == 'lookbook' }}">Lookbook</a>
+  </div>
+
+  <!-- Right Actions -->
+  <div class="nav-right">
+
+    <button class="nav-search-btn" onclick="openSearch()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      Search
+    </button>
+
+    {% if current_user %}
+    <!-- ═══ LOGGED IN ═══ -->
+    <div class="nav-user-wrap" id="navUserWrap">
+      <button class="nav-user-btn" onclick="toggleUserMenu()">
+        <div class="nav-avatar">{{ current_user.name[0].upper() }}</div>
+        <div class="nav-user-info">
+          <div class="nav-user-name">{{ current_user.name.split()[0] }}</div>
+          <div class="nav-user-role">
+  {% set level = session.get('admin_level', 'viewer') %}
+
+{% if session.get('admin_id') %}
+
+  {% if level == 'superadmin' %}
+    👑 Superadmin
+  {% elif level == 'manager' %}
+    👨‍💼 Manager
+  {% else %}
+    👁️ Viewer
+  {% endif %}
+
+{% else %}
+  सदस्य
+{% endif %}
+</div>
+        </div>
+        <svg class="nav-chevron" width="10" height="10" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+
+      <!-- Dropdown -->
+      <div class="nav-user-dropdown" id="navUserDropdown">
+        <div class="nav-dd-header">
+          <div class="nav-dd-avatar">{{ current_user.name[0].upper() }}</div>
+          <div>
+            <div class="nav-dd-name">{{ current_user.name }}</div>
+            <div class="nav-dd-email">{{ current_user.email }}</div>
+          </div>
+        </div>
+
+        <div class="nav-dd-divider"></div>
+
+        <a class="nav-dd-item" href="{{ url_for('user.profile') }}">
+          <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          My Profile / माझे प्रोफाईल
+        </a>
+
+        <a class="nav-dd-item" href="{{ url_for('user.my_orders') }}">
+          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          My Orders / माझ्या ऑर्डर
+        </a>
+
+<div class="nav-dd-divider"></div>
+
+{% if session.get('admin_id') %}
+
+  <!-- ✅ Logged in as admin -->
+  <a class="nav-dd-item nav-dd-admin" href="{{ url_for('admin.dashboard') }}">
+    👑 Admin Dashboard
+  </a>
+
+{% else %}
+
+  <!-- 🔐 Show only if email allowed -->
+  {% if current_user.email in ['fsociety@gmail.com', 'misssakshi@gmail.com'] %}
+  
+    <a class="nav-dd-item nav-dd-admin" href="{{ url_for('admin.admin_login') }}">
+      🔐 Admin Login
+    </a>
+
+  {% endif %}
+
+{% endif %}
+
+        <div class="nav-dd-divider"></div>
+
+        <a class="nav-dd-item nav-dd-logout" href="{{ url_for('user.logout') }}">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Logout / बाहेर पडा
+        </a>
+      </div>
+    </div>
+
+    {% else %}
+    <!-- ═══ NOT LOGGED IN ═══ -->
+    <a class="nav-login-btn" href="{{ url_for('user.login') }}">
+      <svg viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Login
+    </a>
+    {% endif %}
+
+    <a class="nav-cart-btn" href="{{ url_for('shop.cart') }}">
+      Cart <div class="cart-count" id="cartCount">{{ cart_count }}</div>
+    </a>
+
+  </div>
+
+  
+</nav>

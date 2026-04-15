@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Payment — FashionHub</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+body{
+background:
+radial-gradient(circle at 10% 20%, rgba(255,255,255,0.05), transparent 40%),
+radial-gradient(circle at 90% 80%, rgba(255,255,255,0.04), transparent 40%),
+#0b0b0f;
+color:white;
+}
+
+/* NAVBAR */
+/* PREMIUM GLASS NAVBAR */
+
+.navbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:18px 8%;
+position:sticky;
+top:0;
+z-index:1000;
+
+background:rgba(0,0,0,0.65);
+backdrop-filter:blur(10px);
+
+border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.logo{
+font-size:20px;
+font-weight:700;
+color:gold;
+letter-spacing:2px;
+}
+
+.nav-links{
+display:flex;
+gap:28px;
+list-style:none;
+}
+
+.nav-links a{
+color:#bbb;
+text-decoration:none;
+font-size:14px;
+transition:.3s;
+position:relative;
+}
+
+.nav-links a::after{
+content:'';
+position:absolute;
+bottom:-5px;
+left:0;
+width:0%;
+height:2px;
+background:gold;
+transition:.3s;
+}
+
+.nav-links a:hover{
+color:white;
+}
+
+.nav-links a:hover::after{
+width:100%;
+}
+
+/* PAGE */
+.payment-page{
+min-height:90vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:40px 20px;
+}
+
+/* CARD */
+.payment-card{
+width:420px;
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(255,255,255,0.08);
+border-radius:24px;
+padding:40px;
+text-align:center;
+}
+
+.payment-card h2{font-size:28px;margin-bottom:10px}
+.payment-card p{color:#aaa;margin-bottom:25px;font-size:14px}
+
+/* TABS */
+.payment-tabs{
+display:flex;
+gap:10px;
+justify-content:center;
+margin-bottom:25px;
+}
+.payment-tabs button{
+flex:1;
+padding:10px;
+border-radius:20px;
+border:1px solid rgba(255,255,255,0.15);
+background:transparent;
+color:#ccc;
+cursor:pointer;
+font-size:13px;
+transition:.3s;
+}
+.payment-tabs button.active{
+background:white;
+color:black;
+font-weight:600;
+}
+
+/* FORM */
+.payment-form input{
+width:100%;
+padding:14px;
+margin-bottom:14px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.03);
+color:white;
+font-size:14px;
+outline:none;
+}
+.payment-form input:focus{
+border-color:rgba(255,255,255,0.4);
+background:rgba(255,255,255,0.05);
+}
+
+/* BUTTON */
+.premium-btn{
+margin-top:15px;
+width:100%;
+padding:14px;
+border:none;
+border-radius:30px;
+background:white;
+color:black;
+font-weight:600;
+font-size:15px;
+cursor:pointer;
+transition:.3s;
+}
+.premium-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 10px 25px rgba(255,255,255,0.15);
+}
+
+.secure-note{
+margin-top:15px;
+font-size:12px;
+color:#888;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar">
+<div class="logo">FASHIONHUB</div>
+</nav>
+
+<section class="payment-page">
+
+<div class="payment-card">
+<h2>Secure Payment</h2>
+<p>Complete your payment securely</p>
+
+<div class="payment-tabs">
+<button class="active">Card</button>
+<button>UPI</button>
+<button>Net Banking</button>
+</div>
+
+<div class="payment-form">
+<input type="text" id="holder" placeholder="Card Holder Name">
+<input type="text" id="number" placeholder="Card Number">
+<input type="text" id="expiry" placeholder="Expiry Date (MM/YY)">
+<input type="text" id="cvv" placeholder="CVV">
+</div>
+
+<button class="premium-btn" onclick="processPayment()">
+Pay <span id="pay-amount">₹0</span>
+</button>
+
+<p class="secure-note">🔒 256-bit SSL Secure Payment</p>
+</div>
+
+</section>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function loadAmount(){
+let total = 0;
+cart.forEach(item => total += item.price * item.qty);
+document.getElementById("pay-amount").innerText = "₹" + total.toLocaleString();
+}
+
+function processPayment(){
+let holder = document.getElementById("holder").value.trim();
+let number = document.getElementById("number").value.trim();
+let expiry = document.getElementById("expiry").value.trim();
+let cvv = document.getElementById("cvv").value.trim();
+
+if(!holder || !number || !expiry || !cvv){
+alert("Please fill all payment details!");
+return;
+}
+if(number.length < 12){
+alert("Invalid card number!");
+return;
+}
+if(cvv.length < 3){
+alert("Invalid CVV!");
+return;
+}
+
+alert("💳 Processing Payment...");
+
+let orders = JSON.parse(localStorage.getItem("orders")) || [];
+let billing = JSON.parse(localStorage.getItem("billing")) || {};
+
+let newOrder = {
+id: "FH" + Math.floor(Math.random()*1000000),
+date: new Date().toLocaleDateString(),
+items: cart,
+total: cart.reduce((sum,item)=> sum + item.price*item.qty,0),
+customer: billing.name,
+address: billing.address + ", " + billing.city,
+status: "Placed"
+};
+
+orders.push(newOrder);
+localStorage.setItem("orders", JSON.stringify(orders));
+
+localStorage.removeItem("cart");
+localStorage.removeItem("billing");
+
+window.location.href="success.html";
+}
+
+loadAmount();
+</script>
+
+</body>
+</html>

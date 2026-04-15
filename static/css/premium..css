@@ -1,0 +1,479 @@
+/* ===============================
+   🌌 GLOBAL BACKGROUND + FEEL
+================================ */
+body {
+  background: radial-gradient(circle at 20% 20%, #0f0f0f, #000 60%);
+  color: #fff;
+}
+
+/* subtle grain texture */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('https://www.transparenttextures.com/patterns/noise.png');
+  opacity: 0.03;
+  pointer-events: none;
+}
+
+/* cursor glow */
+body::before {
+  content: "";
+  position: fixed;
+  top: var(--y);
+  left: var(--x);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255,102,0,0.15), transparent 60%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+/* smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ===============================
+   📦 SECTION SPACING + FLOW
+================================ */
+section {
+  padding: 100px 80px;
+  position: relative;
+}
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,102,0,0.3), transparent);
+}
+
+/* ===============================
+   🧊 GLASS EFFECT
+================================ */
+.glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ===============================
+   🧠 HERO SECTION
+================================ */
+.hero h1 {
+  text-shadow: 0 0 20px rgba(255,102,0,0.4);
+}
+
+.hero-right {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  border-radius: 14px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.hero-right div {
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.3s;
+}
+
+.hero-right div:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+/* ===============================
+   🔥 FLASH SALE BAR
+================================ */
+.flash-sale {
+  background: linear-gradient(90deg, #ff6600, #ff8c00);
+  box-shadow: 0 0 20px rgba(255,102,0,0.4);
+}
+
+/* ===============================
+   🎯 FEATURE CARDS
+================================ */
+.feature-card {
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0,255,150,0.2);
+}
+
+/* ===============================
+   🧩 CATEGORY GRID
+================================ */
+.uniform-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+/* ===============================
+   🛍️ PRODUCT CARDS
+================================ */
+.product-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0d0d0d;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.3s;
+}
+
+.product-card img {
+  transition: 0.4s;
+}
+
+.product-card:hover img {
+  transform: scale(1.08);
+}
+
+.product-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+}
+
+/* glowing border */
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ff6600, #00ff99);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.product-card:hover::before {
+  opacity: 0.15;
+}
+
+/* ===============================
+   🔘 BUTTON EFFECT
+================================ */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: 0.5s;
+}
+
+.btn:hover::after {
+  left: 100%;
+}
+
+/* ===============================
+   🇮🇳 MARATHI BRANDING
+================================ */
+.marathi-title {
+  letter-spacing: 2px;
+  color: #ffaa33;
+  text-transform: uppercase;
+}
+
+.marathi-text {
+  color: #ffcc66;
+  text-shadow: 0 0 15px rgba(255,204,102,0.4);
+  font-size: 30px;
+  text-align: center;
+}
+
+.sanskrit-line {
+  font-family: serif;
+  color: #ffcc66;
+  opacity: 0.8;
+}
+
+/* ===============================
+   📍 TIMELINE
+================================ */
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  background: #ff6600;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff6600;
+}
+
+/* ===============================
+   🟧 HIGHLIGHT BOX
+================================ */
+.highlight-box {
+  background: linear-gradient(135deg, #ff6600, #ff8c00);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 40px rgba(255,102,0,0.4),
+    inset 0 0 20px rgba(255,255,255,0.1);
+}
+
+/* ===============================
+   💬 TESTIMONIALS
+================================ */
+.testimonial {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: 0.3s;
+}
+
+.testimonial:hover {
+  border-color: #ff6600;
+}
+
+/* ===============================
+   ✨ FADE-IN ANIMATION
+================================ */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.6s;
+}
+
+.fade-in.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ===============================
+   🔚 FOOTER
+================================ */
+footer {
+  background: linear-gradient(to top, #000, #0a0a0a);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ===============================
+   🛍 PRODUCT CARD LAYOUT
+================================ */
+.prod-bot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-box {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===============================
+   🔘 BUTTON GROUP (VERTICAL)
+================================ */
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ===============================
+   🛒 CART BUTTON (existing)
+================================ */
+/* (no change — your existing .prod-add-mini will work) */
+
+/* ===============================
+   👁 VIEW BUTTON (FINAL FIXED)
+================================ */
+
+.view-btn {
+  /* SAME SIZE AS CART */
+  padding: 9px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 700;
+
+  /* CLEAN WHITE STYLE */
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.4);
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* HOVER */
+.view-btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: #ffffff;
+}
+
+
+/* REMOVE BLUE LINK FROM PRODUCT NAMES */
+.prod-name-en a,
+.prod-name-mr a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* REMOVE HOVER BLUE */
+.prod-name-en a:hover,
+.prod-name-mr a:hover {
+  text-decoration: none !important;
+  color: #ff6600 !important;
+}
+
+.related-grid a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.prod-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: block;
+}
+
+.prod-link * {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* 🔥 FORCE REMOVE ALL LINK STYLES INSIDE PRODUCT CARDS */
+.related-sec a,
+.related-sec a:visited,
+.related-sec a:hover,
+.related-sec a:active,
+.related-sec a * {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* 🔥 EXTRA STRONG OVERRIDE */
+.related-sec .prod-link {
+  text-decoration: none !important;
+  color: inherit !important;
+  display: block;
+}
+
+/* 🔥 REMOVE ANY UNDERLINE FROM TEXT ELEMENTS */
+.related-sec .prod-name-en,
+.related-sec .prod-name-mr {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+
+/* ===== FOOTER (HOME STYLE) ===== */
+
+.vk-footer {
+  background: #000;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 40px 28px 24px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.footer-brand {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  letter-spacing: 4px;
+  color: #F7F3EC;
+  margin-bottom: 10px;
+}
+
+.footer-brand span {
+  color: #FF6B00;
+}
+
+.footer-tagline {
+  font-family: "Tiro Devanagari Sanskrit", serif;
+  font-size: 12px;
+  color: rgba(247,243,236,.3);
+  line-height: 1.7;
+  max-width: 220px;
+}
+
+.footer-col-title {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: #FF6B00;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.footer-link {
+  font-size: 12px;
+  color: rgba(247,243,236,.35);
+  display: block;
+  margin-bottom: 8px;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.footer-link:hover {
+  color: #FF6B00;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(247,243,236,.2);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+
+
+
+/* ── URG BAR ── */
+.urg{background:#0a0a0a;border-bottom:1px solid var(--border);padding:7px 24px;display:flex;align-items:center;gap:16px;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.38);flex-wrap:wrap}
+.urg-timer{color:var(--sf);font-family:var(--fd);font-size:15px;letter-spacing:3px}
+.urg-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,107,0,.35)}
+.dev{font-family:var(--fdev);font-size:10px}
+
+
+
+
+/* ── WHY US ── */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.why-item{padding:34px 22px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:10px;transition:background .25s,transform .3s;cursor:default}
+.why-item:last-child{border-right:none}
+.why-item:hover{background:rgba(255,107,0,.03);transform:translateY(-3px)}
+.why-icon{width:46px;height:46px;border:.5px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:19px;transition:.25s}
+.why-item:hover .why-icon{border-color:var(--sf);box-shadow:0 0 14px rgba(255,107,0,.18)}
+.why-en{font-size:12px;font-weight:600;letter-spacing:.3px}
+.why-mr{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.42)}
+.why-hi{font-size:10px;color:rgba(247,243,236,.18)}
+
+
+
+/* ── BRAND PILLARS ── */
+.pillars{padding:60px 28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.pillars-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:30px;background:var(--border)}
+.pillar{background:var(--card);padding:36px 24px;display:flex;flex-direction:column;gap:14px;transition:.3s;cursor:default;position:relative;overflow:hidden}
+.pillar::before{content:attr(data-num);position:absolute;top:-8px;right:8px;font-family:var(--fd);font-size:100px;color:rgba(255,255,255,.02);line-height:1;pointer-events:none}
+.pillar:hover{background:#1b1b1b}
+.pillar-num{font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.18)}
+.pillar-icon{font-size:28px}
+.pillar-title{font-family:var(--fd);font-size:20px;letter-spacing:2px}
+.pillar-mr{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.3)}
+.pillar-desc{font-family:var(--fb);font-size:12px;font-style:italic;color:rgba(247,243,236,.38);line-height:1.7}
+
+
+ 

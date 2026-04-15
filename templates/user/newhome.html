@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — महाराष्ट्रीय पुरुष वस्त्र</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sf:#FF6B00;--sf2:#FF8C35;--sf3:rgba(255,107,0,.08);
+  --gr:#046A38;--gr2:#0A8A4A;
+  --ink:#080808;--smoke:#0E0E0E;--mid:#111;--card:#161616;
+  --cream:#F5F0E8;--white:#F7F3EC;--gold:#C8941A;--gold2:#e0a820;
+  --border:rgba(255,255,255,0.055);--border2:rgba(255,255,255,0.11);
+  --fn:'Space Mono',monospace;--fd:'Bebas Neue',sans-serif;
+  --fdev:'Tiro Devanagari Sanskrit',serif;--fb:'Cormorant Garamond',serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--white);font-family:var(--fn);overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{display:block}
+
+/* ── PAITHANI ── */
+.paithani{height:3px;background:linear-gradient(90deg,var(--sf) 33%,var(--white) 33% 66%,var(--gr) 66%)}
+
+
+
+/* ── NAV ── */
+.nav{background:rgba(8,8,8,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;height:56px;position:sticky;top:0;z-index:200;gap:0}
+.nav-brand{font-family:var(--fd);font-size:27px;letter-spacing:5px;margin-right:auto;cursor:pointer}
+.nav-brand span{color:var(--sf)}
+.nav-links{display:flex;gap:30px;margin-right:32px}
+.nav-link{font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.38);text-transform:uppercase;cursor:pointer;transition:.2s;position:relative;padding-bottom:2px}
+.nav-link::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--sf);transition:.3s}
+.nav-link:hover{color:var(--white)}
+.nav-link:hover::after{width:100%}
+.nav-icons{display:flex;gap:8px}
+.nav-icon{width:37px;height:37px;border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:.2s;position:relative}
+.nav-icon:hover{border-color:var(--sf);background:var(--sf3)}
+.cart-badge{position:absolute;top:-5px;right:-5px;width:15px;height:15px;background:var(--sf);color:#000;font-size:8px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700}
+
+/* ── MARQUEE ── */
+.mq{overflow:hidden;background:var(--card);border-bottom:1px solid var(--border);padding:9px 0}
+.mq-track{display:inline-flex;animation:mqS 30s linear infinite;white-space:nowrap}
+.mq-item{display:flex;align-items:center;gap:10px;padding:0 32px;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.3)}
+.mq-dot{width:3px;height:3px;border-radius:50%;background:var(--sf);flex-shrink:0}
+@keyframes mqS{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── HERO ── */
+.hero{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border);min-height:500px}
+.hero-l{padding:56px 44px;display:flex;flex-direction:column;gap:20px;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.hero-chakra{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;animation:spin 90s linear infinite;opacity:.055}
+@keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.hero-l>*:not(.hero-chakra){position:relative;z-index:1}
+.hero-glitch{font-family:var(--fdev);font-size:12px;color:var(--sf);letter-spacing:3px;animation:fadeUp .8s ease both}
+.hero-sk{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.28);animation:fadeUp .8s .1s ease both}
+.hero-title{font-family:var(--fd);font-size:clamp(54px,7.5vw,90px);line-height:.85;letter-spacing:.02em;animation:fadeUp .8s .15s ease both}
+.hero-title .sf{color:var(--sf)}
+.hero-title .gr{color:var(--gr2)}
+.hero-sub-mr{font-family:var(--fdev);font-size:12px;color:rgba(247,243,236,.45);margin-bottom:2px}
+.hero-sub-hi{font-size:10px;color:rgba(247,243,236,.25)}
+.hero-sub{animation:fadeUp .8s .2s ease both}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap;animation:fadeUp .8s .28s ease both}
+.btn-sf{padding:13px 30px;background:var(--sf);color:#000;font-family:var(--fn);font-size:9px;letter-spacing:3px;border:none;cursor:pointer;font-weight:700;transition:.2s;display:inline-block}
+.btn-sf:hover{background:var(--sf2);transform:scale(1.03)}
+.btn-gr{padding:13px 26px;background:transparent;border:1px solid var(--gr2);color:var(--gr2);font-family:var(--fn);font-size:9px;letter-spacing:3px;cursor:pointer;transition:.2s;display:inline-block}
+.btn-gr:hover{background:var(--gr);color:var(--white);border-color:var(--gr)}
+.btn-outline{padding:11px 22px;background:transparent;border:.5px solid rgba(255,255,255,.18);color:rgba(247,243,236,.55);font-family:var(--fn);font-size:9px;letter-spacing:3px;cursor:pointer;transition:.2s;display:inline-block}
+.btn-outline:hover{border-color:var(--sf);color:var(--sf)}
+.hero-trust{display:flex;gap:18px;flex-wrap:wrap;animation:fadeUp .8s .35s ease both}
+.trust-item{display:flex;align-items:center;gap:7px;font-size:8px;letter-spacing:1.5px;color:rgba(247,243,236,.28);cursor:default;transition:.2s}
+.trust-item:hover{color:rgba(247,243,236,.7)}
+.trust-icon{width:26px;height:26px;border:.5px solid rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font-size:13px;transition:.2s;flex-shrink:0}
+.trust-item:hover .trust-icon{border-color:var(--sf)}
+.hero-r{display:flex;flex-direction:column;justify-content:center;gap:20px;padding:40px 30px;background:var(--mid)}
+
+/* ── INDIA CARD ── */
+.india-made-card{display:flex;align-items:center;gap:16px;padding:20px;border:.5px solid rgba(255,107,0,.2);background:rgba(255,107,0,.04);transition:.3s;cursor:default}
+.india-made-card:hover{background:rgba(255,107,0,.09);border-color:rgba(255,107,0,.4)}
+.flag-vert{display:flex;flex-direction:column;width:18px;height:42px;flex-shrink:0}
+.fv{flex:1}
+.fv.sf{background:var(--sf)}
+.fv.wh{background:rgba(247,243,236,.9);display:flex;align-items:center;justify-content:center}
+.fv-ch{width:6px;height:6px;border-radius:50%;border:1px solid #000059}
+.fv.gr{background:var(--gr)}
+.imh-big{font-family:var(--fd);font-size:20px;letter-spacing:.1em;color:var(--sf)}
+.imh-mr{font-family:var(--fdev);font-size:10px;color:rgba(247,243,236,.3);margin:3px 0}
+.imh-en{font-size:8px;letter-spacing:1px;color:rgba(247,243,236,.18)}
+
+/* ── STATS ── */
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;background:var(--border)}
+.hs{background:var(--card);padding:20px 16px;transition:.3s;cursor:default}
+.hs:hover{background:#1e1e1e}
+.hs-num{font-family:var(--fd);font-size:34px;line-height:1;margin-bottom:4px}
+.hs-num .sf{color:var(--sf)}
+.hs-num .gr{color:var(--gr2)}
+.hs-mr{font-family:var(--fdev);font-size:9px;color:rgba(247,243,236,.26)}
+.hs-en{font-size:7px;letter-spacing:1.5px;color:rgba(247,243,236,.18);margin-top:2px}
+
+/* ── FLASH SALE ── */
+.flash{display:flex;align-items:center;gap:22px;padding:18px 28px;background:var(--mid);border-top:1px solid rgba(255,107,0,.12);border-bottom:1px solid rgba(255,107,0,.12);flex-wrap:wrap}
+.flash-badge{background:var(--sf);padding:10px 16px;flex-shrink:0}
+.flash-badge-en{font-family:var(--fd);font-size:16px;letter-spacing:.1em;color:#000}
+.flash-badge-mr{font-family:var(--fdev);font-size:9px;color:rgba(0,0,0,.5)}
+.flash-text{flex:1;min-width:160px}
+.flash-big{font-family:var(--fd);font-size:21px;letter-spacing:.04em}
+.flash-big span{color:var(--sf)}
+.flash-mr{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.28);margin-top:3px}
+.flash-timer{display:flex;align-items:center;gap:5px;flex-shrink:0}
+.ft-box{text-align:center}
+.ft-num{font-family:var(--fd);font-size:30px;color:var(--sf);background:rgba(255,107,0,.08);border:.5px solid rgba(255,107,0,.2);padding:4px 12px;min-width:50px;line-height:1}
+.ft-sep{font-family:var(--fd);font-size:24px;color:var(--sf);padding:0 2px}
+.ft-lbl{font-size:7px;letter-spacing:.15em;color:rgba(247,243,236,.18);margin-top:2px}
+
+/* ── MARATHA CODE ── */
+.mc-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.mc-card{padding:40px 28px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:10px;transition:background .3s;position:relative;overflow:hidden;cursor:default}
+.mc-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sf);transform:scaleX(0);transform-origin:left;transition:transform .45s ease}
+.mc-card:hover{background:rgba(255,107,0,.025)}
+.mc-card:hover::after{transform:scaleX(1)}
+.mc-card:last-child{border-right:none}
+.mc-icon{width:42px;height:42px;border:1px solid;display:flex;align-items:center;justify-content:center;font-size:19px;transition:transform .3s}
+.mc-card:hover .mc-icon{transform:rotate(6deg)}
+.mc-word{font-family:var(--fdev);font-size:26px;color:var(--white)}
+.mc-en{font-size:8px;letter-spacing:.18em;color:rgba(247,243,236,.22);text-transform:uppercase}
+.mc-desc{font-family:var(--fb);font-size:13px;font-style:italic;color:rgba(247,243,236,.42);line-height:1.7}
+.mc-sk{font-family:var(--fdev);font-size:10px;color:var(--sf);margin-top:4px}
+
+/* ── PROVERB ── */
+.proverb-strip{overflow:hidden;background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:11px 0}
+.proverb-track{display:inline-flex;align-items:center;white-space:nowrap;animation:pS 32s linear infinite;font-family:var(--fdev);font-size:12px;color:rgba(247,243,236,.22)}
+@keyframes pS{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.proverb-sep{color:var(--sf);padding:0 14px}
+
+/* ── SECTION COMMON ── */
+.sec-wrap{padding:52px 28px}
+.sec-tag{font-size:8px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.sec-tag::before{content:'';width:14px;height:2px;background:var(--sf);flex-shrink:0}
+.sec-head{font-family:var(--fd);font-size:clamp(30px,4vw,54px);letter-spacing:2px;line-height:.9}
+.sec-mr{font-family:var(--fdev);font-size:13px;color:rgba(247,243,236,.2);display:block;margin-top:4px}
+.sec-top{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:26px}
+.see-all{font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.2);border:.5px solid rgba(255,255,255,.07);padding:8px 16px;cursor:pointer;transition:.2s}
+.see-all:hover{color:var(--sf);border-color:var(--sf)}
+
+/* ── CATEGORIES ── */
+.cat-grid{display:grid;grid-template-columns:repeat(5,1fr);border:.5px solid var(--border)}
+.cat-card{padding:22px 18px;border-right:.5px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;gap:12px;min-height:140px;cursor:pointer;transition:background .25s;position:relative;overflow:hidden}
+.cat-card:last-child{border-right:none}
+.cat-card:hover{background:rgba(255,107,0,.04)}
+.cat-card:hover .cat-arrow{color:var(--sf);transform:translate(3px,-3px)}
+.cat-card:hover .cat-bar{transform:scaleX(1)}
+.cat-top{display:flex;justify-content:space-between;align-items:flex-start}
+.cat-num{font-size:8px;color:rgba(247,243,236,.18);letter-spacing:.1em}
+.cat-arrow{font-size:16px;color:rgba(247,243,236,.18);transition:.25s}
+.cat-en{font-family:var(--fd);font-size:19px;letter-spacing:.06em}
+.cat-mr{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.28);margin-top:3px}
+.cat-count{font-size:7px;letter-spacing:1px;color:var(--sf);margin-top:6px}
+.cat-bar{position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sf);transform:scaleX(0);transform-origin:left;transition:transform .4s ease}
+
+/* ── PRODUCTS ── */
+.prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:26px}
+.prod-card{background:var(--card);border:.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:border-color .3s,transform .35s ease;cursor:pointer}
+.prod-card:hover{border-color:rgba(255,107,0,.3);transform:translateY(-5px)}
+.prod-img-area{position:relative;background:var(--mid);height:230px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.prod-illustration{transition:transform .5s ease}
+.prod-card:hover .prod-illustration{transform:scale(1.05)}
+.prod-badge-wrap{position:absolute;top:10px;left:10px;z-index:2;display:flex;flex-direction:column;gap:4px}
+.pbadge{font-family:var(--fdev);font-size:9px;padding:4px 10px;display:block}
+.pbadge-new{background:var(--sf);color:#000}
+.pbadge-best{background:var(--gr);color:var(--white)}
+.pbadge-ltd{background:var(--gold);color:#000}
+.prod-stock{position:absolute;top:10px;right:10px;font-size:8px;letter-spacing:1px;padding:3px 8px;background:rgba(0,0,0,.85);color:rgba(247,243,236,.5);text-transform:uppercase;z-index:2}
+.prod-overlay{position:absolute;inset:0;background:rgba(6,6,6,.75);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;z-index:3}
+.prod-card:hover .prod-overlay{opacity:1}
+.prod-overlay-btn{background:var(--white);color:#000;font-size:8px;letter-spacing:2.5px;padding:11px 22px;font-weight:700;border:none;cursor:pointer;transition:.2s;font-family:var(--fn)}
+.prod-overlay-btn:hover{background:var(--sf)}
+.prod-flag{position:absolute;bottom:0;left:0;right:0;height:3px;display:flex;z-index:2}
+.pf{flex:1}
+.pf.sf{background:var(--sf)}
+.pf.wh{background:rgba(247,243,236,.25)}
+.pf.gr{background:var(--gr)}
+.prod-info{padding:18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.prod-name{font-family:var(--fb);font-size:17px;font-weight:300;color:var(--white)}
+.prod-name-mr{font-family:var(--fdev);font-size:10px;color:rgba(247,243,236,.24)}
+.prod-stars{color:var(--gold);font-size:11px;letter-spacing:1px}
+.prod-rating-txt{font-size:7px;color:rgba(247,243,236,.2);letter-spacing:1px;margin-left:4px}
+.prod-bot{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;margin-top:auto}
+.prod-price{font-size:14px;color:var(--sf);letter-spacing:1.5px}
+.prod-old{font-size:8px;color:rgba(247,243,236,.18);text-decoration:line-through;margin-top:2px}
+.prod-save{font-size:7px;color:var(--gr2);letter-spacing:.5px;margin-top:1px}
+.prod-btns{display:flex;gap:5px;flex-shrink:0}
+.pib-view{padding:8px 12px;background:transparent;border:.5px solid rgba(255,255,255,.1);color:rgba(247,243,236,.4);font-size:8px;letter-spacing:1.5px;font-weight:700;cursor:pointer;transition:.2s;font-family:var(--fn)}
+.pib-view:hover{border-color:var(--sf);color:var(--sf)}
+.pib-cart{padding:8px 12px;background:var(--sf);color:#000;font-size:8px;letter-spacing:1.5px;font-weight:700;border:none;cursor:pointer;transition:.2s;font-family:var(--fn)}
+.pib-cart:hover{background:var(--sf2)}
+
+
+
+/* ── TIMELINE ── */
+.tl-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:30px;position:relative}
+.tl-grid::before{content:'';position:absolute;top:17px;left:0;right:0;height:1px;background:var(--border);z-index:0}
+.tl-item{display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
+.tl-dot{width:36px;height:36px;border:2px solid var(--sf);border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--ink)}
+.tl-dot-in{width:10px;height:10px;border-radius:50%;background:var(--sf)}
+.tl-dot.gr{border-color:var(--gr2)}
+.tl-dot.gr .tl-dot-in{background:var(--gr2)}
+.tl-dot.gold{border-color:var(--gold)}
+.tl-dot.gold .tl-dot-in{background:var(--gold)}
+.tl-year{font-family:var(--fd);font-size:22px;letter-spacing:2px;margin-top:4px}
+.tl-en{font-family:var(--fb);font-size:13px;color:rgba(247,243,236,.48);line-height:1.5}
+.tl-mr{font-family:var(--fdev);font-size:10px;color:rgba(247,243,236,.2);margin-top:2px}
+
+/* ── PRIDE ── */
+.pride{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--border)}
+.pride-l{background:var(--sf);padding:60px 44px;display:flex;flex-direction:column;gap:18px;position:relative;overflow:hidden}
+.pride-l::after{content:'VEKTOR';position:absolute;bottom:-20px;right:-10px;font-family:var(--fd);font-size:110px;color:rgba(0,0,0,.06);letter-spacing:.1em;pointer-events:none}
+.pride-sk{font-family:var(--fdev);font-size:11px;color:rgba(0,0,0,.42)}
+.pride-sk-tr{font-family:var(--fb);font-style:italic;font-size:11px;color:rgba(0,0,0,.35)}
+.pride-title{font-family:var(--fd);font-size:clamp(46px,6vw,72px);line-height:.85;letter-spacing:.02em;color:#000}
+.pride-body{font-family:var(--fb);font-size:13px;color:rgba(0,0,0,.55);line-height:1.8}
+.btn-outline-dark{font-size:8px;letter-spacing:3px;color:#000;border:.5px solid rgba(0,0,0,.22);padding:11px 22px;cursor:pointer;transition:.2s;display:inline-block;margin-top:4px;font-family:var(--fn)}
+.btn-outline-dark:hover{border-color:#000;background:rgba(0,0,0,.09)}
+.pride-r{background:var(--mid);padding:60px 44px;display:flex;flex-direction:column;justify-content:center;gap:0}
+.pride-row{display:flex;align-items:center;gap:18px;padding:18px 0;border-bottom:.5px solid var(--border);transition:padding-left .25s,background .2s;cursor:default}
+.pride-row:first-child{border-top:.5px solid var(--border)}
+.pride-row:hover{padding-left:10px}
+.pr-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;color:var(--sf)}
+.pr-en{font-size:13px;font-weight:400;margin-bottom:3px}
+.pr-langs{font-family:var(--fdev);font-size:10px;color:rgba(247,243,236,.26)}
+
+/* ── CRAFTSMAN ── */
+.craftsman{background:var(--mid);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:38px 30px;display:flex;gap:34px;align-items:center;flex-wrap:wrap}
+.craftsman-icon{width:68px;height:68px;border:1px solid rgba(255,107,0,.28);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.cr-en{font-family:var(--fb);font-size:21px;font-weight:300;margin-bottom:4px}
+.cr-mr{font-family:var(--fdev);font-size:13px;color:rgba(247,243,236,.35);margin-bottom:3px}
+.cr-sub{font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.16);text-transform:uppercase}
+.cr-stats{margin-left:auto;display:flex;gap:30px;flex-shrink:0}
+.cr-stat{text-align:center}
+.cr-stat-num{font-family:var(--fd);font-size:40px;line-height:1}
+.cr-stat-num .sf{color:var(--sf)}
+.cr-stat-mr{font-family:var(--fdev);font-size:10px;color:rgba(247,243,236,.28)}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:26px}
+.testi-card{padding:26px 22px;background:var(--card);border:.5px solid var(--border);position:relative;overflow:hidden;transition:background .3s;cursor:default}
+.testi-card:hover{background:#1a1a1a}
+.testi-flag{position:absolute;top:0;left:0;right:0;height:3px;display:flex}
+.ttf{flex:1}
+.ttf.sf{background:var(--sf)}
+.ttf.wh{background:rgba(247,243,236,.16)}
+.ttf.gr{background:var(--gr)}
+.testi-stars{color:var(--gold);font-size:11px;letter-spacing:2px;margin-bottom:13px;margin-top:6px}
+.testi-quote{position:absolute;top:-4px;left:-2px;font-family:var(--fb);font-size:52px;color:rgba(255,107,0,.08);line-height:1;pointer-events:none;user-select:none}
+.testi-en{font-family:var(--fb);font-size:14px;font-style:italic;font-weight:300;color:rgba(247,243,236,.65);line-height:1.7;margin-bottom:7px}
+.testi-mr{font-family:var(--fdev);font-size:11px;color:rgba(247,243,236,.26);line-height:1.7;font-style:italic;margin-bottom:15px}
+.testi-meta{border-top:.5px solid var(--border);padding-top:12px;display:flex;align-items:center;gap:11px}
+.testi-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#000;font-weight:700;flex-shrink:0}
+.testi-name{font-size:13px}
+.testi-loc{font-size:7px;letter-spacing:1px;color:rgba(247,243,236,.16);text-transform:uppercase;margin-top:2px}
+
+/* ── SIZE CTA ── */
+.size-cta{background:var(--mid);border-top:1px solid var(--border);padding:26px 30px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.sc-title{font-family:var(--fd);font-size:28px;letter-spacing:2px}
+.sc-mr{font-family:var(--fdev);font-size:12px;color:rgba(247,243,236,.26);margin-top:3px}
+.sc-btns{display:flex;gap:10px}
+
+/* ── NEWSLETTER ── */
+.newsletter{padding:64px 28px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;background:var(--card)}
+.nl-left .sec-tag{margin-bottom:8px}
+.nl-left .sec-head{font-size:clamp(28px,3.5vw,48px)}
+.nl-sub{font-family:var(--fb);font-size:14px;font-style:italic;color:rgba(247,243,236,.35);margin-top:14px;line-height:1.6}
+.nl-form{display:flex;flex-direction:column;gap:12px}
+.nl-input-row{display:flex;gap:0}
+.nl-input{flex:1;background:transparent;border:.5px solid var(--border2);padding:13px 18px;font-family:var(--fn);font-size:9px;letter-spacing:2px;color:var(--white);outline:none;transition:.2s}
+.nl-input::placeholder{color:rgba(247,243,236,.22)}
+.nl-input:focus{border-color:var(--sf);background:rgba(255,107,0,.03)}
+.nl-btn{padding:13px 26px;background:var(--sf);color:#000;font-family:var(--fn);font-size:9px;letter-spacing:2px;border:none;cursor:pointer;font-weight:700;white-space:nowrap;transition:.2s;flex-shrink:0}
+.nl-btn:hover{background:var(--sf2)}
+.nl-promise{font-size:8px;letter-spacing:1.5px;color:rgba(247,243,236,.18);display:flex;align-items:center;gap:6px}
+.nl-promise::before{content:'🔒';font-size:10px}
+
+/* ── LOOKBOOK STRIP ── */
+.lookbook-strip{border-top:1px solid var(--border);overflow:hidden;position:relative}
+.lookbook-header{padding:28px 30px 22px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.lookbook-scroll{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.lookbook-scroll::-webkit-scrollbar{display:none}
+.look-card{flex-shrink:0;width:260px;height:340px;background:var(--mid);border:.5px solid var(--border);position:relative;overflow:hidden;cursor:pointer;transition:.3s}
+.look-card:hover{border-color:rgba(255,107,0,.3)}
+.look-card:hover .look-overlay{opacity:1}
+.look-card:hover .look-img-el{transform:scale(1.06)}
+.look-img-el{width:100%;height:100%;display:flex;align-items:center;justify-content:center;transition:transform .5s ease}
+.look-overlay{position:absolute;inset:0;background:rgba(6,6,6,.7);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;opacity:0;transition:.3s}
+.look-overlay-tag{font-family:var(--fdev);font-size:11px;color:var(--sf)}
+.look-overlay-title{font-family:var(--fb);font-size:16px;font-style:italic;color:var(--white)}
+.look-num{position:absolute;top:10px;left:12px;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.25);z-index:2}
+.look-price{position:absolute;bottom:12px;right:12px;background:var(--sf);color:#000;font-size:8px;letter-spacing:1.5px;padding:4px 10px;font-weight:700;z-index:2}
+
+
+/* ── SOCIAL PROOF BAR ── */
+.social-bar{background:rgba(255,107,0,.05);border-top:1px solid rgba(255,107,0,.12);border-bottom:1px solid rgba(255,107,0,.12);padding:18px 30px;display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.sb-item{display:flex;align-items:center;gap:10px;font-size:9px;letter-spacing:1.5px;color:rgba(247,243,236,.45)}
+.sb-num{font-family:var(--fd);font-size:28px;color:var(--sf);line-height:1}
+.sb-div{width:1px;height:32px;background:rgba(255,255,255,.07)}
+
+/* ── CART DRAWER ── */
+.cart-drawer{position:fixed;top:0;right:-400px;width:360px;height:100vh;background:#0d0d0d;border-left:1px solid var(--border);z-index:500;transition:right .35s ease;display:flex;flex-direction:column}
+.cart-drawer.open{right:0}
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:499;display:none}
+.cart-overlay.open{display:block}
+.cart-header{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.cart-title{font-family:var(--fd);font-size:22px;letter-spacing:3px}
+.cart-close{width:32px;height:32px;border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:.2s}
+.cart-close:hover{border-color:var(--sf)}
+.cart-body{flex:1;overflow-y:auto;padding:16px 22px}
+.cart-empty{text-align:center;padding:60px 20px;font-family:var(--fdev);font-size:14px;color:rgba(247,243,236,.3)}
+.cart-item{display:flex;gap:14px;padding:14px 0;border-bottom:.5px solid var(--border);align-items:center}
+.cart-item-icon{width:44px;height:44px;background:var(--card);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.cart-item-name{font-size:12px;margin-bottom:4px}
+.cart-item-price{font-family:var(--fd);font-size:16px;color:var(--sf)}
+.cart-item-remove{margin-left:auto;font-size:14px;color:rgba(247,243,236,.2);cursor:pointer;transition:.2s;flex-shrink:0}
+.cart-item-remove:hover{color:var(--sf)}
+.cart-footer{padding:20px 22px;border-top:1px solid var(--border)}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.cart-total-label{font-size:10px;letter-spacing:2px;color:rgba(247,243,236,.4)}
+.cart-total-val{font-family:var(--fd);font-size:24px;color:var(--sf)}
+.cart-checkout-btn{width:100%;padding:14px;background:var(--sf);color:#000;font-family:var(--fn);font-size:10px;letter-spacing:3px;font-weight:700;border:none;cursor:pointer;transition:.2s}
+.cart-checkout-btn:hover{background:var(--sf2)}
+
+/* ── FOOTER ── */
+.footer{background:#000;border-top:1px solid var(--border);padding:44px 28px 24px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:34px;margin-bottom:34px}
+.footer-brand{font-family:var(--fd);font-size:34px;letter-spacing:5px;margin-bottom:11px}
+.footer-brand span{color:var(--sf)}
+.footer-tagline{font-family:var(--fdev);font-size:12px;color:rgba(247,243,236,.28);line-height:1.7;max-width:220px}
+.footer-col-title{font-family:var(--fn);font-size:8px;letter-spacing:3px;color:var(--sf);text-transform:uppercase;margin-bottom:16px}
+.footer-link{font-size:12px;color:rgba(247,243,236,.32);cursor:pointer;transition:.2s;margin-bottom:9px;display:block}
+.footer-link:hover{color:var(--sf);padding-left:4px}
+.footer-bottom{border-top:1px solid var(--border);padding-top:20px;display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.18);flex-wrap:wrap;gap:8px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sf);color:#000;font-size:9px;letter-spacing:2px;padding:13px 22px;font-weight:700;transform:translateY(90px);opacity:0;transition:.35s;z-index:999;font-family:var(--fn)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ── BACK TO TOP ── */
+.btt{position:fixed;bottom:24px;left:24px;width:42px;height:42px;background:var(--card);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;transition:.25s;z-index:998;opacity:0;pointer-events:none}
+.btt.show{opacity:1;pointer-events:auto}
+.btt:hover{border-color:var(--sf);background:var(--sf3)}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-l{border-right:none}
+  .hero-r{padding:28px}
+  .cat-grid{grid-template-columns:repeat(3,1fr)}
+  .prod-grid{grid-template-columns:1fr 1fr}
+  .why-grid{grid-template-columns:1fr 1fr}
+  .tl-grid{grid-template-columns:1fr 1fr}
+  .pride{grid-template-columns:1fr}
+  .pillars-grid{grid-template-columns:1fr 1fr}
+  .newsletter{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .cat-grid{grid-template-columns:1fr 1fr}
+  .prod-grid{grid-template-columns:1fr}
+  .mc-grid{grid-template-columns:1fr}
+  .mc-card{border-right:none;border-bottom:1px solid var(--border)}
+  .why-grid{grid-template-columns:1fr}
+  .why-item{border-right:none;border-bottom:1px solid var(--border)}
+  .testi-grid{grid-template-columns:1fr}
+  .pillars-grid{grid-template-columns:1fr}
+  .tl-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="paithani"></div>
+
+
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand" onclick="window.scrollTo({top:0,behavior:'smooth'})">VEK<span>T</span>OR</div>
+  <div class="nav-links">
+    <span class="nav-link">Shop</span>
+    <span class="nav-link">Collections</span>
+    <span class="nav-link">Lookbook</span>
+    <span class="nav-link">Our Story</span>
+  </div>
+  <div class="nav-icons">
+    <div class="nav-icon" title="Search" onclick="showToast('🔍 Search coming soon!')">🔍</div>
+    <div class="nav-icon" title="Account" onclick="showToast('👤 Account coming soon!')">👤</div>
+    <div class="nav-icon" id="cartIcon" onclick="openCart()" title="Cart">🛒<div class="cart-badge" id="cartBadge">0</div></div>
+  </div>
+</nav>
+
+<!-- MARQUEE -->
+<div class="mq">
+  <div class="mq-track">
+    <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
+    <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
+    <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
+    <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
+    <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
+    <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
+    <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
+    <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
+    <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
+    <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-l">
+    <div class="hero-chakra">
+      <svg width="440" height="440" viewBox="0 0 480 480" fill="none">
+        <circle cx="240" cy="240" r="192" stroke="white" stroke-width="2.5"/>
+        <circle cx="240" cy="240" r="20" fill="white"/>
+        <circle cx="240" cy="240" r="76" stroke="white" stroke-width="1.5" stroke-dasharray="6 4"/>
+        <g stroke="white" stroke-width="1.5">
+          <line x1="240" y1="48" x2="240" y2="432"/><line x1="48" y1="240" x2="432" y2="240"/>
+          <line x1="104" y1="104" x2="376" y2="376"/><line x1="376" y1="104" x2="104" y2="376"/>
+          <line x1="48" y1="168" x2="432" y2="312"/><line x1="48" y1="312" x2="432" y2="168"/>
+          <line x1="168" y1="48" x2="312" y2="432"/><line x1="312" y1="48" x2="168" y2="432"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero-glitch">।। पराक्रम ।।</div>
+    <div class="hero-sk">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
+    <h1 class="hero-title">महाराष्ट्रीय<br><span class="sf">पुरुष</span><br><span class="gr">VEKTOR</span></h1>
+    <div class="hero-sub">
+      <div class="hero-sub-mr">खोलीत नाही — खोली बदलून या.</div>
+      <div class="hero-sub-hi">कमरे में नहीं — कमरे को बदल के आओ।</div>
+    </div>
+    <div class="hero-cta">
+      <button class="btn-sf" onclick="document.querySelector('.sec-wrap').scrollIntoView({behavior:'smooth'})">संग्रह पाहा — Shop Now</button>
+      <button class="btn-gr" onclick="document.querySelector('.lookbook-strip').scrollIntoView({behavior:'smooth'})">Lookbook</button>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-item"><div class="trust-icon">🛡</div><span>Secure Checkout</span></div>
+      <div class="trust-item"><div class="trust-icon">⚡</div><span>Fast Dispatch</span></div>
+      <div class="trust-item"><div class="trust-icon">🇮🇳</div><span>Made in India</span></div>
+      <div class="trust-item"><div class="trust-icon">🔄</div><span>Easy Returns</span></div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <div class="india-made-card">
+      <div class="flag-vert">
+        <div class="fv sf"></div>
+        <div class="fv wh"><div class="fv-ch"></div></div>
+        <div class="fv gr"></div>
+      </div>
+      <div>
+        <div class="imh-big">MADE IN INDIA</div>
+        <div class="imh-mr">भारतात बनवलेले · हर धागा, हर सिलाई</div>
+        <div class="imh-en">Every stitch. Every thread. 100% desi.</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-num">12<span class="sf">K+</span></div><div class="hs-mr">खूश ग्राहक</div><div class="hs-en">Happy Customers</div></div>
+      <div class="hs"><div class="hs-num">4<span class="gr">.9</span></div><div class="hs-mr">मूल्यांकन</div><div class="hs-en">Avg Rating</div></div>
+      <div class="hs"><div class="hs-num">200<span class="sf">+</span></div><div class="hs-mr">शैली</div><div class="hs-en">Styles</div></div>
+      <div class="hs"><div class="hs-num">5<span class="gr">yr</span></div><div class="hs-mr">वॉरंटी</div><div class="hs-en">Warranty</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FLASH SALE -->
+<div class="flash">
+  <div class="flash-badge"><div class="flash-badge-en">FLASH SALE</div><div class="flash-badge-mr">फ्लॅश सेल</div></div>
+  <div class="flash-text">
+    <div class="flash-big">UP TO <span>40% OFF</span> — Today Only</div>
+    <div class="flash-mr">आजच खरेदी करा · आज ही खरीदें — सिर्फ आज</div>
+  </div>
+  <div class="flash-timer">
+    <div class="ft-box"><div class="ft-num" id="fh">02</div><div class="ft-lbl">HRS</div></div>
+    <div class="ft-sep">:</div>
+    <div class="ft-box"><div class="ft-num" id="fm">47</div><div class="ft-lbl">MIN</div></div>
+    <div class="ft-sep">:</div>
+    <div class="ft-box"><div class="ft-num" id="fs">33</div><div class="ft-lbl">SEC</div></div>
+  </div>
+  <button class="btn-sf">सेलमध्ये जा</button>
+</div>
+
+<!-- MARATHA CODE -->
+<div class="mc-grid">
+  <div class="mc-card">
+    <div class="mc-icon" style="border-color:rgba(255,107,0,.3);color:#FF6B00">★</div>
+    <div class="mc-word">शौर्य</div>
+    <div class="mc-en">COURAGE</div>
+    <div class="mc-desc">The courage to dress with intention. To own the room before you speak.</div>
+    <div class="mc-sk">।। शूरस्य भूषणं शौर्यम् ।।</div>
+  </div>
+  <div class="mc-card">
+    <div class="mc-icon" style="border-color:rgba(200,148,26,.3);color:#C8941A">♥</div>
+    <div class="mc-word">निष्ठा</div>
+    <div class="mc-en">LOYALTY</div>
+    <div class="mc-desc">Loyal to craft. Loyal to India. Loyal to the men who wear our name.</div>
+    <div class="mc-sk">।। निष्ठा परमो धर्मः ।।</div>
+  </div>
+  <div class="mc-card">
+    <div class="mc-icon" style="border-color:rgba(4,106,56,.5);color:#0A8A4A">✦</div>
+    <div class="mc-word">अभिमान</div>
+    <div class="mc-en">PRIDE</div>
+    <div class="mc-desc">Wear Maharashtra's pride on your back. Not with words — with every stitch.</div>
+    <div class="mc-sk">।। अभिमानेन जीवनम् ।।</div>
+  </div>
+</div>
+
+<!-- PROVERB -->
+<div class="proverb-strip">
+  <div class="proverb-track">
+    <span>मराठी माणसाने बनवलेले. मराठी माणसासाठी.</span><span class="proverb-sep"> ✦ </span>
+    <span>।। वीरभोग्या वसुन्धरा ।।</span><span class="proverb-sep"> ✦ </span>
+    <span>Crafted in Maharashtra. Worn with Pride.</span><span class="proverb-sep"> ✦ </span>
+    <span>मराठी माणसाने बनवलेले. मराठी माणसासाठी.</span><span class="proverb-sep"> ✦ </span>
+    <span>।। वीरभोग्या वसुन्धरा ।।</span><span class="proverb-sep"> ✦ </span>
+    <span>Crafted in Maharashtra. Worn with Pride.</span><span class="proverb-sep"> ✦ </span>
+  </div>
+</div>
+
+<!-- SOCIAL PROOF BAR -->
+<div class="social-bar reveal">
+  <div class="sb-item"><div class="sb-num">12K+</div><div>Happy Customers<br><span class="dev" style="font-size:9px">खूश ग्राहक</span></div></div>
+  <div class="sb-div"></div>
+  <div class="sb-item"><div class="sb-num">4.9★</div><div>Avg Rating<br><span style="font-size:8px;letter-spacing:0;color:rgba(247,243,236,.25)">2,400+ Reviews</span></div></div>
+  <div class="sb-div"></div>
+  <div class="sb-item"><div class="sb-num">200+</div><div>Styles Available<br><span class="dev" style="font-size:9px">शैली उपलब्ध</span></div></div>
+  <div class="sb-div"></div>
+  <div class="sb-item"><div class="sb-num">5yr</div><div>Fabric Warranty<br><span class="dev" style="font-size:9px">कापड हमी</span></div></div>
+  <div class="sb-div"></div>
+  <div class="sb-item"><div class="sb-num">48h</div><div>Dispatch Time<br><span class="dev" style="font-size:9px">डिलिव्हरी वेळ</span></div></div>
+</div>
+
+<!-- CATEGORIES -->
+<section class="sec-wrap">
+  <div class="sec-top">
+    <div>
+      <div class="sec-tag">Category · श्रेणी</div>
+      <div class="sec-head">YOUR UNIFORM<span class="sec-mr">तुमचा पोशाख · आपकी पहचान</span></div>
+    </div>
+    <span class="see-all" onclick="showToast('All categories coming soon!')">सगळ्या श्रेणी ↗</span>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card" onclick="showToast('Shirts — येत आहे!')"><div class="cat-top"><div class="cat-num">01</div><div class="cat-arrow">↗</div></div><div><div class="cat-en">SHIRTS</div><div class="cat-mr">शर्ट</div><div class="cat-count">48 styles available</div></div><div class="cat-bar"></div></div>
+    <div class="cat-card" onclick="showToast('T-Shirts — येत आहे!')"><div class="cat-top"><div class="cat-num">02</div><div class="cat-arrow">↗</div></div><div><div class="cat-en">T-SHIRTS</div><div class="cat-mr">टी-शर्ट</div><div class="cat-count">32 styles</div></div><div class="cat-bar"></div></div>
+    <div class="cat-card" onclick="showToast('Jeans — येत आहे!')"><div class="cat-top"><div class="cat-num">03</div><div class="cat-arrow">↗</div></div><div><div class="cat-en">JEANS</div><div class="cat-mr">जीन्स</div><div class="cat-count">27 styles</div></div><div class="cat-bar"></div></div>
+    <div class="cat-card" onclick="showToast('Jackets — येत आहे!')"><div class="cat-top"><div class="cat-num">04</div><div class="cat-arrow">↗</div></div><div><div class="cat-en">JACKETS</div><div class="cat-mr">जॅकेट</div><div class="cat-count">19 styles</div></div><div class="cat-bar"></div></div>
+    <div class="cat-card" onclick="showToast('Trousers — येत आहे!')"><div class="cat-top"><div class="cat-num">05</div><div class="cat-arrow">↗</div></div><div><div class="cat-en">TROUSERS</div><div class="cat-mr">ट्राउझर्स</div><div class="cat-count">22 styles</div></div><div class="cat-bar"></div></div>
+  </div>
+</section>
+
+<!-- NEW ARRIVALS -->
+<section class="sec-wrap" style="padding-top:0">
+  <div class="sec-tag">Just Dropped · नुकतेच आले</div>
+  <div class="sec-head">NEW ARRIVALS<span class="sec-mr">नवीन आगमन · नई पेशकश</span></div>
+  <div class="prod-grid">
+
+    <div class="prod-card reveal">
+      <div class="prod-img-area">
+        <div class="prod-illustration">
+          <svg width="180" height="210" viewBox="0 0 200 240" fill="none">
+            <rect x="45" y="80" width="110" height="145" rx="3" fill="#1a2e4a"/>
+            <path d="M80 80 L100 110 L80 95 Z" fill="#F7F3EC" opacity=".9"/>
+            <path d="M120 80 L100 110 L120 95 Z" fill="#F7F3EC" opacity=".9"/>
+            <path d="M45 80 L20 130 L35 135 L55 90 Z" fill="#1a2e4a"/>
+            <path d="M155 80 L180 130 L165 135 L145 90 Z" fill="#1a2e4a"/>
+            <line x1="100" y1="110" x2="100" y2="225" stroke="#F7F3EC" stroke-width="1" opacity=".2"/>
+            <circle cx="100" cy="128" r="3" fill="#C8941A"/>
+            <circle cx="100" cy="148" r="3" fill="#C8941A"/>
+            <circle cx="100" cy="168" r="3" fill="#C8941A"/>
+            <rect x="60" y="100" width="22" height="18" rx="1" fill="none" stroke="#F7F3EC" stroke-width="0.8" opacity=".3"/>
+            <text x="100" y="215" font-family="monospace" font-size="7" fill="#FF6B00" text-anchor="middle" opacity=".5" letter-spacing="3">VEKTOR</text>
+          </svg>
+        </div>
+        <div class="prod-badge-wrap"><span class="pbadge pbadge-new">नवीन</span></div>
+        <div class="prod-stock">Only 8 left</div>
+        <div class="prod-overlay"><button class="prod-overlay-btn" onclick="addToCart('Classic Oxford Shirt',2499)">+ कार्टमध्ये घाला</button></div>
+        <div class="prod-flag"><div class="pf sf"></div><div class="pf wh"></div><div class="pf gr"></div></div>
+      </div>
+      <div class="prod-info">
+        <div><div class="prod-name">Classic Oxford Shirt</div><div class="prod-name-mr">क्लासिक ऑक्सफर्ड शर्ट</div></div>
+        <div><span class="prod-stars">★★★★★</span><span class="prod-rating-txt">4.8 (234)</span></div>
+        <div class="prod-bot">
+          <div><div class="prod-price">₹2,499</div><div class="prod-old">₹3,499</div><div class="prod-save">Save ₹1,000</div></div>
+          <div class="prod-btns"><button class="pib-view" onclick="showToast('Viewing Classic Oxford Shirt...')">View</button><button class="pib-cart" onclick="addToCart('Classic Oxford Shirt',2499)">+ Cart</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prod-card reveal">
+      <div class="prod-img-area">
+        <div class="prod-illustration">
+          <svg width="160" height="210" viewBox="0 0 180 240" fill="none">
+            <rect x="30" y="55" width="120" height="18" rx="2" fill="#2a2a3a"/>
+            <rect x="48" y="52" width="6" height="14" rx="1" fill="#1a1a28"/>
+            <rect x="87" y="52" width="6" height="14" rx="1" fill="#1a1a28"/>
+            <rect x="126" y="52" width="6" height="14" rx="1" fill="#1a1a28"/>
+            <path d="M30 73 L55 230 L90 230 L90 73 Z" fill="#2c3e6b"/>
+            <path d="M90 73 L90 230 L125 230 L150 73 Z" fill="#253460"/>
+            <line x1="90" y1="73" x2="90" y2="230" stroke="#1a2a50" stroke-width="1.5"/>
+            <circle cx="62" cy="80" r="2.5" fill="#C8941A"/>
+            <circle cx="118" cy="80" r="2.5" fill="#C8941A"/>
+            <ellipse cx="62" cy="155" rx="18" ry="10" fill="#3a4e80" opacity=".3"/>
+            <ellipse cx="118" cy="155" rx="18" ry="10" fill="#3a4e80" opacity=".3"/>
+          </svg>
+        </div>
+        <div class="prod-badge-wrap"><span class="pbadge pbadge-best">बेस्टसेलर</span></div>
+        <div class="prod-stock">12 left</div>
+        <div class="prod-overlay"><button class="prod-overlay-btn" onclick="addToCart('Slim Fit Jeans',3299)">+ कार्टमध्ये घाला</button></div>
+        <div class="prod-flag"><div class="pf sf"></div><div class="pf wh"></div><div class="pf gr"></div></div>
+      </div>
+      <div class="prod-info">
+        <div><div class="prod-name">Slim Fit Jeans</div><div class="prod-name-mr">स्लिम फिट जीन्स</div></div>
+        <div><span class="prod-stars">★★★★★</span><span class="prod-rating-txt">4.8 (189)</span></div>
+        <div class="prod-bot">
+          <div><div class="prod-price">₹3,299</div><div class="prod-old">₹4,999</div><div class="prod-save">Save ₹1,700</div></div>
+          <div class="prod-btns"><button class="pib-view" onclick="showToast('Viewing Slim Fit Jeans...')">View</button><button class="pib-cart" onclick="addToCart('Slim Fit Jeans',3299)">+ Cart</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prod-card reveal">
+      <div class="prod-img-area" style="background:#111">
+        <div class="prod-illustration">
+          <svg width="190" height="210" viewBox="0 0 210 240" fill="none">
+            <path d="M40 85 L40 215 L170 215 L170 85 Q155 78 135 75 L105 95 L75 75 Q55 78 40 85 Z" fill="#1c1c1c"/>
+            <path d="M75 75 L60 95 L90 115 L105 95 Z" fill="#242424"/>
+            <path d="M135 75 L150 95 L120 115 L105 95 Z" fill="#242424"/>
+            <path d="M75 75 Q90 65 105 62 Q120 65 135 75 L120 85 Q105 78 90 85 Z" fill="#2a2a2a"/>
+            <path d="M40 85 L12 160 L28 165 L50 100 Z" fill="#1c1c1c"/>
+            <path d="M170 85 L198 160 L182 165 L160 100 Z" fill="#1c1c1c"/>
+            <line x1="105" y1="95" x2="105" y2="215" stroke="#888" stroke-width="1.5" opacity=".5"/>
+            <rect x="52" y="110" width="32" height="22" rx="2" fill="none" stroke="#444" stroke-width="1"/>
+            <rect x="126" y="110" width="32" height="22" rx="2" fill="none" stroke="#444" stroke-width="1"/>
+            <rect x="174" y="148" width="22" height="6" rx="1" fill="#FF6B00" opacity=".7"/>
+            <rect x="14" y="148" width="22" height="6" rx="1" fill="#FF6B00" opacity=".7"/>
+            <rect x="80" y="170" width="50" height="20" rx="2" fill="none" stroke="#FF6B00" stroke-width="0.5" opacity=".4"/>
+            <text x="105" y="184" font-family="monospace" font-size="7" fill="#FF6B00" text-anchor="middle" letter-spacing="3" opacity=".8">VEKTOR</text>
+          </svg>
+        </div>
+        <div class="prod-badge-wrap"><span class="pbadge pbadge-ltd">लिमिटेड</span></div>
+        <div class="prod-stock" style="color:#FF6B00">Only 3 left!</div>
+        <div class="prod-overlay"><button class="prod-overlay-btn" onclick="addToCart('Biker Jacket',6999)">+ कार्टमध्ये घाला</button></div>
+        <div class="prod-flag"><div class="pf sf"></div><div class="pf wh"></div><div class="pf gr"></div></div>
+      </div>
+      <div class="prod-info">
+        <div><div class="prod-name">Biker Jacket</div><div class="prod-name-mr">बाइकर जॅकेट</div></div>
+        <div><span class="prod-stars">★★★★★</span><span class="prod-rating-txt">5.0 (67)</span></div>
+        <div class="prod-bot">
+          <div><div class="prod-price">₹6,999</div><div class="prod-old">₹9,999</div><div class="prod-save">Save ₹3,000</div></div>
+          <div class="prod-btns"><button class="pib-view" onclick="showToast('Viewing Biker Jacket...')">View</button><button class="pib-cart" onclick="addToCart('Biker Jacket',6999)">+ Cart</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LOOKBOOK STRIP -->
+<div class="lookbook-strip reveal">
+  <div class="lookbook-header">
+    <div>
+      <div class="sec-tag">SS/26 · वसंत संग्रह</div>
+      <div class="sec-head" style="font-size:clamp(26px,3vw,44px)">LOOKBOOK<span class="sec-mr">शैली दर्शन</span></div>
+    </div>
+    <span class="see-all" onclick="showToast('Full lookbook coming soon!')">View All Looks ↗</span>
+  </div>
+  <div class="lookbook-scroll">
+    <div class="look-card">
+      <div class="look-img-el">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none">
+          <rect x="30" y="20" width="100" height="160" rx="4" fill="#1a2e4a" opacity=".8"/>
+          <rect x="50" y="5" width="60" height="25" rx="12" fill="#1a2e4a"/>
+          <circle cx="80" cy="12" r="4" fill="#2a3e5a"/>
+          <line x1="80" y1="45" x2="80" y2="170" stroke="#F7F3EC" stroke-width="1" opacity=".15"/>
+          <rect x="42" y="50" width="26" height="20" rx="1" fill="none" stroke="#F7F3EC" stroke-width=".7" opacity=".3"/>
+          <circle cx="80" cy="62" r="2.5" fill="#C8941A"/>
+          <circle cx="80" cy="82" r="2.5" fill="#C8941A"/>
+          <circle cx="80" cy="102" r="2.5" fill="#C8941A"/>
+          <text x="80" y="162" font-family="monospace" font-size="6" fill="#FF6B00" text-anchor="middle" opacity=".6" letter-spacing="2">VEKTOR</text>
+        </svg>
+      </div>
+      <div class="look-overlay"><div class="look-overlay-tag">Look 01 · वसंत</div><div class="look-overlay-title">The Office Warrior</div></div>
+      <div class="look-num">01</div>
+      <div class="look-price">₹2,499</div>
+    </div>
+    <div class="look-card">
+      <div class="look-img-el">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none">
+          <circle cx="80" cy="50" r="28" fill="#1a1a2a"/>
+          <rect x="35" y="78" width="90" height="115" rx="3" fill="#1c1c2c"/>
+          <text x="80" y="52" font-family="serif" font-size="20" fill="#FF6B00" text-anchor="middle">V</text>
+          <line x1="35" y1="115" x2="125" y2="115" stroke="#FF6B00" stroke-width="0.5" opacity=".3"/>
+          <text x="80" y="185" font-family="monospace" font-size="6" fill="#FF6B00" text-anchor="middle" opacity=".6" letter-spacing="2">VEKTOR</text>
+        </svg>
+      </div>
+      <div class="look-overlay"><div class="look-overlay-tag">Look 02 · उन्हाळा</div><div class="look-overlay-title">Street Pride</div></div>
+      <div class="look-num">02</div>
+      <div class="look-price">₹1,899</div>
+    </div>
+    <div class="look-card">
+      <div class="look-img-el" style="background:#0f0f12">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none">
+          <path d="M25 60 L25 190 L135 190 L135 60 Q120 53 100 50 L80 70 L60 50 Q40 53 25 60 Z" fill="#1c1c1c"/>
+          <path d="M60 50 L48 68 L70 84 L80 70 Z" fill="#242424"/>
+          <path d="M100 50 L112 68 L90 84 L80 70 Z" fill="#242424"/>
+          <path d="M25 60 L6 128 L19 133 L36 76 Z" fill="#1c1c1c"/>
+          <path d="M135 60 L154 128 L141 133 L124 76 Z" fill="#1c1c1c"/>
+          <rect x="14" y="118" width="18" height="5" rx="1" fill="#FF6B00" opacity=".7"/>
+          <rect x="128" y="118" width="18" height="5" rx="1" fill="#FF6B00" opacity=".7"/>
+          <rect x="62" y="148" width="36" height="15" rx="2" fill="none" stroke="#FF6B00" stroke-width="0.5" opacity=".5"/>
+          <text x="80" y="159" font-family="monospace" font-size="5" fill="#FF6B00" text-anchor="middle" letter-spacing="2.5" opacity=".9">VEKTOR</text>
+        </svg>
+      </div>
+      <div class="look-overlay"><div class="look-overlay-tag">Look 03 · रात्र</div><div class="look-overlay-title">Night Rider</div></div>
+      <div class="look-num">03</div>
+      <div class="look-price">₹6,999</div>
+    </div>
+    <div class="look-card">
+      <div class="look-img-el">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none">
+          <rect x="20" y="40" width="120" height="155" rx="3" fill="#2c3e6b"/>
+          <rect x="30" y="30" width="100" height="18" rx="2" fill="#253460"/>
+          <rect x="46" y="27" width="5" height="12" rx="1" fill="#1a2450"/>
+          <rect x="78" y="27" width="5" height="12" rx="1" fill="#1a2450"/>
+          <rect x="110" y="27" width="5" height="12" rx="1" fill="#1a2450"/>
+          <line x1="80" y1="48" x2="80" y2="195" stroke="#1a2a50" stroke-width="1.5"/>
+          <ellipse cx="52" cy="130" rx="16" ry="9" fill="#3a4e80" opacity=".3"/>
+          <ellipse cx="108" cy="130" rx="16" ry="9" fill="#3a4e80" opacity=".3"/>
+          <circle cx="52" cy="55" r="2.5" fill="#C8941A"/>
+          <circle cx="108" cy="55" r="2.5" fill="#C8941A"/>
+        </svg>
+      </div>
+      <div class="look-overlay"><div class="look-overlay-tag">Look 04 · दिवस</div><div class="look-overlay-title">Denim Days</div></div>
+      <div class="look-num">04</div>
+      <div class="look-price">₹3,299</div>
+    </div>
+    <div class="look-card">
+      <div class="look-img-el" style="background:#0a1a0a">
+        <svg width="160" height="200" viewBox="0 0 160 200" fill="none">
+          <rect x="30" y="25" width="100" height="155" rx="3" fill="#0d2a0d"/>
+          <path d="M55 25 L80 55 L55 40 Z" fill="#F7F3EC" opacity=".8"/>
+          <path d="M105 25 L80 55 L105 40 Z" fill="#F7F3EC" opacity=".8"/>
+          <path d="M30 25 L10 75 L22 79 L38 36 Z" fill="#0d2a0d"/>
+          <path d="M130 25 L150 75 L138 79 L122 36 Z" fill="#0d2a0d"/>
+          <line x1="80" y1="55" x2="80" y2="180" stroke="#F7F3EC" stroke-width="1" opacity=".15"/>
+          <rect x="38" y="45" width="24" height="18" rx="1" fill="none" stroke="#0A8A4A" stroke-width="1" opacity=".5"/>
+          <circle cx="80" cy="72" r="2.5" fill="#0A8A4A"/>
+          <circle cx="80" cy="90" r="2.5" fill="#0A8A4A"/>
+          <circle cx="80" cy="108" r="2.5" fill="#0A8A4A"/>
+          <text x="80" y="168" font-family="monospace" font-size="6" fill="#0A8A4A" text-anchor="middle" opacity=".7" letter-spacing="2">VEKTOR</text>
+        </svg>
+      </div>
+      <div class="look-overlay"><div class="look-overlay-tag">Look 05 · हिरवा</div><div class="look-overlay-title">Forest Green</div></div>
+      <div class="look-num">05</div>
+      <div class="look-price">₹2,799</div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- IDENTITY STRIP -->
+<div class="id-strip reveal">
+  <div class="id-label">OUR PROMISE · आमचे वचन</div>
+  <div class="id-big">मराठी माणसाने बनवलेले.<br>मराठी माणसासाठी.</div>
+  <div class="id-en">"Made by a Marathi man. For the Marathi man."</div>
+</div>
+
+
+<!-- TIMELINE -->
+<section class="sec-wrap reveal" style="border-top:1px solid var(--border)">
+  <div class="sec-tag">Our Journey · आमचा प्रवास</div>
+  <div class="sec-head">THE VEKTOR STORY<span class="sec-mr">वेक्टरची कहाणी</span></div>
+  <div class="tl-grid">
+    <div class="tl-item"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2019</div><div class="tl-en">Founded — first shirts stitched by hand</div><div class="tl-mr">सुरुवात — पहिले शर्ट हाताने शिवले</div></div>
+    <div class="tl-item"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">2021</div><div class="tl-en">Launched online — 500 orders in first month</div><div class="tl-mr">ऑनलाईन सुरुवात</div></div>
+    <div class="tl-item"><div class="tl-dot gold"><div class="tl-dot-in"></div></div><div class="tl-year">2023</div><div class="tl-en">10,000 customers — Maharashtra's own brand</div><div class="tl-mr">१०,000 ग्राहक</div></div>
+    <div class="tl-item"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2024</div><div class="tl-en">5-year fabric warranty — India first</div><div class="tl-mr">५ वर्ष वॉरंटी</div></div>
+    <div class="tl-item"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">२०२६</div><div class="tl-en">वसंत संग्रह — SS/26 Live Now</div><div class="tl-mr">वसंत संग्रह आला</div></div>
+  </div>
+</section>
+
+<!-- PRIDE -->
+<section class="pride">
+  <div class="pride-l reveal">
+    <div class="pride-sk">।। वीरभोग्या वसुन्धरा ।।</div>
+    <div class="pride-sk-tr">"The earth belongs to the brave." — Sanskrit</div>
+    <h2 class="pride-title">DRESSED<br>TO<br>DISRUPT</h2>
+    <p class="pride-body">Vektor is built for the Maharashtrian man — confident, grounded, and impossible to ignore.<br><br>मराठी माणसासाठी. मराठी माणसाने.</p>
+    <span class="btn-outline-dark" onclick="showToast('Our story — coming soon!')">आमची कहाणी — Our Story →</span>
+  </div>
+  <div class="pride-r reveal">
+    <div class="pride-row"><div class="pr-icon">🛡</div><div><div class="pr-en">Crafted with precision</div><div class="pr-langs">हाताने तयार केलेले · हाथ से बनाया गया</div></div></div>
+    <div class="pride-row"><div class="pr-icon">⚡</div><div><div class="pr-en">Fast dispatch, zero delay</div><div class="pr-langs">जलद पाठवणी · जल्दी डिलीवरी</div></div></div>
+    <div class="pride-row"><div class="pr-icon">👤</div><div><div class="pr-en">Designed for the Indian fit</div><div class="pr-langs">भारतीय फिटसाठी · भारतीय शरीर के लिए</div></div></div>
+    <div class="pride-row"><div class="pr-icon">🔄</div><div><div class="pr-en">Wear your identity</div><div class="pr-langs">तुमची ओळख परिधान करा · अपनी पहचान पहनें</div></div></div>
+  </div>
+</section>
+
+<!-- CRAFTSMAN -->
+<div class="craftsman reveal">
+  <div class="craftsman-icon">⚒</div>
+  <div>
+    <div class="cr-en">Hand-stitched with pride, since 2019</div>
+    <div class="cr-mr">२०१९ पासून अभिमानाने हाताने शिवलेले</div>
+    <div class="cr-sub">Maharashtra · Handcrafted · Premium Fabric</div>
+  </div>
+  <div class="cr-stats">
+    <div class="cr-stat"><div class="cr-stat-num">12<span class="sf">K+</span></div><div class="cr-stat-mr">ग्राहक</div></div>
+    <div class="cr-stat"><div class="cr-stat-num">6<span class="sf">yr</span></div><div class="cr-stat-mr">अनुभव</div></div>
+    <div class="cr-stat"><div class="cr-stat-num">200<span class="sf">+</span></div><div class="cr-stat-mr">शैली</div></div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="sec-wrap">
+  <div class="sec-tag">Reviews · ग्राहक काय म्हणतात</div>
+  <div class="sec-head">WORN &amp; APPROVED<span class="sec-mr">परिधान केले, पसंत केले</span></div>
+  <div class="testi-grid">
+    <div class="testi-card reveal">
+      <div class="testi-flag"><div class="ttf sf"></div><div class="ttf wh"></div><div class="ttf gr"></div></div>
+      <div style="position:relative;padding-top:8px"><span class="testi-quote">"</span>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-en">The Oxford shirt fits like it was stitched for me. Three strangers asked where I got it the same evening.</p>
+        <p class="testi-mr">शर्ट अगदी माझ्यासाठीच शिवल्यासारखा. तीन अनोळखी लोकांनी विचारलं!</p>
+      </div>
+      <div class="testi-meta"><div class="testi-av" style="background:var(--sf)">RK</div><div><div class="testi-name">Rahul Kulkarni</div><div class="testi-loc">Pune, MH · Verified Buyer</div></div></div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-flag"><div class="ttf sf"></div><div class="ttf wh"></div><div class="ttf gr"></div></div>
+      <div style="position:relative;padding-top:8px"><span class="testi-quote">"</span>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-en">Finally a brand that knows Indian men. Quality at this price is honestly unreal.</p>
+        <p class="testi-mr">एक ब्रँड जो भारतीय पुरुषांसाठी आहे. या किमतीत एवढी गुणवत्ता!</p>
+      </div>
+      <div class="testi-meta"><div class="testi-av" style="background:var(--gr)">AS</div><div><div class="testi-name">Arjun Shinde</div><div class="testi-loc">Nashik, MH · Verified Buyer</div></div></div>
+    </div>
+    <div class="testi-card reveal">
+      <div class="testi-flag"><div class="ttf sf"></div><div class="ttf wh"></div><div class="ttf gr"></div></div>
+      <div style="position:relative;padding-top:8px"><span class="testi-quote">"</span>
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-en">Wore the biker jacket to a wedding. Everyone thought it was imported. Vektor keeps my secrets.</p>
+        <p class="testi-mr">बाइकर जॅकेट घालून लग्नाला गेलो. सगळ्यांना वाटलं परदेशातून आणलाय!</p>
+      </div>
+      <div class="testi-meta"><div class="testi-av" style="background:var(--gold)">VP</div><div><div class="testi-name">Vikram Patil</div><div class="testi-loc">Mumbai, MH · Verified Buyer</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter">
+  <div class="nl-left">
+    <div class="sec-tag">Stay in the Loop · बातम्या मिळवा</div>
+    <div class="sec-head" style="font-size:clamp(28px,3.5vw,46px)">JOIN THE<br>VEKTOR TRIBE<span class="sec-mr">आमच्या कुटुंबात सामील व्हा</span></div>
+    <p class="nl-sub">New drops. Exclusive deals. The Marathi man's fashion dispatch — straight to your inbox.</p>
+  </div>
+  <div class="nl-form">
+    <div style="font-family:var(--fdev);font-size:12px;color:rgba(247,243,236,.35);margin-bottom:4px">तुमचा ईमेल · Your Email Address</div>
+    <div class="nl-input-row">
+      <input class="nl-input" type="email" placeholder="yourname@email.com" id="nlEmail">
+      <button class="nl-btn" onclick="subscribeNewsletter()">SUBSCRIBE →</button>
+    </div>
+    <div class="nl-promise">No spam. Unsubscribe anytime. Zero nonsense.</div>
+  </div>
+</div>
+
+<!-- SIZE CTA -->
+<div class="size-cta reveal">
+  <div>
+    <div class="sc-title">Not Sure About Your Size?</div>
+    <div class="sc-mr">साईझबद्दल खात्री नाही? · साइज़ को लेकर कंफ्यूज़ हो?</div>
+  </div>
+  <div class="sc-btns">
+    <button class="btn-sf" onclick="showToast('Size Guide — coming soon!')">Size Guide / साईझ गाईड</button>
+    <button class="btn-gr" onclick="window.open('https://wa.me/919999999999','_blank')">WhatsApp Us</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">VEK<span>T</span>OR</div>
+      <div class="footer-tagline">महाराष्ट्रीय पुरुष वस्त्र. Built for the Maharashtrian man. Every stitch, every thread — 100% desi.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Shop</div>
+      <span class="footer-link">New Arrivals</span>
+      <span class="footer-link">Shirts</span>
+      <span class="footer-link">Jeans</span>
+      <span class="footer-link">Jackets</span>
+      <span class="footer-link">Sale</span>
+    </div>
+    <div>
+      <div class="footer-col-title">Brand</div>
+      <span class="footer-link">Our Story</span>
+      <span class="footer-link">Lookbook</span>
+      <span class="footer-link">SS/26 Collection</span>
+      <span class="footer-link">Careers</span>
+    </div>
+    <div>
+      <div class="footer-col-title">Help</div>
+      <span class="footer-link">Size Guide</span>
+      <span class="footer-link">Returns</span>
+      <span class="footer-link">Contact</span>
+      <span class="footer-link">WhatsApp</span>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 VEKTOR · Made in Maharashtra · भारतात बनवलेले</span>
+    <span>Privacy · Terms · Shipping Policy</span>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- BACK TO TOP -->
+<div class="btt" id="btt" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <div class="cart-title">CART <span style="color:var(--sf)" id="cartCountHead">0</span></div>
+    <div class="cart-close" onclick="closeCart()">✕</div>
+  </div>
+  <div class="cart-body" id="cartBody">
+    <div class="cart-empty">
+      <div style="font-size:36px;margin-bottom:12px">🛒</div>
+      <div>तुमची कार्ट रिकामी आहे</div>
+      <div style="font-size:11px;margin-top:6px;font-family:var(--fn);font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.18)">Your cart is empty</div>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <div class="cart-total-label">TOTAL</div>
+      <div class="cart-total-val" id="cartTotalVal">₹0</div>
+    </div>
+    <button class="cart-checkout-btn" onclick="showToast('Checkout — coming soon! · लवकरच येत आहे!')">CHECKOUT →</button>
+  </div>
+</div>
+
+<script>
+// ── CART STATE ──
+var cartItems = [];
+
+function addToCart(name, price) {
+  cartItems.push({ name, price, emoji: getProductEmoji(name) });
+  updateCartUI();
+  showToast('✓ ' + name + ' — कार्टमध्ये जोडले!');
+}
+
+function getProductEmoji(name) {
+  if (name.toLowerCase().includes('shirt')) return '👔';
+  if (name.toLowerCase().includes('jean')) return '👖';
+  if (name.toLowerCase().includes('jacket')) return '🧥';
+  return '🛍';
+}
+
+function removeFromCart(index) {
+  cartItems.splice(index, 1);
+  updateCartUI();
+  renderCartItems();
+}
+
+function updateCartUI() {
+  var count = cartItems.length;
+  document.getElementById('cartBadge').textContent = count;
+  document.getElementById('cartCountHead').textContent = count;
+  var total = cartItems.reduce(function(a, i) { return a + i.price; }, 0);
+  document.getElementById('cartTotalVal').textContent = '₹' + total.toLocaleString('en-IN');
+  renderCartItems();
+}
+
+function renderCartItems() {
+  var body = document.getElementById('cartBody');
+  if (cartItems.length === 0) {
+    body.innerHTML = '<div class="cart-empty"><div style="font-size:36px;margin-bottom:12px">🛒</div><div>तुमची कार्ट रिकामी आहे</div><div style="font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.18);margin-top:6px;font-family:var(--fn)">Your cart is empty</div></div>';
+    return;
+  }
+  var html = '';
+  cartItems.forEach(function(item, i) {
+    html += '<div class="cart-item">' +
+      '<div class="cart-item-icon">' + item.emoji + '</div>' +
+      '<div><div class="cart-item-name">' + item.name + '</div><div class="cart-item-price">₹' + item.price.toLocaleString('en-IN') + '</div></div>' +
+      '<div class="cart-item-remove" onclick="removeFromCart(' + i + ')">✕</div>' +
+      '</div>';
+  });
+  body.innerHTML = html;
+}
+
+function openCart() {
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── TIMER ──
+var total = 2 * 3600 + 47 * 60 + 33;
+function tick() {
+  if (total <= 0) return;
+  total--;
+  var h = Math.floor(total / 3600), m = Math.floor((total % 3600) / 60), s = total % 60;
+  var p = function(n) { return n < 10 ? '0' + n : n; };
+  document.getElementById('fh').textContent = p(h);
+  document.getElementById('fm').textContent = p(m);
+  document.getElementById('fs').textContent = p(s);
+  document.getElementById('urgTimer').textContent = p(h) + ':' + p(m) + ':' + p(s);
+}
+setInterval(tick, 1000);
+
+// ── SCROLL REVEAL ──
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+// ── BACK TO TOP ──
+var btt = document.getElementById('btt');
+window.addEventListener('scroll', function() {
+  btt.classList.toggle('show', window.scrollY > 400);
+});
+
+// ── TOAST ──
+var toastTimer;
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.classList.remove('show'); }, 2600);
+}
+
+// ── NEWSLETTER ──
+function subscribeNewsletter() {
+  var v = document.getElementById('nlEmail').value;
+  if (!v || !v.includes('@')) { showToast('Valid email टाका!'); return; }
+  document.getElementById('nlEmail').value = '';
+  showToast('✓ Subscribed! · धन्यवाद!');
+}
+
+// ── KEYBOARD: ESC closes cart ──
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCart();
+});
+</script>
+</body>
+</html>

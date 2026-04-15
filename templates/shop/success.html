@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}Order Confirmed — VEKTOR{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;background:var(--ink);display:flex;align-items:center;justify-content:center;padding:60px 20px;position:relative;overflow:hidden">
+
+  <!-- AMBIENT BG -->
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(255,107,0,.07),transparent 60%),radial-gradient(ellipse at 50% 100%,rgba(10,138,74,.05),transparent 60%);pointer-events:none"></div>
+  <div style="position:absolute;font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,15vw,200px);color:rgba(255,107,0,.03);letter-spacing:4px;user-select:none;pointer-events:none;white-space:nowrap;top:50%;left:50%;transform:translate(-50%,-50%)">VEKTOR</div>
+
+  {% if order %}
+  <div style="width:100%;max-width:560px;position:relative;z-index:2">
+
+    <!-- FLAG BAR -->
+    <div style="height:5px;display:flex">
+      <div style="flex:1;background:var(--sf)"></div>
+      <div style="flex:1;background:rgba(247,243,236,.15)"></div>
+      <div style="flex:1;background:var(--gr)"></div>
+    </div>
+
+    <div style="background:rgba(10,10,10,.92);border:0.5px solid var(--border)">
+
+      <!-- SUCCESS HEADER -->
+      <div style="background:var(--gr);padding:36px;text-align:center;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-10px;bottom:-20px;font-family:'Bebas Neue',sans-serif;font-size:100px;color:rgba(0,0,0,.08);line-height:1">✓</div>
+        <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 16px">✓</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:4px;color:var(--white);line-height:1;margin-bottom:6px">ORDER CONFIRMED!</div>
+        <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:16px;color:rgba(255,255,255,.7)">ऑर्डर यशस्वीरित्या दिली गेली!</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.45);margin-top:8px;text-transform:uppercase">Thank you for shopping with VEKTOR</div>
+      </div>
+
+      <!-- ORDER DETAILS -->
+      <div style="padding:28px 32px;display:flex;flex-direction:column;gap:0">
+
+        <!-- ORDER ID -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:0.5px solid var(--border);margin-bottom:16px">
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;margin-bottom:4px">Order ID</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--sf);line-height:1">#VK{{ order.id }}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(247,243,236,.3);line-height:1.6">।। वस्त्रं शौर्यस्य<br>चिन्हम् ।।</div>
+          </div>
+        </div>
+
+        <!-- DETAIL ROWS -->
+        <!-- FIX: removed current_user, use order.shipping_name and order fields only -->
+        {% set detail_rows = [
+          ('Customer · ग्राहक',    order.shipping_name or 'VEKTOR Customer'),
+          ('Phone · मोबाइल',       order.shipping_phone or '—'),
+          ('Delivery · डिलिव्हरी', ((order.shipping_address or '') + (', ' + order.shipping_city if order.shipping_city else ''))),
+          ('Payment · पेमेंट',    order.payment_method or 'COD'),
+          ('Status · स्थिती',     order.status or 'Pending'),
+          ('Date · दिनांक',       order.created_at.strftime('%d %B %Y, %I:%M %p')),
+          ('Estimated Delivery',   '3–5 Business Days · ३-५ कार्यदिवस'),
+        ] %}
+        {% for label, value in detail_rows %}
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:12px 0;border-bottom:0.5px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.3);text-transform:uppercase;flex-shrink:0">{{ label }}</div>
+          <div style="font-size:13px;color:rgba(247,243,236,.7);text-align:right">{{ value }}</div>
+        </div>
+        {% endfor %}
+
+        <!-- TOTAL -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 0 8px">
+          <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(247,243,236,.4);text-transform:uppercase">Total Paid · एकूण रक्कम</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;color:var(--sf);line-height:1">₹{{ "{:,}".format(order.total_price|int) }}</div>
+        </div>
+
+        <!-- ORDER ITEMS (if available) -->
+        {% if order.items %}
+        <div style="background:var(--mid);border:0.5px solid var(--border);padding:16px 20px;margin-bottom:16px">
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;margin-bottom:12px">Items Ordered · ऑर्डर केलेले</div>
+          {% for item in order.items %}
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border)">
+            <span style="font-size:13px;color:rgba(247,243,236,.6)">{{ item.product_name or (item.product.name if item.product else 'Item') }} × {{ item.quantity }}</span>
+            <span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--sf)">₹{{ "{:,}".format((item.price_at_purchase * item.quantity)|int) }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- ORDER TRACKING -->
+        <div style="background:var(--mid);border:0.5px solid var(--border);padding:16px 20px;margin-bottom:16px">
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;margin-bottom:14px">ORDER TRACKING</div>
+          <div style="display:flex;align-items:center">
+            {% set steps = ['Placed','Confirmed','Shipped','Delivered'] %}
+            {% for step in steps %}
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+              <div style="width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-family:'Space Mono',monospace;z-index:2;position:relative;
+                {{ 'background:var(--sf);color:var(--ink);' if loop.index == 1 else 'background:var(--card);border:1px solid var(--border);color:rgba(247,243,236,.2);' }}">
+                {{ '✓' if loop.index == 1 else loop.index }}
+              </div>
+              <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:.5px;margin-top:5px;text-align:center;text-transform:uppercase;{{ 'color:var(--sf);' if loop.index == 1 else 'color:rgba(247,243,236,.2);' }}">{{ step }}</div>
+              {% if not loop.last %}
+              <div style="position:absolute;top:9px;left:55%;width:90%;height:1px;background:var(--border)"></div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- CTA BUTTONS -->
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <a href="/my-orders"
+             style="display:block;padding:15px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:700;text-decoration:none;text-align:center;transition:background .25s"
+             onmouseover="this.style.background='#FF8C35'"
+             onmouseout="this.style.background='#FF6B00'">
+            📦 TRACK MY ORDER — ऑर्डर ट्रॅक करा
+          </a>
+          <a href="{{ url_for('shop.shop_page') }}"
+             style="display:block;padding:13px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.35);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;text-align:center;transition:all .2s"
+             onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'"
+             onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">
+            खरेदी सुरू ठेवा — CONTINUE SHOPPING
+          </a>
+        </div>
+
+        <!-- PROMISE -->
+        <div style="text-align:center;padding-top:16px;border-top:0.5px solid var(--border);margin-top:8px">
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(247,243,236,.2)">मराठी माणसाने बनवलेले. मराठी माणसासाठी.</div>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.1);margin-top:4px">VEKTOR — MAHARASHTRA'S OWN BRAND</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- No order found fallback -->
+  <div style="text-align:center;position:relative;z-index:2">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,107,0,.06);margin-bottom:20px">VEKTOR</div>
+    <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:20px;color:rgba(247,243,236,.3);margin-bottom:8px">ऑर्डर सापडली नाही</div>
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(247,243,236,.2);margin-bottom:32px">Order not found</div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;padding:16px 40px;background:var(--sf);color:var(--ink);text-decoration:none;font-weight:700">
+      SHOP NOW
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+/* Confetti burst */
+(function(){
+  const colors = ['#FF6B00','#C8941A','#046A38','#F7F3EC','#FF8C35'];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    const size = Math.random() * 6 + 4;
+    p.style.cssText = `position:fixed;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};left:${Math.random()*100}vw;top:-20px;border-radius:${Math.random()>.5?'50%':'0'};opacity:${Math.random()*.8+.2};z-index:9999;pointer-events:none;animation:confettiFall ${Math.random()*2+1.5}s ease-in ${Math.random()*.8}s forwards`;
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), (Math.random() * 2 + 2.5) * 1000);
+  }
+})();
+</script>
+<style>
+@keyframes confettiFall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+</style>
+{% endblock %}

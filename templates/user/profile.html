@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}My Profile — VEKTOR{% endblock %}
+
+{% block content %}
+
+{# ✅ FIXED — redirect to login if user session expired (caused black screen on back nav) #}
+{% if not current_user %}
+<script>window.location.replace("/login");</script>
+{% else %}
+
+<div style="min-height:80vh;padding:60px 5%;background:var(--ink)">
+
+  <div style="display:grid;grid-template-columns:300px 1fr;gap:3px;align-items:start;max-width:1200px">
+
+    <!-- SIDEBAR PROFILE CARD -->
+    <div style="display:flex;flex-direction:column;gap:3px;position:sticky;top:80px">
+
+      <!-- AVATAR + NAME -->
+      <div style="background:var(--sf);padding:36px 24px;text-align:center;position:relative;overflow:hidden">
+        <div style="position:absolute;right:-20px;bottom:-20px;font-family:'Bebas Neue',sans-serif;font-size:100px;color:rgba(0,0,0,.08);letter-spacing:2px;user-select:none">VK</div>
+        <div style="width:80px;height:80px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--sf);margin:0 auto 16px;border:3px solid rgba(255,255,255,.2)">
+          {{ current_user.name[0].upper() }}
+        </div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--ink);line-height:1">{{ current_user.name }}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(10,10,10,.55);margin-top:4px;text-transform:uppercase">{{ current_user.role|title }} Member</div>
+        {% if current_user.is_verified %}
+        <div style="display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:4px 12px;background:rgba(0,0,0,.15);color:rgba(10,10,10,.7)">✓ VERIFIED</div>
+        {% endif %}
+      </div>
+
+      <!-- STATS -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
+        <div style="background:var(--card);padding:20px 16px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--sf);line-height:1">{{ current_user.total_orders }}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.25);text-transform:uppercase;margin-top:3px">Orders</div>
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">ऑर्डर</div>
+        </div>
+        <div style="background:var(--card);padding:20px 16px;text-align:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1">₹{{ "{:,}".format(current_user.total_spent|int) }}</div>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.25);text-transform:uppercase;margin-top:3px">Spent</div>
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">एकूण खर्च</div>
+        </div>
+      </div>
+
+      <!-- NAV LINKS -->
+      <div style="background:var(--card);border:0.5px solid var(--border);display:flex;flex-direction:column">
+        {% set nav_items = [
+          ('/profile','👤','My Profile','माझे प्रोफाईल','active'),
+          ('/my-orders','📦','My Orders','माझ्या ऑर्डर',''),
+          ('/wishlist','♡','Wishlist','विशलिस्ट',''),
+          ('/addresses','📍','Saved Addresses','पत्ते',''),
+          ('/edit-profile','✏','Edit Profile','प्रोफाईल बदला',''),
+          ('/logout','→','Logout','बाहेर पडा','logout'),
+        ] %}
+        {% for href, icon, en, mr, cls in nav_items %}
+        <a href="{{ href }}" style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;transition:all .2s;
+          {% if cls == 'active' %}background:rgba(255,107,0,.06);border-left:2px solid var(--sf);{% elif cls == 'logout' %}color:#ff7070!important;{% else %}{% endif %}"
+          onmouseover="this.style.background='rgba(255,107,0,.04)';this.style.paddingLeft='22px'" onmouseout="this.style.background='{% if cls == 'active' %}rgba(255,107,0,.06){% else %}transparent{% endif %}';this.style.paddingLeft='18px'">
+          <span style="font-size:14px;flex-shrink:0">{{ icon }}</span>
+          <div>
+            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;{% if cls == 'active' %}color:var(--sf);{% elif cls == 'logout' %}color:#ff7070;{% else %}color:rgba(247,243,236,.55);{% endif %}">{{ en }}</div>
+            <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">{{ mr }}</div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div style="display:flex;flex-direction:column;gap:3px">
+
+      <!-- PAGE TITLE -->
+      <div style="background:var(--smoke);border:0.5px solid var(--border);padding:28px 32px">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:6px">My Profile · माझे प्रोफाईल</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--white);line-height:.9">ACCOUNT DETAILS</div>
+      </div>
+
+      <!-- PERSONAL INFO -->
+      <div style="background:var(--card);border:0.5px solid var(--border)">
+        <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--white)">PERSONAL INFO</div>
+          <a href="/edit-profile" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;padding:7px 16px;border:0.5px solid var(--border);color:rgba(247,243,236,.35);text-decoration:none;text-transform:uppercase;transition:all .2s" onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'" onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">✏ EDIT</a>
+        </div>
+        <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          {% set fields = [
+            ('Full Name','नाव', current_user.name),
+            ('Email Address','ईमेल', current_user.email),
+            ('Phone Number','फोन', current_user.phone or '— Not added'),
+            ('Member Since','सदस्य झाल्यापासून', current_user.created_at.strftime('%d %b %Y') if current_user.created_at else '—'),
+            ('Account Role','खाते प्रकार', current_user.role|title),
+            ('Account Status','खाते स्थिती', current_user.status),
+          ] %}
+          {% for en, mr, val in fields %}
+          <div style="border-bottom:0.5px solid var(--border);padding-bottom:16px">
+            <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.28);text-transform:uppercase;margin-bottom:4px">{{ en }}</div>
+            <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2);margin-bottom:4px">{{ mr }}</div>
+            <div style="font-size:15px;color:{% if val == 'Active' %}var(--gr2){% elif val == 'Blocked' %}#ff7070{% else %}var(--white){% endif %}">{{ val }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RECENT ORDERS -->
+      <div style="background:var(--card);border:0.5px solid var(--border)">
+        <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--white)">RECENT ORDERS</div>
+          <a href="/my-orders" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--sf);text-decoration:none">VIEW ALL →</a>
+        </div>
+        <div>
+          {% if current_user.orders %}
+            {% for order in current_user.orders[-3:]|reverse %}
+
+            {# ✅ FIXED — was: <a /order-details/<int:order_id> which is invalid HTML #}
+            <a href="/order-details/{{ order.id }}" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:0.5px solid var(--border);text-decoration:none;transition:background .2s" onmouseover="this.style.background='rgba(255,107,0,.03)'" onmouseout="this.style.background='transparent'">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--sf);">#VK{{ order.id }}</div>
+                <div>
+                  <div style="font-size:13px;color:var(--white)">{{ order.items|length }} item{{ 's' if order.items|length > 1 }}</div>
+                  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(247,243,236,.25)">{{ order.created_at.strftime('%d %b %Y') }}</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--sf);letter-spacing:2px">₹{{ "{:,}".format(order.total_price|int) }}</div>
+                {% if order.status == 'Delivered' %}
+                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(10,138,74,.15);border:1px solid rgba(10,138,74,.3);color:#0db85f">DONE</div>
+                {% elif order.status == 'Shipped' %}
+                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(59,125,216,.15);border:1px solid rgba(59,125,216,.3);color:#7aacff">SHIPPED</div>
+                {% else %}
+                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(200,148,26,.15);border:1px solid rgba(200,148,26,.3);color:var(--gold2)">{{ order.status|upper }}</div>
+                {% endif %}
+              </div>
+            </a>
+
+            {% endfor %}
+          {% else %}
+          <div style="padding:36px;text-align:center;color:rgba(247,243,236,.3);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px">NO ORDERS YET</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- PROMISE STRIP -->
+      <div style="background:var(--mid);border:0.5px solid var(--border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:15px;color:rgba(247,243,236,.35)">।। मराठी माणसाने बनवलेले — मराठी माणसासाठी ।।</div>
+        <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--sf)">VEKTOR SS/26</div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endif %}
+{% endblock %}

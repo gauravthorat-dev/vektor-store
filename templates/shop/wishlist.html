@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}My Wishlist — VEKTOR{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;background:var(--ink)">
+
+  <!-- PAGE HEADER -->
+  <div style="padding:40px 5% 28px;border-bottom:1px solid var(--border);background:var(--smoke);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Wishlist · विशलिस्ट</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,64px);letter-spacing:2px;color:var(--white);line-height:.9">
+        MY WISHLIST
+        <span style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:16px;color:rgba(247,243,236,.25);display:block;margin-top:8px;letter-spacing:1px">
+          माझी विशलिस्ट · {{ wishlist_items|length }} item{% if wishlist_items|length != 1 %}s{% endif %}
+        </span>
+      </div>
+    </div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:11px 24px;border:0.5px solid var(--border);color:rgba(247,243,236,.35);text-decoration:none;text-transform:uppercase;transition:all .2s"
+       onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'"
+       onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">
+      ← CONTINUE SHOPPING
+    </a>
+  </div>
+
+  {% if wishlist_items %}
+
+  <div style="padding:36px 5%">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:3px">
+
+      {% for item in wishlist_items %}
+      {% set p = item.product %}
+      <div style="background:var(--card);border:0.5px solid var(--border);display:flex;flex-direction:column;transition:border-color .25s"
+           onmouseover="this.style.borderColor='rgba(255,107,0,.2)'"
+           onmouseout="this.style.borderColor='rgba(247,243,236,.07)'">
+
+        <!-- Product image -->
+        <a href="/product?id={{ p.id }}" style="display:block;text-decoration:none;position:relative;overflow:hidden">
+          <div style="height:280px;background:var(--mid);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+            {% if p.image %}
+            <img src="{{ url_for('static', filename='uploads/' + p.image) }}"
+                 alt="{{ p.name }}"
+                 style="width:100%;height:100%;object-fit:cover;transition:transform .5s"
+                 onmouseover="this.style.transform='scale(1.04)'"
+                 onmouseout="this.style.transform='scale(1)'"
+                 onerror="this.style.display='none'">
+            {% else %}
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:60px;color:rgba(255,255,255,.04);letter-spacing:4px">VK</div>
+            {% endif %}
+
+            <!-- Badge -->
+            {% if p.badge %}
+            <div style="position:absolute;top:12px;left:12px;font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;padding:4px 12px;background:var(--sf);color:var(--ink)">{{ p.badge }}</div>
+            {% endif %}
+
+            <!-- Discount badge -->
+            {% if p.discount and p.discount > 0 %}
+            <div style="position:absolute;top:12px;right:12px;background:var(--gr);padding:4px 10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--white);font-weight:700">{{ p.discount }}% OFF</div>
+            {% endif %}
+
+            <!-- Flag bar -->
+            <div style="position:absolute;bottom:0;left:0;right:0;height:4px;display:flex">
+              <div style="flex:1;background:var(--sf)"></div>
+              <div style="flex:1;background:rgba(247,243,236,.15)"></div>
+              <div style="flex:1;background:var(--gr)"></div>
+            </div>
+          </div>
+        </a>
+
+        <!-- Details -->
+        <div style="padding:16px;flex:1;display:flex;flex-direction:column;gap:8px">
+          <a href="/product?id={{ p.id }}" style="text-decoration:none">
+            <div style="font-size:16px;color:var(--white);transition:color .2s"
+                 onmouseover="this.style.color='var(--sf)'"
+                 onmouseout="this.style.color='var(--white)'">{{ p.name }}</div>
+          </a>
+          {% if p.name_mr %}
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:11px;color:rgba(247,243,236,.25)">{{ p.name_mr }}</div>
+          {% endif %}
+
+          <!-- Price -->
+          <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+            <div style="font-family:'Space Mono',monospace;font-size:15px;color:var(--sf);letter-spacing:2px">₹{{ "{:,}".format(p.final_price|int) }}</div>
+            {% if p.discount and p.discount > 0 %}
+            <div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(247,243,236,.2);text-decoration:line-through">₹{{ "{:,}".format(p.price|int) }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Stock status -->
+          {% if not p.in_stock %}
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,80,80,.7);text-transform:uppercase">✕ Out of Stock</div>
+          {% endif %}
+
+          <!-- Action buttons -->
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:auto;padding-top:8px">
+            {% if p.in_stock %}
+            <a href="{{ url_for('shop.add_to_cart', product_id=p.id) }}"
+               style="display:block;padding:12px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:700;text-decoration:none;text-align:center;transition:background .25s"
+               onmouseover="this.style.background='var(--sf2)'"
+               onmouseout="this.style.background='var(--sf)'">
+              🛒 ADD TO CART
+            </a>
+            {% else %}
+            <div style="padding:12px;background:rgba(255,255,255,.03);border:0.5px solid var(--border);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(247,243,236,.2);text-align:center">
+              OUT OF STOCK
+            </div>
+            {% endif %}
+
+            <!-- Remove from wishlist -->
+            <a href="/wishlist/remove/{{ p.id }}"
+               onclick="return confirm('Remove {{ p.name }} from wishlist?')"
+               style="display:block;padding:10px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.25);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;text-align:center;transition:all .25s"
+               onmouseover="this.style.borderColor='rgba(255,80,80,.3)';this.style.color='rgba(255,112,112,.8)'"
+               onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.25)'">
+              ♡ REMOVE
+            </a>
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- EMPTY WISHLIST -->
+  <div style="text-align:center;padding:80px 20px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,12vw,120px);color:rgba(255,107,0,.05);letter-spacing:4px;margin-bottom:20px;line-height:1">EMPTY</div>
+    <div style="font-size:36px;margin-bottom:12px">♡</div>
+    <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:20px;color:rgba(247,243,236,.3);margin-bottom:8px">विशलिस्ट रिकामी आहे</div>
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(247,243,236,.2);margin-bottom:32px;text-transform:uppercase">Save items you love · आवडलेल्या वस्तू जतन करा</div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;padding:16px 48px;background:var(--sf);color:var(--ink);text-decoration:none;font-weight:700;display:inline-block;transition:background .25s"
+       onmouseover="this.style.background='var(--sf2)'"
+       onmouseout="this.style.background='var(--sf)'">
+      संग्रह पाहा — EXPLORE NOW
+    </a>
+  </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

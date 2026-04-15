@@ -1,0 +1,690 @@
+{% extends "base.html" %}
+{% set active_page = "shop" %}
+{% block title %}Checkout — VEKTOR{% endblock %}
+
+{% block extra_css %}
+<style>
+.checkout-wrap {
+  min-height: calc(100vh - 120px);
+  padding: 0 0 80px;
+  background: var(--ink);
+}
+
+/* ── PROGRESS BAR ── */
+.checkout-progress {
+  background: var(--smoke);
+  border-bottom: 1px solid var(--border);
+  padding: 0 36px;
+  display: flex;
+  align-items: stretch;
+  overflow-x: auto;
+}
+.cp-step {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 28px;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.cp-step.active { background: rgba(255,107,0,.05); }
+.cp-step.done   { background: rgba(10,138,74,.04); }
+.cp-num {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  color: rgba(247,243,236,.3); flex-shrink: 0; transition: all .25s;
+}
+.cp-step.active .cp-num { border-color: var(--sf); color: var(--sf); background: rgba(255,107,0,.1); }
+.cp-step.done   .cp-num { border-color: var(--gr2); background: var(--gr2); color: #000; }
+.cp-label {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 3px; color: rgba(247,243,236,.2); text-transform: uppercase;
+}
+.cp-step.active .cp-label { color: var(--sf); }
+.cp-step.done   .cp-label { color: var(--gr2); }
+
+/* ── MAIN GRID ── */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 80vh;
+}
+
+/* ── FORM SIDE ── */
+.checkout-form-side {
+  border-right: 1px solid var(--border);
+  padding: 40px 48px;
+  display: flex; flex-direction: column; gap: 0;
+}
+.co-section { margin-bottom: 32px; }
+.co-section-hdr {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.co-section-num {
+  width: 28px; height: 28px; background: var(--sf); color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif; font-size: 14px; letter-spacing: 1px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.co-section-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: 18px;
+  letter-spacing: 3px; color: var(--white);
+}
+.co-section-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 11px;
+  color: rgba(247,243,236,.25); margin-left: auto;
+}
+
+/* Fields */
+.co-row { display: flex; gap: 14px; margin-bottom: 14px; }
+.co-field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.co-label {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 3px; color: rgba(247,243,236,.28); text-transform: uppercase;
+}
+.co-input {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+  color: var(--white); font-family: 'Space Mono', monospace; font-size: 12px;
+  padding: 12px 14px; outline: none; letter-spacing: 1px; width: 100%;
+  transition: border-color .25s, background .25s;
+}
+.co-input:focus { border-color: var(--sf); background: rgba(255,107,0,.04); }
+.co-input::placeholder { color: rgba(247,243,236,.12); }
+.co-input.error { border-color: rgba(255,60,60,.5); }
+.co-err {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 1px; color: rgba(255,80,80,.7); display: none;
+}
+.co-err.show { display: block; }
+
+.co-select {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+  color: var(--white); font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 12px 14px; outline: none; letter-spacing: 1px; width: 100%;
+  cursor: pointer; -webkit-appearance: none; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,107,0,.5)' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  transition: border-color .25s;
+}
+.co-select:focus { border-color: var(--sf); }
+.co-select option { background: #141414; color: var(--white); }
+
+.co-textarea {
+  background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+  color: var(--white); font-family: 'Space Mono', monospace; font-size: 11px;
+  padding: 12px 14px; outline: none; letter-spacing: 1px; width: 100%;
+  resize: vertical; min-height: 80px; line-height: 1.6;
+  transition: border-color .25s;
+}
+.co-textarea:focus { border-color: var(--sf); }
+.co-textarea::placeholder { color: rgba(247,243,236,.12); }
+
+/* ── PAYMENT OPTIONS ── */
+.pay-opts { display: flex; flex-direction: column; gap: 8px; }
+.pay-opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border: 1px solid var(--border);
+  cursor: pointer; transition: all .25s; position: relative; overflow: hidden;
+}
+.pay-opt:hover { border-color: rgba(255,107,0,.25); background: rgba(255,107,0,.03); }
+.pay-opt.selected { border-color: rgba(255,107,0,.4); background: rgba(255,107,0,.06); }
+.pay-opt.selected::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--sf);
+}
+.pay-radio {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .2s;
+}
+.pay-opt.selected .pay-radio { border-color: var(--sf); background: var(--sf); }
+.pay-opt.selected .pay-radio::after {
+  content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--ink);
+}
+.pay-icon { font-size: 18px; flex-shrink: 0; }
+.pay-label {
+  flex: 1; font-family: 'Space Mono', monospace; font-size: 10px;
+  letter-spacing: 2px; color: rgba(247,243,236,.5); text-transform: uppercase;
+}
+.pay-opt.selected .pay-label { color: var(--white); }
+.pay-sub { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 10px; color: rgba(247,243,236,.2); margin-top: 2px; }
+.pay-tag {
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 2px;
+  color: var(--gr2); border: 0.5px solid rgba(10,138,74,.3); padding: 2px 8px; text-transform: uppercase;
+}
+.upi-field { display: none; margin-top: 10px; padding: 12px 16px; background: rgba(255,107,0,.04); border: 0.5px solid rgba(255,107,0,.15); }
+.upi-field.show { display: block; }
+
+/* ── ORDER SUMMARY SIDE ── */
+.checkout-summary-side {
+  padding: 40px; background: var(--smoke);
+  display: flex; flex-direction: column; gap: 0;
+}
+.summary-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--white); margin-bottom: 4px; }
+.summary-mr { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 11px; color: rgba(247,243,236,.25); margin-bottom: 20px; }
+
+/* Cart items */
+.summary-items { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; max-height: 300px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,107,0,.2) transparent; }
+.summary-items::-webkit-scrollbar { width: 2px; }
+.summary-items::-webkit-scrollbar-thumb { background: rgba(255,107,0,.2); }
+.summary-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+.summary-item:last-child { border-bottom: none; }
+.si-img {
+  width: 52px; height: 64px; background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif; font-size: 14px; color: rgba(255,255,255,.06);
+  flex-shrink: 0; position: relative; overflow: hidden;
+}
+.si-img img { width: 100%; height: 100%; object-fit: cover; }
+.si-qty-badge {
+  position: absolute; top: 3px; right: 3px; width: 18px; height: 18px;
+  background: var(--sf); color: var(--ink); font-family: 'Space Mono', monospace;
+  font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.si-info { flex: 1; min-width: 0; }
+.si-name { font-size: 14px; color: var(--white); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-meta { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 1px; color: rgba(247,243,236,.2); text-transform: uppercase; }
+.si-price { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--sf); letter-spacing: 2px; flex-shrink: 0; text-align: right; }
+
+/* Price breakdown */
+.price-breakdown { display: flex; flex-direction: column; gap: 0; margin-bottom: 16px; border: 0.5px solid var(--border); }
+.pb-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 16px; border-bottom: 0.5px solid var(--border); }
+.pb-row:last-child { border-bottom: none; }
+.pb-label { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 2px; color: rgba(247,243,236,.3); text-transform: uppercase; }
+.pb-val { font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1px; color: rgba(247,243,236,.5); }
+.pb-row.total .pb-label { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px; color: var(--white); }
+.pb-row.total .pb-val { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--sf); letter-spacing: 2px; }
+.pb-row.saving .pb-val, .pb-row.shipping .pb-val { color: var(--gr2); }
+
+/* Trust */
+.summary-trust { display: grid; grid-template-columns: repeat(2,1fr); gap: 6px; margin-bottom: 16px; }
+.st-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: rgba(255,255,255,.02); border: 0.5px solid var(--border); }
+.st-icon { font-size: 13px; flex-shrink: 0; }
+.st-text { font-family: 'Space Mono', monospace; font-size: 7px; letter-spacing: 1px; color: rgba(247,243,236,.22); text-transform: uppercase; line-height: 1.4; }
+
+/* CTA */
+.btn-place-order {
+  width: 100%; padding: 17px; background: var(--sf); color: var(--ink);
+  font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 4px;
+  text-transform: uppercase; font-weight: 700; border: none; cursor: pointer;
+  transition: background .25s; position: relative; overflow: hidden; margin-bottom: 10px;
+}
+.btn-place-order:hover { background: var(--sf2); }
+.btn-place-order:disabled { opacity: .5; cursor: not-allowed; }
+.btn-place-order::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  animation: shimmer 2.5s infinite;
+}
+@keyframes shimmer { to { left: 160%; } }
+.btn-continue-shopping {
+  width: 100%; padding: 13px; background: transparent;
+  border: 0.5px solid var(--border); color: rgba(247,243,236,.28);
+  font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 3px;
+  text-transform: uppercase; cursor: pointer; text-align: center;
+  text-decoration: none; display: block; margin-bottom: 14px; transition: all .25s;
+}
+.btn-continue-shopping:hover { border-color: var(--sf); color: var(--sf); }
+.secure-note {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 2px;
+  color: rgba(247,243,236,.15); text-transform: uppercase;
+  padding-top: 12px; border-top: 0.5px solid var(--border);
+}
+.co-shloka { margin-top: auto; padding-top: 20px; border-top: 0.5px solid var(--border); }
+.co-shloka-text { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 12px; color: rgba(255,107,0,.3); line-height: 1.7; text-align: center; }
+
+/* Responsive */
+@media(max-width:900px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+  .checkout-form-side { padding: 28px 24px; border-right: none; border-bottom: 1px solid var(--border); }
+  .checkout-summary-side { padding: 28px 24px; }
+  .co-row { flex-direction: column; gap: 0; }
+}
+@media(max-width:600px) {
+  .checkout-progress { padding: 0 16px; }
+  .cp-step { padding: 14px 16px; }
+  .summary-trust { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="checkout-wrap">
+
+  <!-- PROGRESS -->
+  <div class="checkout-progress">
+    <div class="cp-step done">
+      <div class="cp-num">✓</div>
+      <div class="cp-label">Cart · कार्ट</div>
+    </div>
+    <div class="cp-step active">
+      <div class="cp-num">2</div>
+      <div class="cp-label">Checkout · चेकआउट</div>
+    </div>
+    <div class="cp-step">
+      <div class="cp-num">3</div>
+      <div class="cp-label">Confirmed · पुष्टी</div>
+    </div>
+  </div>
+
+  <!-- FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}{% for cat, msg in messages %}
+    <div style="background:rgba(255,107,0,.08);border-left:3px solid var(--sf);padding:12px 36px;font-family:'Space Mono',monospace;font-size:11px;color:var(--sf);letter-spacing:1px">
+      {{ msg }}
+    </div>
+    {% endfor %}{% endif %}
+  {% endwith %}
+
+  <div class="checkout-grid">
+
+    <!-- ══ LEFT: FORM ══ -->
+    <div class="checkout-form-side">
+
+      <!-- FIX: form POSTs to place_order, field names match what route expects -->
+      <form method="POST" action="{{ url_for('shop.place_order') }}" id="checkoutForm" onsubmit="return validateForm()">
+
+        <!-- ① PERSONAL INFO -->
+        <div class="co-section">
+          <div class="co-section-hdr">
+            <div class="co-section-num">1</div>
+            <div class="co-section-title">PERSONAL INFO</div>
+            <div class="co-section-mr">वैयक्तिक माहिती</div>
+          </div>
+
+          <div class="co-row">
+            <div class="co-field">
+              <label class="co-label">Full Name · पूर्ण नाव *</label>
+              <!-- FIX: name="full_name" to match place_order route -->
+              <input class="co-input" type="text" name="full_name" id="fullName"
+                     placeholder="Arjun Patil" required autocomplete="name"
+                     value="{{ user.name if user else '' }}">
+              <div class="co-err" id="fullNameErr">Required · आवश्यक आहे</div>
+            </div>
+            <div class="co-field">
+              <label class="co-label">Phone · मोबाइल *</label>
+              <input class="co-input" type="tel" name="phone" id="phoneField"
+                     placeholder="98765 43210" maxlength="14" required autocomplete="tel"
+                     value="{{ user.phone if user and user.phone else '' }}">
+              <div class="co-err" id="phoneErr">Enter 10-digit number</div>
+            </div>
+          </div>
+
+          <div class="co-field" style="margin-bottom:0">
+            <label class="co-label">Email · ईमेल</label>
+            <input class="co-input" type="email" name="email" placeholder="you@example.com"
+                   autocomplete="email" value="{{ user.email if user else '' }}">
+          </div>
+        </div>
+
+        <!-- ② DELIVERY ADDRESS -->
+        <div class="co-section">
+          <div class="co-section-hdr">
+            <div class="co-section-num">2</div>
+            <div class="co-section-title">DELIVERY ADDRESS</div>
+            <div class="co-section-mr">डिलिव्हरी पत्ता</div>
+          </div>
+
+          <!-- Saved addresses (if any) -->
+          {% if addresses %}
+          <div style="margin-bottom:16px">
+            <div class="co-label" style="margin-bottom:8px">Saved Addresses · जतन केलेले पत्ते</div>
+            <div style="display:flex;flex-direction:column;gap:6px">
+              {% for addr in addresses %}
+              <div class="pay-opt {% if loop.first %}selected{% endif %}"
+                   onclick="fillAddress(this, '{{ addr.line1 }}', '{{ addr.city }}', '{{ addr.state }}', '{{ addr.pincode }}')"
+                   style="cursor:pointer">
+                <div class="pay-radio {% if loop.first %}selected{% endif %}"></div>
+                <div>
+                  <div class="pay-label">{{ addr.full_name }} · {{ addr.phone }}</div>
+                  <div class="pay-sub">{{ addr.full_address }}</div>
+                </div>
+              </div>
+              {% endfor %}
+              <div class="pay-opt" onclick="clearAddress(this)" style="cursor:pointer">
+                <div class="pay-radio"></div>
+                <div class="pay-label">+ New Address · नवीन पत्ता</div>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="co-field" style="margin-bottom:14px">
+            <label class="co-label">Street Address · रस्त्याचा पत्ता *</label>
+            <input class="co-input" type="text" name="address" id="addressField"
+                   placeholder="Flat / House No, Street, Area" required autocomplete="street-address">
+            <div class="co-err" id="addressErr">Required · आवश्यक आहे</div>
+          </div>
+
+          <div class="co-field" style="margin-bottom:14px">
+            <label class="co-label">Landmark · खूण (Optional)</label>
+            <input class="co-input" type="text" name="landmark" placeholder="Near temple, opposite school...">
+          </div>
+
+          <div class="co-row">
+            <div class="co-field">
+              <label class="co-label">City · शहर *</label>
+              <input class="co-input" type="text" name="city" id="cityField"
+                     placeholder="Pune" required autocomplete="address-level2">
+              <div class="co-err" id="cityErr">Required · आवश्यक आहे</div>
+            </div>
+            <div class="co-field">
+              <label class="co-label">State · राज्य *</label>
+              <select class="co-select" name="state" id="stateField" required>
+                <option value="">Select State</option>
+                <option value="Maharashtra" selected>Maharashtra · महाराष्ट्र</option>
+                <option value="Delhi">Delhi · दिल्ली</option>
+                <option value="Karnataka">Karnataka · कर्नाटक</option>
+                <option value="Tamil Nadu">Tamil Nadu</option>
+                <option value="Gujarat">Gujarat · गुजरात</option>
+                <option value="Rajasthan">Rajasthan · राजस्थान</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="West Bengal">West Bengal</option>
+                <option value="Telangana">Telangana</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Other">Other State</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="co-row">
+            <div class="co-field">
+              <label class="co-label">Pincode · पिनकोड *</label>
+              <input class="co-input" type="text" name="pincode" id="pincodeField"
+                     placeholder="411001" maxlength="6" required
+                     oninput="this.value=this.value.replace(/\D/g,'');checkDelivery()">
+              <div class="co-err" id="pincodeErr">Enter valid 6-digit pincode</div>
+            </div>
+            <div class="co-field">
+              <label class="co-label">Delivery Estimate</label>
+              <div id="deliveryEstimate"
+                   style="padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;color:rgba(247,243,236,.3);letter-spacing:1px">
+                Enter pincode above ↑
+              </div>
+            </div>
+          </div>
+
+          <div class="co-field">
+            <label class="co-label">Delivery Notes (Optional)</label>
+            <textarea class="co-textarea" name="notes" placeholder="Ring bell twice, leave at door..."></textarea>
+          </div>
+        </div>
+
+        <!-- ③ PAYMENT -->
+        <div class="co-section">
+          <div class="co-section-hdr">
+            <div class="co-section-num">3</div>
+            <div class="co-section-title">PAYMENT METHOD</div>
+            <div class="co-section-mr">पेमेंट पद्धत</div>
+          </div>
+
+          <!-- FIX: name="payment_method" matches route -->
+          <input type="hidden" name="payment_method" id="hiddenPayment" value="COD">
+
+          <div class="pay-opts">
+            <div class="pay-opt selected" onclick="selectPayment(this,'COD')">
+              <div class="pay-radio"></div>
+              <span class="pay-icon">💵</span>
+              <div>
+                <div class="pay-label">Cash on Delivery</div>
+                <div class="pay-sub">रोख डिलिव्हरीवर · Pay when you receive</div>
+              </div>
+              <div class="pay-tag">POPULAR</div>
+            </div>
+            <div class="pay-opt" onclick="selectPayment(this,'UPI')">
+              <div class="pay-radio"></div>
+              <span class="pay-icon">📲</span>
+              <div>
+                <div class="pay-label">UPI Payment</div>
+                <div class="pay-sub">GPay · PhonePe · Paytm · UPI</div>
+              </div>
+              <div class="pay-tag" style="color:var(--sf);border-color:rgba(255,107,0,.3)">INSTANT</div>
+            </div>
+            <div class="pay-opt" onclick="selectPayment(this,'Card')">
+              <div class="pay-radio"></div>
+              <span class="pay-icon">💳</span>
+              <div>
+                <div class="pay-label">Credit / Debit Card</div>
+                <div class="pay-sub">HDFC · SBI · Kotak · All banks</div>
+              </div>
+            </div>
+            <div class="pay-opt" onclick="selectPayment(this,'NetBanking')">
+              <div class="pay-radio"></div>
+              <span class="pay-icon">🏦</span>
+              <div>
+                <div class="pay-label">Net Banking</div>
+                <div class="pay-sub">सर्व बँका · All major banks</div>
+              </div>
+            </div>
+            <div class="pay-opt" onclick="selectPayment(this,'WhatsApp')">
+              <div class="pay-radio"></div>
+              <span class="pay-icon">💬</span>
+              <div>
+                <div class="pay-label">WhatsApp Order</div>
+                <div class="pay-sub">Order via WhatsApp · वॉट्सॅपद्वारे ऑर्डर करा</div>
+              </div>
+              <div class="pay-tag" style="color:var(--gr2);border-color:rgba(10,138,74,.3)">EASY</div>
+            </div>
+          </div>
+
+          <div class="upi-field" id="upiField">
+            <label class="co-label" style="display:block;margin-bottom:6px">UPI ID · युपीआय आयडी</label>
+            <input class="co-input" type="text" name="upi_id" id="upiId"
+                   placeholder="yourname@upi" style="margin-bottom:0">
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ══ RIGHT: ORDER SUMMARY ══ -->
+    <!-- FIX: Populated from Flask (DB cart), not localStorage -->
+    <div class="checkout-summary-side">
+
+      <div class="summary-title">ORDER SUMMARY</div>
+      <div class="summary-mr">ऑर्डर सारांश</div>
+
+      <!-- Items from DB cart -->
+      <div class="summary-items">
+        {% for item in items %}
+        <div class="summary-item">
+          <div class="si-img">
+            {% if item.image %}
+            <img src="{{ url_for('static', filename='uploads/' + item.image) }}"
+                 alt="{{ item.name }}" onerror="this.style.display='none'">
+            {% else %}
+            VK
+            {% endif %}
+            <div class="si-qty-badge">{{ item.qty }}</div>
+          </div>
+          <div class="si-info">
+            <div class="si-name">{{ item.name }}</div>
+            <div class="si-meta">
+              {% if item.size %}SIZE: {{ item.size }}{% endif %}
+              {% if item.size and item.color %} · {% endif %}
+              {% if item.color %}{{ item.color }}{% endif %}
+            </div>
+          </div>
+          <div class="si-price">₹{{ "{:,}".format(item.subtotal|int) }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Price breakdown — server-calculated -->
+      {% set shipping = 0 if total >= 999 else 79 %}
+      {% set discount = session.get('coupon_discount', 0) %}
+      {% set grand_total = total + shipping - discount %}
+
+      <div class="price-breakdown">
+
+  <div class="pb-row">
+    <span class="pb-label">Subtotal · एकूण</span>
+    <span class="pb-val">₹{{ "{:,}".format(total|int) }}</span>
+  </div>
+
+  <div class="pb-row shipping">
+    <span class="pb-label">Shipping · डिलिव्हरी</span>
+    <span class="pb-val">
+      {% if shipping == 0 %}FREE 🎉{% else %}₹{{ shipping }}{% endif %}
+    </span>
+  </div>
+
+  {% if discount > 0 %}
+  <div class="pb-row saving">
+    <span class="pb-label">Coupon · {{ session.get('coupon_code','') }}</span>
+    <span class="pb-val">−₹{{ "{:,}".format(discount|int) }}</span>
+  </div>
+  {% endif %}
+
+  <div class="pb-row total">
+    <span class="pb-label">TOTAL</span>
+    <span class="pb-val">₹{{ "{:,}".format(grand_total|int) }}</span>
+  </div>
+
+</div>
+
+      <!-- Trust badges -->
+      <div class="summary-trust">
+        <div class="st-item"><span class="st-icon">🔒</span><span class="st-text">256-bit SSL Secure</span></div>
+        <div class="st-item"><span class="st-icon">🔄</span><span class="st-text">30-Day Returns</span></div>
+        <div class="st-item"><span class="st-icon">🇮🇳</span><span class="st-text">Made in Maharashtra</span></div>
+        <div class="st-item"><span class="st-icon">⚡</span><span class="st-text">24hr Fast Dispatch</span></div>
+      </div>
+
+      <!-- Place Order — triggers form submit -->
+      <button class="btn-place-order" id="placeOrderBtn" onclick="submitOrder()">
+        ⚡ PLACE ORDER — ऑर्डर द्या
+      </button>
+      <a href="{{ url_for('shop.cart') }}" class="btn-continue-shopping">
+        ← BACK TO CART · कार्टवर परत जा
+      </a>
+
+      <div class="secure-note">
+        <span>🔒</span>
+        <span>Secure Payment · सुरक्षित पेमेंट</span>
+      </div>
+
+      <div class="co-shloka">
+        <div class="co-shloka-text">।। क्रयते वस्त्रं गर्वेण ।।<br><span style="font-size:10px;opacity:.5">"Clothing worn with pride"</span></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+let selectedPayment = 'COD';
+
+/* ── SAVED ADDRESS FILL ── */
+function fillAddress(el, address, city, state, pincode) {
+  document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('addressField').value = address;
+  document.getElementById('cityField').value    = city;
+  document.getElementById('stateField').value   = state;
+  document.getElementById('pincodeField').value = pincode;
+  checkDelivery();
+}
+function clearAddress(el) {
+  document.querySelectorAll('.pay-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  ['addressField','cityField','pincodeField'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
+/* ── PAYMENT SELECTION ── */
+function selectPayment(el, method) {
+  document.querySelectorAll('.pay-opts .pay-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayment = method;
+  document.getElementById('hiddenPayment').value = method;
+  document.getElementById('upiField').classList.toggle('show', method === 'UPI');
+}
+
+/* ── DELIVERY ESTIMATE ── */
+function checkDelivery() {
+  const pin = document.getElementById('pincodeField').value;
+  const el  = document.getElementById('deliveryEstimate');
+  if (pin.length === 6) {
+    const from = new Date(); from.setDate(from.getDate() + 2);
+    const to   = new Date(); to.setDate(to.getDate() + 4);
+    const opts = { day: 'numeric', month: 'short' };
+    el.innerHTML = `<span style="color:var(--gr2)">✓</span> Arrives ${from.toLocaleDateString('en-IN', opts)} – ${to.toLocaleDateString('en-IN', opts)}`;
+    el.style.borderColor = 'rgba(10,138,74,.3)';
+  } else {
+    el.textContent = 'Enter pincode above ↑';
+    el.style.borderColor = 'var(--border)';
+  }
+}
+
+/* ── FORM VALIDATION ── */
+function validateForm() {
+  let ok = true;
+  const rules = [
+    { id: 'fullName',     errId: 'fullNameErr',  test: v => v.trim().length >= 2 },
+    { id: 'phoneField',   errId: 'phoneErr',     test: v => /\d{10}/.test(v.replace(/\D/g,'')) },
+    { id: 'addressField', errId: 'addressErr',   test: v => v.trim().length > 5 },
+    { id: 'cityField',    errId: 'cityErr',      test: v => v.trim().length > 0 },
+    { id: 'pincodeField', errId: 'pincodeErr',   test: v => /^\d{6}$/.test(v) },
+  ];
+  rules.forEach(r => {
+    const inp = document.getElementById(r.id);
+    const err = document.getElementById(r.errId);
+    if (!inp || !err) return;
+    if (!r.test(inp.value)) {
+      inp.classList.add('error'); err.classList.add('show'); ok = false;
+    } else {
+      inp.classList.remove('error'); err.classList.remove('show');
+    }
+  });
+  if (!ok) {
+    document.querySelector('.co-input.error')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return ok;
+}
+
+/* ── SUBMIT ── */
+function submitOrder() {
+  if (!validateForm()) return;
+
+  /* WhatsApp special case */
+  if (selectedPayment === 'WhatsApp') {
+    const name  = document.getElementById('fullName').value;
+    const phone = document.getElementById('phoneField').value;
+    const addr  = document.getElementById('addressField').value + ', ' + document.getElementById('cityField').value;
+    const total = '₹{{ "{:,}".format(total|int) }}';
+    const items = `{{ items | map(attribute='name') | join(', ') }}`;
+    const msg   = `Hello VEKTOR! 🙏\n\nNew Order from ${name}\n📞 ${phone}\n📍 ${addr}\n\nItems: ${items}\nTotal: ${total}\n\nPlease confirm! नमस्कार!`;
+    window.open('https://wa.me/917798042011?text=' + encodeURIComponent(msg), '_blank');
+    return;
+  }
+
+  /* Disable button, show loading */
+  const btn = document.getElementById('placeOrderBtn');
+  btn.disabled = true;
+  btn.textContent = 'Processing... · प्रक्रिया होत आहे...';
+  document.getElementById('checkoutForm').submit();
+}
+
+/* ── LIVE VALIDATION — remove errors on type ── */
+['fullName','phoneField','addressField','cityField','pincodeField'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', () => {
+    el.classList.remove('error');
+    const errMap = { fullName:'fullNameErr', phoneField:'phoneErr', addressField:'addressErr', cityField:'cityErr', pincodeField:'pincodeErr' };
+    const errEl = document.getElementById(errMap[id]);
+    if (errEl) errEl.classList.remove('show');
+  });
+});
+</script>
+{% endblock %}

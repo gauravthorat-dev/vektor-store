@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060606;--bg2:#0f0f0f;--bg3:#161616;
+  --border:#1e1e1e;--border2:#2a2a2a;
+  --fg:#f0f0f0;--fg2:#999;--fg3:#555;
+  --amber:#f59e0b;--green:#4ade80;--red:#f87171;--blue:#60a5fa;
+  --mono:'Space Mono',monospace;--display:'Bebas Neue',sans-serif;
+}
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100vh;overflow-x:hidden}
+
+.ticker{height:30px;background:var(--amber);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:200}
+.t-label{flex-shrink:0;background:#000;color:var(--amber);font-size:9px;font-weight:700;letter-spacing:.2em;padding:0 14px;height:100%;display:flex;align-items:center}
+.t-track{display:flex;animation:tick 20s linear infinite;white-space:nowrap}
+.t-track span{font-size:9px;font-weight:700;color:#000;letter-spacing:.12em;padding:0 16px}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+.statusbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.sb-logo{font-family:var(--display);font-size:24px;color:var(--amber);letter-spacing:.1em}
+.sb-name{font-size:10px;color:var(--fg2);margin-top:1px}
+.sb-name strong{color:var(--fg)}
+
+.online-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.tog-track{width:44px;height:23px;border-radius:12px;background:var(--border2);position:relative;transition:background .2s;border:1px solid var(--border2);flex-shrink:0}
+.tog-track.on{background:#16a34a22;border-color:#16a34a55}
+.tog-thumb{position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;background:var(--fg3);transition:all .2s}
+.tog-track.on .tog-thumb{left:24px;background:var(--green)}
+.tog-lbl{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--fg3);transition:color .2s}
+.tog-track.on ~ .tog-lbl{color:var(--green)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border)}
+.stat{padding:16px 20px;border-right:1px solid var(--border);position:relative;overflow:hidden}
+.stat:last-child{border-right:none}
+.stat-n{font-family:var(--display);font-size:34px;color:var(--amber);line-height:1}
+.stat-l{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--fg3);margin-top:3px}
+.rate-bar{height:2px;background:var(--border2);border-radius:1px;margin-top:6px;overflow:hidden}
+.rate-fill{height:100%;background:var(--green);border-radius:1px;transition:width .6s ease}
+.stat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.stat:hover::after{transform:scaleX(1)}
+
+.main{max-width:820px;margin:0 auto;padding:24px 16px}
+
+/* INCOMING CARD */
+.inc-card{background:var(--bg2);border:1px solid var(--amber);border-radius:6px;overflow:hidden;margin-bottom:20px;
+  box-shadow:0 0 50px #f59e0b15,0 0 0 1px #f59e0b22;
+  animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 0 50px #f59e0b15,0 0 0 1px #f59e0b22}50%{box-shadow:0 0 70px #f59e0b28,0 0 0 1px #f59e0b55}}
+
+.inc-head{background:linear-gradient(135deg,#f59e0b0a,transparent);padding:14px 18px;border-bottom:1px solid #f59e0b22;display:flex;align-items:center;justify-content:space-between}
+.inc-badge{font-size:9px;font-weight:700;letter-spacing:.15em;color:var(--amber);background:#f59e0b12;border:1px solid #f59e0b33;padding:4px 12px;border-radius:2px;display:flex;align-items:center;gap:7px}
+.blink-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);animation:blink 1s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.timer-wrap{position:relative;width:56px;height:56px;flex-shrink:0}
+.timer-svg{transform:rotate(-90deg)}
+.t-track2{fill:none;stroke:#1e1e1e;stroke-width:4}
+.t-fill{fill:none;stroke:var(--green);stroke-width:4;stroke-linecap:round;stroke-dasharray:138.2;stroke-dashoffset:0;transition:stroke-dashoffset 1s linear,stroke .5s}
+.t-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:19px;color:var(--amber)}
+
+.inc-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:480px){.inc-body{grid-template-columns:1fr}}
+.kv{display:flex;flex-direction:column;gap:3px}
+.kk{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg3)}
+.vv{font-size:13px;color:var(--fg);line-height:1.4}
+.vv.big{font-family:var(--display);font-size:24px;color:var(--amber)}
+
+.inc-foot{padding:14px 18px;border-top:1px solid #f59e0b1a;display:flex;gap:10px}
+.btn-acc{flex:1;padding:14px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:#16a34a18;border:1px solid #16a34a44;color:var(--green);border-radius:3px;cursor:pointer;transition:all .15s}
+.btn-acc:hover{background:#16a34a28;transform:translateY(-1px)}
+.btn-acc:active{transform:none}
+.btn-acc:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-rej{padding:14px 18px;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:#7f1d1d12;border:1px solid #7f1d1d44;color:var(--red);border-radius:3px;cursor:pointer;transition:all .15s}
+.btn-rej:hover{background:#7f1d1d22}
+.btn-rej:disabled{opacity:.4;cursor:not-allowed}
+
+/* ACTIVE CARD */
+.act-card{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;margin-bottom:14px;overflow:hidden;transition:border-color .2s}
+.act-card:hover{border-color:#2e2e2e}
+.ac-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ac-id{font-family:var(--display);font-size:20px;color:var(--amber)}
+.ac-body{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.ac-body{grid-template-columns:1fr}}
+.ac-foot{padding:10px 16px;border-top:1px solid var(--border);background:var(--bg3);display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1px solid}
+.p-amber{color:var(--amber);border-color:#f59e0b33;background:#f59e0b0d}
+.p-green{color:var(--green);border-color:#4ade8033;background:#4ade800d}
+.p-blue {color:var(--blue); border-color:#60a5fa33;background:#60a5fa0d}
+.p-pulse::before{content:'';display:inline-block;width:5px;height:5px;border-radius:50%;background:currentColor;animation:blink 1s ease-in-out infinite}
+
+.otp-zone{background:var(--bg);border:1px solid #f59e0b1a;border-radius:3px;padding:12px 14px;margin:0 16px 12px}
+.otp-title{font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--amber);margin-bottom:8px}
+.otp-row{display:flex;gap:8px;align-items:center}
+
+/* ── FIX: OTP input is now type="text" so maxlength works and leading zeros are preserved ── */
+.otp-in{
+  flex:1;
+  max-width:160px;
+  background:var(--bg2);
+  border:1px solid #f59e0b33;
+  color:var(--amber);
+  font-family:var(--mono);
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:.3em;
+  padding:8px 12px;
+  border-radius:2px;
+  text-align:center;
+}
+.otp-in:focus{outline:none;border-color:var(--amber);box-shadow:0 0 0 2px #f59e0b15}
+/* hide browser validation bubble styling */
+.otp-in:invalid{box-shadow:none}
+
+.btn{padding:8px 14px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:2px;cursor:pointer;border:1px solid;transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.btn-g{background:#16a34a15;border-color:#16a34a44;color:var(--green)}
+.btn-g:hover{background:#16a34a25}
+.btn-gh{background:transparent;border-color:var(--border2);color:var(--fg3)}
+.btn-gh:hover{border-color:#3a3a3a;color:var(--fg2)}
+
+.empty{text-align:center;padding:64px 20px;color:var(--fg3)}
+.empty-i{font-size:46px;margin-bottom:14px;opacity:.3}
+.empty-t{font-family:var(--display);font-size:24px;color:var(--fg2);margin-bottom:6px}
+.empty-s{font-size:10px;letter-spacing:.05em}
+
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px}
+.tab{padding:9px 18px;font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg3);border-bottom:2px solid transparent;cursor:pointer;text-decoration:none;transition:all .15s;margin-bottom:-1px}
+.tab:hover{color:var(--fg)}
+.tab.active{color:var(--amber);border-bottom-color:var(--amber)}
+.tab-c{background:var(--amber);color:#000;font-size:8px;padding:1px 5px;border-radius:1px;margin-left:5px}
+
+.ht{width:100%;border-collapse:collapse;font-size:11px}
+.ht th{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg3);padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+.ht td{padding:11px 10px;border-bottom:1px solid var(--border);color:var(--fg2);font-family:var(--mono)}
+.ht tr:hover td{background:var(--bg2)}
+
+.sec-t{font-family:var(--display);font-size:20px;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-t small{font-family:var(--mono);font-size:9px;color:var(--fg3);font-weight:400}
+
+.toast-wrap{position:fixed;bottom:24px;right:18px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg2);border:1px solid var(--border2);border-radius:4px;padding:11px 15px;font-size:11px;min-width:200px;pointer-events:all;animation:tin .25s ease;display:flex;align-items:center;gap:9px}
+.toast.success{border-color:#16a34a44;color:var(--green)}
+.toast.error  {border-color:#7f1d1d44;color:var(--red)}
+.toast.info   {border-color:#1d4ed844;color:var(--blue)}
+@keyframes tin{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="ticker">
+  <div class="t-label">VEKTOR</div>
+  <div class="t-track">
+    <span>DELIVERY PORTAL</span><span>·</span><span>REAL-TIME DISPATCH</span><span>·</span>
+    <span>ACCEPT ORDERS INSTANTLY</span><span>·</span><span>OTP VERIFIED DELIVERY</span><span>·</span>
+    <span>DELIVERY PORTAL</span><span>·</span><span>REAL-TIME DISPATCH</span><span>·</span>
+    <span>ACCEPT ORDERS INSTANTLY</span><span>·</span><span>OTP VERIFIED DELIVERY</span><span>·</span>
+  </div>
+</div>
+
+<div class="statusbar">
+  <div>
+    <div class="sb-logo">VEKTOR</div>
+    <div class="sb-name">Delivery Portal · <strong>{{ boy_name }}</strong></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+    <div class="online-toggle" onclick="toggleOnline(this)">
+      <div class="tog-track on" id="togTrack"><div class="tog-thumb"></div></div>
+      <span class="tog-lbl" id="togLbl">ONLINE</span>
+    </div>
+    <a href="/logout" style="font-size:9px;color:var(--fg3);letter-spacing:.08em;text-decoration:none;border:1px solid var(--border2);padding:5px 12px;border-radius:2px">LOGOUT</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-n">{{ active_orders|length }}</div>
+    <div class="stat-l">Active Orders</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">{{ delivered_today }}</div>
+    <div class="stat-l">Delivered Today</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">{{ total_delivered }}</div>
+    <div class="stat-l">Total Delivered</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n">{{ acceptance_rate }}%</div>
+    <div class="stat-l">Acceptance Rate</div>
+    <div class="rate-bar"><div class="rate-fill" style="width:{{ acceptance_rate }}%"></div></div>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div style="max-width:820px;margin:14px auto 0;padding:0 16px">
+  {% for cat,msg in messages %}
+  <div style="padding:9px 14px;border-radius:2px;font-size:11px;font-weight:700;margin-bottom:6px;border:1px solid;
+    {%if cat=='success'%}color:var(--green);border-color:#4ade8033;background:#4ade800d
+    {%else%}color:var(--red);border-color:#f8717133;background:#f871710d{%endif%}">{{msg}}</div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="main">
+  <!-- Incoming orders injected here by SocketIO -->
+  <div id="inZone"></div>
+
+  <div class="tabs">
+    <a href="/delivery/dashboard" class="tab {% if not show_history %}active{% endif %}">
+      Active {% if active_orders %}<span class="tab-c">{{ active_orders|length }}</span>{% endif %}
+    </a>
+    <a href="/delivery/history" class="tab {% if show_history %}active{% endif %}">History</a>
+  </div>
+
+  {% if not show_history %}
+    {% if active_orders %}
+    <div class="sec-t">ACTIVE ORDERS <small>· IN PROGRESS</small></div>
+    {% for order in active_orders %}
+    <div class="act-card">
+      <div class="ac-head">
+        <div>
+          <div class="ac-id">#VK{{ order.id }}</div>
+          <div style="font-size:10px;color:var(--fg3);margin-top:2px">
+            ₹{{ order.total_price }} ·
+            {% if order.payment_method=='COD' %}<span style="color:var(--amber)">COLLECT CASH</span>
+            {% else %}<span style="color:var(--green)">PREPAID</span>{% endif %}
+          </div>
+        </div>
+        <span class="pill {% if order.status=='Out for Delivery' %}p-amber p-pulse{% else %}p-blue{% endif %}">
+          {{ order.status }}
+        </span>
+      </div>
+      <div class="ac-body">
+        <div class="kv"><span class="kk">Customer</span><span class="vv">{{ order.shipping_name or (order.user.name if order.user else '—') }}</span></div>
+        <div class="kv"><span class="kk">Phone</span><span class="vv"><a href="tel:{{ order.shipping_phone }}" style="color:var(--blue);text-decoration:none">📞 {{ order.shipping_phone or '—' }}</a></span></div>
+        <div class="kv" style="grid-column:1/-1"><span class="kk">Address</span><span class="vv" style="font-size:12px">{{ order.shipping_address }}, {{ order.shipping_city }} — {{ order.shipping_pincode }}</span></div>
+      </div>
+
+      {% if order.status == 'Out for Delivery' %}
+      <div class="otp-zone">
+        <div class="otp-title">⚡ Enter Customer OTP to confirm delivery</div>
+        <form action="/delivery/deliver/{{ order.id }}" method="POST" class="otp-row" onsubmit="return validateOtp(this)">
+          {#
+            FIX: Changed type="number" → type="text"
+            - maxlength now works (was silently ignored on type=number)
+            - Leading zeros (e.g. 012345) are preserved instead of being stripped
+            - minlength="6" + pattern="\d{6}" block short/non-numeric submissions
+            - inputmode="numeric" still shows numeric keyboard on mobile
+          #}
+          <input
+            type="text"
+            name="otp"
+            class="otp-in"
+            placeholder="000000"
+            maxlength="6"
+            minlength="6"
+            pattern="\d{6}"
+            inputmode="numeric"
+            autocomplete="off"
+            required
+          >
+          <button type="submit" class="btn btn-g">✓ CONFIRM DELIVERED</button>
+        </form>
+        <div style="font-size:9px;color:var(--fg3);margin-top:7px">Ask the customer for the 6-digit OTP sent to their phone.</div>
+      </div>
+      {% endif %}
+
+      <div class="ac-foot">
+        {% if order.status == 'Shipped' %}
+        <form action="/delivery/pickup/{{ order.id }}" method="POST" style="display:inline">
+          <button type="submit" class="btn btn-g">📦 PICKED UP → OUT FOR DELIVERY</button>
+        </form>
+        {% endif %}
+        <a href="https://maps.google.com/?q={{ order.shipping_address }},{{ order.shipping_city }},{{ order.shipping_pincode }}" target="_blank" class="btn btn-gh">🗺 MAPS</a>
+        <a href="tel:{{ order.shipping_phone }}" class="btn btn-gh">📞 CALL</a>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty">
+      <div class="empty-i">📡</div>
+      <div class="empty-t">STANDING BY</div>
+      <div class="empty-s">Stay online. New orders ping instantly.</div>
+    </div>
+    {% endif %}
+
+  {% else %}
+  <div class="sec-t">DELIVERY HISTORY</div>
+  {% if history_orders %}
+  <table class="ht">
+    <thead><tr><th>Order</th><th>Customer</th><th>Amount</th><th>Delivered At</th><th>OTP</th></tr></thead>
+    <tbody>
+      {% for o in history_orders %}
+      <tr>
+        <td style="color:var(--amber);font-weight:700">#VK{{ o.id }}</td>
+        <td>{{ o.shipping_name or (o.user.name if o.user else '—') }}</td>
+        <td>₹{{ o.total_price }}</td>
+        <td>{{ o.delivered_at.strftime('%d %b · %H:%M') if o.delivered_at else '—' }}</td>
+        <td>{% if o.otp_verified %}<span style="color:var(--green);font-weight:700">✓</span>{% else %}—{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty"><div class="empty-i">📋</div><div class="empty-t">NO HISTORY YET</div></div>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+<audio id="ping" preload="auto"><source src="/static/sounds/ping.mp3" type="audio/mpeg"></audio>
+
+<script>
+const socket  = io({ transports: ['websocket'] });
+const TIMEOUT = 60;
+let isOnline  = true;
+let timers    = {};
+
+socket.on('connect',    () => { toast('Dispatch server connected', 'info'); startHeartbeat(); });
+socket.on('disconnect', () => toast('Reconnecting...', 'error'));
+
+/* ── NEW ORDER ─────────────────────────────── */
+socket.on('new_order_request', d => {
+  if (!isOnline) return;
+  playPing(); vibrate();
+  showCard(d);
+});
+
+/* ── ORDER TAKEN ───────────────────────────── */
+socket.on('order_taken', d => {
+  removeCard(d.order_id);
+  toast(`Order #VK${d.order_id} taken by ${d.accepted_by}`, 'info');
+});
+
+/* ── ACCEPT RESULT ─────────────────────────── */
+socket.on('accept_result', d => {
+  if (d.ok) { toast('✓ Order accepted!', 'success'); setTimeout(() => location.reload(), 1200); }
+  else toast(`Could not accept: ${d.reason}`, 'error');
+});
+
+socket.on('reject_result', () => toast('Order rejected', 'info'));
+
+/* ── CARD ──────────────────────────────────── */
+function showCard(o) {
+  if (document.getElementById(`ic-${o.order_id}`)) return;
+  const zone = document.getElementById('inZone');
+  const card = document.createElement('div');
+  card.className = 'inc-card';
+  card.id = `ic-${o.order_id}`;
+
+  const circ = 2 * Math.PI * 22;
+  card.innerHTML = `
+    <div class="inc-head">
+      <div class="inc-badge"><span class="blink-dot"></span>NEW ORDER REQUEST</div>
+      <div class="timer-wrap">
+        <svg class="timer-svg" width="56" height="56" viewBox="0 0 56 56">
+          <circle class="t-track2" cx="28" cy="28" r="22"/>
+          <circle class="t-fill" id="tf-${o.order_id}" cx="28" cy="28" r="22"/>
+        </svg>
+        <div class="t-num" id="tn-${o.order_id}">${TIMEOUT}</div>
+      </div>
+    </div>
+    <div class="inc-body">
+      <div class="kv"><span class="kk">Order ID</span><span class="vv big">#VK${o.order_id}</span></div>
+      <div class="kv"><span class="kk">Amount</span><span class="vv big">₹${o.total}</span></div>
+      <div class="kv">
+        <span class="kk">Payment</span>
+        <span class="vv" style="color:${o.payment_method==='COD'?'var(--amber)':'var(--green)'}">
+          ${o.payment_method==='COD'?'💵 COLLECT CASH':'✓ ALREADY PAID'}
+        </span>
+      </div>
+      <div class="kv"><span class="kk">Items</span><span class="vv">${o.items_count} item${o.items_count>1?'s':''}</span></div>
+      <div class="kv" style="grid-column:1/-1">
+        <span class="kk">Delivery Address</span>
+        <span class="vv" style="font-size:12px">${o.address}</span>
+      </div>
+    </div>
+    <div class="inc-foot">
+      <button class="btn-acc" id="acc-${o.order_id}" onclick="acceptOrder(${o.order_id})">✓ &nbsp;ACCEPT ORDER</button>
+      <button class="btn-rej" id="rej-${o.order_id}" onclick="rejectOrder(${o.order_id})">✕ REJECT</button>
+    </div>`;
+
+  zone.prepend(card);
+  startTimer(o.order_id, TIMEOUT, circ);
+}
+
+function removeCard(id) {
+  const c = document.getElementById(`ic-${id}`);
+  if (c) { c.style.transition='opacity .3s'; c.style.opacity='0'; setTimeout(()=>c.remove(),300); }
+  stopTimer(id);
+}
+
+/* ── TIMER ─────────────────────────────────── */
+function startTimer(id, secs, circ) {
+  const fill = document.getElementById(`tf-${id}`);
+  const num  = document.getElementById(`tn-${id}`);
+  let rem = secs;
+  if (fill) { fill.style.strokeDasharray = circ; fill.style.strokeDashoffset = 0; }
+
+  timers[id] = setInterval(() => {
+    rem--;
+    if (num) num.textContent = rem;
+    if (fill) {
+      fill.style.strokeDashoffset = circ * (1 - rem/secs);
+      fill.style.stroke = rem > 30 ? '#4ade80' : rem > 10 ? '#f59e0b' : '#f87171';
+    }
+    if (num && rem <= 10) num.style.color = '#f87171';
+    if (rem <= 0) {
+      stopTimer(id);
+      socket.emit('order_timeout', { order_id: id });
+      removeCard(id);
+      toast(`Order #VK${id} timed out`, 'error');
+    }
+  }, 1000);
+}
+
+function stopTimer(id) {
+  clearInterval(timers[id]);
+  delete timers[id];
+}
+
+/* ── ACCEPT / REJECT ───────────────────────── */
+function acceptOrder(id) {
+  const btn = document.getElementById(`acc-${id}`);
+  const rej = document.getElementById(`rej-${id}`);
+  if (btn) { btn.disabled=true; btn.textContent='Accepting...'; }
+  if (rej) rej.disabled = true;
+  stopTimer(id);
+  socket.emit('accept_order', { order_id: id });
+}
+
+function rejectOrder(id) {
+  socket.emit('reject_order', { order_id: id });
+  removeCard(id);
+}
+
+/* ── OTP CLIENT-SIDE VALIDATION ────────────── */
+// FIX: extra JS guard — catches non-numeric input and wrong length before form submits
+function validateOtp(form) {
+  const input = form.querySelector('input[name="otp"]');
+  const val   = input ? input.value.trim() : '';
+  if (!/^\d{6}$/.test(val)) {
+    toast('Enter the 6-digit OTP from the customer', 'error');
+    if (input) input.focus();
+    return false;
+  }
+  return true;
+}
+
+/* ── ONLINE TOGGLE ─────────────────────────── */
+function toggleOnline(wrap) {
+  isOnline = !isOnline;
+  const t = document.getElementById('togTrack');
+  const l = document.getElementById('togLbl');
+  t.classList.toggle('on', isOnline);
+  l.textContent = isOnline ? 'ONLINE' : 'OFFLINE';
+  toast(isOnline ? 'You are Online' : 'You are Offline', isOnline ? 'success' : 'info');
+}
+
+/* ── HEARTBEAT ─────────────────────────────── */
+function startHeartbeat() {
+  setInterval(() => { if (isOnline) socket.emit('heartbeat'); }, 25000);
+}
+
+/* ── UTILS ─────────────────────────────────── */
+function playPing() {
+  try { document.getElementById('ping').play(); } catch(e) {}
+}
+function vibrate() {
+  if (navigator.vibrate) navigator.vibrate([200,100,200]);
+}
+function toast(msg, type='info') {
+  const w = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  const icon = type==='success'?'✓':type==='error'?'✕':'ℹ';
+  t.innerHTML = `<span style="font-size:13px">${icon}</span>${msg}`;
+  w.prepend(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
+}
+</script>
+</body>
+</html>

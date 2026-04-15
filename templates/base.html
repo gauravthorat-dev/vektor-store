@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}VEKTOR — महाराष्ट्रीय पुरुष वस्त्र{% endblock %}</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home-extra.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
+ 
+
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       UI OVERLAYS & FIXED ELEMENTS
+  ══════════════════════════════════════ -->
+
+  <!-- Custom Cursor -->
+  <div class="cursor"      id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-label" id="cursorLabel">ADD TO CART</div>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-prog" id="scrollProg"></div>
+
+  <!-- Page Loader -->
+  <div id="loader">
+    <div class="loader-shloka">।। क्षत्रिय धर्मो युद्धम् ।।</div>
+    <div class="loader-brand">VEKTOR</div>
+    <div class="loader-line"></div>
+    <div class="loader-sub">महाराष्ट्रीय पुरुष वस्त्र</div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="searchOverlay">
+    <button class="search-close" onclick="closeSearch()">✕ Close / बंद करा</button>
+    <div class="search-label">काय शोधत आहात? · What are you looking for?</div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="SHIRTS, JEANS..." autocomplete="off">
+      <button onclick="doSearch()">शोधा</button>
+    </div>
+    <div class="search-hints">
+      <button class="search-hint" onclick="searchTerm('Shirts')">Shirts / शर्ट</button>
+      <button class="search-hint" onclick="searchTerm('Jeans')">Jeans / जीन्स</button>
+      <button class="search-hint" onclick="searchTerm('Jackets')">Jackets</button>
+      <button class="search-hint" onclick="searchTerm('New Arrivals')">नवीन आगमन</button>
+      <button class="search-hint" onclick="searchTerm('Sale')">Sale / सेल</button>
+    </div>
+  </div>
+
+  <!-- Cart Overlay Background -->
+  <div class="cart-overlay-bg" id="cartBg" onclick="closeCart()"></div>
+
+  <!-- Cart Sidebar -->
+  <div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-head">
+      <div>
+        <div class="cart-title">YOUR CART</div>
+        <div class="cart-title-mr">तुमची कार्ट</div>
+      </div>
+      <button class="cart-close-btn" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cartBody">
+      <div class="cart-empty">
+        <div class="cart-empty-sk">कार्ट रिकामी आहे</div>
+        <div class="cart-empty-en">Your cart is empty</div>
+        <button class="cart-empty-btn" onclick="closeCart()">खरेदी करा — Shop Now</button>
+      </div>
+    </div>
+    <div class="cart-foot" id="cartFoot" style="display:none">
+      <div class="cart-total-row">
+        <div><div class="cart-total-label">Total / एकूण</div></div>
+        <div class="cart-total-amt" id="cartTotal">₹0</div>
+      </div>
+      <button class="cart-checkout" onclick="checkout()">CHECKOUT — चेकआउट करा</button>
+      <button class="cart-continue" onclick="closeCart()">CONTINUE SHOPPING / खरेदी सुरू ठेवा</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span id="toastMsg">Added to cart!</span>
+    <span class="toast-mr" id="toastMr">कार्टमध्ये जोडले</span>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       GLOBAL HEADER
+  ══════════════════════════════════════ -->
+
+  <!-- Paithani Stripe -->
+  <div class="paithani"></div>
+
+  <!-- Urgency Bar -->
+  <div class="urg">
+    <span class="dev">मर्यादित वेळेची ऑफर</span>
+    <span>SALE ENDS IN</span>
+    <div class="urg-timer" id="urgTimer">02:47:33</div>
+    <span>·</span>
+    <span>UP TO 40% OFF THIS WEEK</span>
+    <span class="dev">आजच खरेदी करा</span>
+  </div>
+
+  <!-- Navigation -->
+  {% include "components/navbar.html" %}
+
+  <!-- Marquee -->
+  <div class="mq">
+    <div class="mq-track">
+      <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
+      <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
+      <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
+      <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
+      <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
+      <!-- Duplicated for seamless loop -->
+      <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
+      <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
+      <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
+      <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
+      <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════
+       PAGE CONTENT
+  ══════════════════════════════════════ -->
+  {% block content %}{% endblock %}
+
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  {% include "components/footer.html" %}
+
+
+  <!-- ══════════════════════════════════════
+       JS
+  ══════════════════════════════════════ -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block extra_js %}{% endblock %}
+
+
+  <div class="cursor"></div>
+<div class="cursor-follower"></div>
+
+<div class="page-transition"></div>
+<div class="scroll-bar"></div>
+
+</body>
+</html>

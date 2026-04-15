@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — Admin Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+  --fg:#f0ece4;--fg2:#a09890;--fg3:#555;
+  --sf:#FF6B00;--sf2:#ff8c38;--gold:#c8941a;--gold2:#e0aa30;
+  --gr:#0aab5a;--gr2:#0db85f;--blue:#3b7dd8;--blue2:#7aacff;
+  --red:#e03030;--red2:#ff5555;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --font-dev:'Tiro Devanagari Sanskrit',serif;
+  --sb-w:52px;--ticker-h:34px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:13px;overflow:hidden;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--sf);}
+
+/* TICKER */
+.admin-ticker{position:fixed;top:0;left:0;right:0;height:var(--ticker-h);background:var(--sf);z-index:200;display:flex;align-items:center;overflow:hidden;}
+.ticker-label{font-family:var(--font-display);font-size:13px;letter-spacing:.15em;color:#000;padding:0 16px;white-space:nowrap;border-right:2px solid rgba(0,0,0,0.25);height:100%;display:flex;align-items:center;background:rgba(0,0,0,0.12);flex-shrink:0;}
+.ticker-track{display:flex;animation:ticker 32s linear infinite;white-space:nowrap;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:14px;padding:0 14px;font-family:var(--font-mono);font-size:10px;color:#000;font-weight:700;letter-spacing:.1em;}
+.ticker-dot{width:4px;height:4px;background:rgba(0,0,0,0.4);border-radius:50%;}
+
+/* SIDEBAR */
+.admin-sidebar{position:fixed;top:var(--ticker-h);left:0;bottom:0;width:var(--sb-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:0 0 16px;z-index:100;gap:4px;}
+.sb-logo{font-family:var(--font-display);font-size:10px;letter-spacing:.2em;color:var(--sf);writing-mode:vertical-rl;transform:rotate(180deg);padding:16px 0;height:80px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);width:100%;margin-bottom:8px;}
+.sb-btn{width:38px;height:38px;border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--fg3);text-decoration:none;transition:all .2s;position:relative;border:1px solid transparent;}
+.sb-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.sb-btn:hover{color:var(--fg);background:var(--bg3);border-color:var(--border);}
+.sb-btn.active{color:var(--sf);background:rgba(255,107,0,0.1);border-color:rgba(255,107,0,0.25);}
+.sb-spacer{flex:1;}
+.sb-divider{width:28px;height:1px;background:var(--border);margin:4px 0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--sf),var(--gold));color:#000;font-family:var(--font-display);font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid var(--sf);}
+
+/* LAYOUT */
+.admin-shell{display:flex;height:100vh;padding-top:var(--ticker-h);}
+.admin-main{margin-left:var(--sb-w);flex:1;overflow-y:auto;overflow-x:hidden;padding:0 24px 40px;display:flex;flex-direction:column;gap:16px;}
+
+/* HEADER */
+.page-hdr{position:sticky;top:0;z-index:90;background:linear-gradient(to bottom,var(--bg) 70%,transparent);padding:20px 0 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;}
+.page-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--fg3);margin-bottom:5px;}
+.page-title{font-family:var(--font-display);font-size:38px;letter-spacing:.04em;line-height:1;}
+.page-title span{color:var(--sf);}
+.page-sub{font-family:var(--font-dev);font-size:11px;color:var(--fg3);margin-top:6px;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.btn-create{display:flex;align-items:center;gap:8px;background:var(--sf);color:#000;font-family:var(--font-display);font-size:14px;letter-spacing:.1em;padding:10px 20px;border:none;cursor:pointer;transition:background .2s,transform .15s;}
+.btn-create:hover{background:var(--sf2);transform:translateY(-1px);}
+.btn-back{display:flex;align-items:center;gap:6px;color:var(--fg3);font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-decoration:none;border:1px solid var(--border2);padding:8px 14px;transition:all .2s;}
+.btn-back:hover{color:var(--sf);border-color:rgba(255,107,0,0.3);}
+.btn-back svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+/* FLASH */
+.flash-msg{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:11px;}
+.flash-success{background:rgba(13,184,95,0.08);border:1px solid rgba(13,184,95,0.2);border-left:2px solid var(--gr2);color:#3dffa0;}
+.flash-error{background:rgba(224,48,48,0.07);border:1px solid rgba(224,48,48,0.2);border-left:2px solid var(--red);color:#ff7070;}
+.flash-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;font-weight:700;margin-right:4px;}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--ac);}
+.stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--fg3);margin-bottom:8px;}
+.stat-num{font-family:var(--font-display);font-size:32px;letter-spacing:.02em;line-height:1;margin-bottom:4px;}
+.stat-sub{font-size:10px;color:var(--fg3);}
+
+/* FILTER */
+.filter-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);}
+.fsearch{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);padding:7px 12px;flex:1;max-width:280px;transition:border-color .2s;}
+.fsearch:focus-within{border-color:rgba(255,107,0,0.4);}
+.fsearch svg{width:12px;height:12px;stroke:var(--fg3);fill:none;stroke-width:2;flex-shrink:0;}
+.fsearch input{background:none;border:none;outline:none;color:var(--fg);font-family:var(--font-mono);font-size:10px;width:100%;}
+.fsearch input::placeholder{color:var(--fg3);}
+.fbtn{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:7px 12px;border:1px solid var(--border2);background:none;color:var(--fg3);cursor:pointer;transition:all .2s;}
+.fbtn:hover,.fbtn.on{color:var(--sf);border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.05);}
+.fcount{margin-left:auto;font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.1em;}
+.fcount b{color:var(--fg);}
+
+/* TABLE PANEL */
+.tpanel{background:var(--bg2);border:1px solid var(--border);overflow:hidden;}
+.tpanel-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);}
+.tpanel-title{font-family:var(--font-display);font-size:16px;letter-spacing:.06em;}
+.tpanel-tag{font-family:var(--font-mono);font-size:9px;color:var(--sf);letter-spacing:.1em;}
+.twrap{overflow-x:auto;}
+.atable{width:100%;border-collapse:collapse;}
+.atable th{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);text-align:left;padding:10px 16px;border-bottom:1px solid var(--border);font-weight:400;white-space:nowrap;}
+.atable td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.atable tr:last-child td{border-bottom:none;}
+.atable tbody tr{transition:background .15s;}
+.atable tbody tr:hover td{background:var(--bg3);}
+
+/* AVATAR */
+.ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;flex-shrink:0;}
+.name-cell{display:flex;align-items:center;gap:10px;}
+.name-main{font-size:13px;font-weight:500;color:var(--fg);margin-bottom:2px;display:flex;align-items:center;gap:6px;}
+.name-email{font-family:var(--font-mono);font-size:9px;color:var(--fg3);}
+.you-tag{font-family:var(--font-mono);font-size:8px;padding:2px 5px;background:rgba(255,107,0,0.15);color:var(--sf);border:1px solid rgba(255,107,0,0.2);}
+
+/* BADGES */
+.lbadge{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:3px 9px;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.lbadge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.lb-superadmin{background:rgba(255,107,0,0.12);color:var(--sf);border:1px solid rgba(255,107,0,0.25);}
+.lb-superadmin::before{background:var(--sf);}
+.lb-manager{background:rgba(59,125,216,0.12);color:var(--blue2);border:1px solid rgba(59,125,216,0.25);}
+.lb-manager::before{background:var(--blue2);}
+.lb-viewer{background:rgba(160,152,144,0.1);color:var(--fg2);border:1px solid rgba(160,152,144,0.15);}
+.lb-viewer::before{background:var(--fg2);}
+
+.sbadge{font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;padding:3px 9px;display:inline-flex;align-items:center;gap:5px;}
+.sb-active{background:rgba(13,184,95,0.1);color:var(--gr2);border:1px solid rgba(13,184,95,0.2);}
+.sb-blocked{background:rgba(224,48,48,0.1);color:var(--red2);border:1px solid rgba(224,48,48,0.2);}
+.pulse{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.pulse-on{background:var(--gr2);animation:pulseAnim 2s ease-in-out infinite;}
+.pulse-off{background:var(--red2);}
+@keyframes pulseAnim{0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,0.5)}50%{box-shadow:0 0 0 4px rgba(13,184,95,0)}}
+
+/* DATE / LOGIN */
+.date-cell{font-family:var(--font-mono);font-size:9px;color:var(--fg3);line-height:1.7;}
+.login-count{font-family:var(--font-display);font-size:16px;color:var(--fg2);}
+
+/* ACTION BTNS */
+.act-btns{display:flex;align-items:center;gap:6px;}
+.act-btn{font-family:var(--font-mono);font-size:8px;letter-spacing:.08em;padding:5px 10px;border:1px solid;background:none;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.act-edit{color:var(--blue2);border-color:rgba(59,125,216,0.3);}
+.act-edit:hover{background:rgba(59,125,216,0.1);}
+.act-block{color:var(--gold2);border-color:rgba(200,148,26,0.3);}
+.act-block:hover{background:rgba(200,148,26,0.08);}
+.act-unblock{color:var(--gr2);border-color:rgba(13,184,95,0.3);}
+.act-unblock:hover{background:rgba(13,184,95,0.08);}
+.act-delete{color:var(--red2);border-color:rgba(224,48,48,0.3);}
+.act-delete:hover{background:rgba(224,48,48,0.08);}
+.act-btn:disabled{opacity:.25;cursor:not-allowed;pointer-events:none;}
+
+/* EMPTY */
+.empty-row td{padding:50px 20px;text-align:center;}
+.empty-icon{font-size:28px;opacity:.3;margin-bottom:8px;}
+.empty-txt{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--fg3);}
+
+/* ── MODALS ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.overlay.open{display:flex;}
+
+/* DRAWER — create/edit */
+.drawer{position:fixed;top:var(--ticker-h);right:0;bottom:0;width:460px;background:var(--bg2);border-left:1px solid var(--border2);z-index:600;transform:translateX(100%);transition:transform .35s cubic-bezier(.22,.68,0,1.2);display:flex;flex-direction:column;overflow:hidden;}
+.drawer.open{transform:translateX(0);}
+.drawer-bar{height:3px;background:linear-gradient(90deg,var(--sf) 33%,#f0ece4 33%,#f0ece4 66%,var(--gr) 66%);}
+.drawer-hdr{padding:20px 28px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0;}
+.drawer-title{font-family:var(--font-display);font-size:26px;letter-spacing:.08em;}
+.drawer-sub{font-family:var(--font-dev);font-size:10px;color:var(--fg3);margin-top:4px;}
+.drawer-close{background:none;border:1px solid var(--border2);color:var(--fg3);width:30px;height:30px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;}
+.drawer-close:hover{color:var(--sf);border-color:rgba(255,107,0,0.3);}
+.drawer-body{flex:1;overflow-y:auto;padding:20px 28px;}
+.drawer-footer{padding:16px 28px;border-top:1px solid var(--border);flex-shrink:0;}
+
+/* CONFIRM MODAL */
+.cmodal{background:var(--bg2);border:1px solid var(--border2);width:100%;max-width:420px;overflow:hidden;animation:modalIn .3s cubic-bezier(.22,.68,0,1.2);}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.cmodal-bar{height:3px;}
+.cmodal-body{padding:28px 32px;}
+.cmodal-icon{font-size:28px;margin-bottom:12px;}
+.cmodal-title{font-family:var(--font-display);font-size:22px;letter-spacing:.08em;margin-bottom:6px;}
+.cmodal-sub{font-size:11px;color:var(--fg3);line-height:1.6;margin-bottom:20px;}
+.cmodal-footer{padding:16px 32px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;}
+
+/* FORM ELEMENTS */
+.fg{margin-bottom:16px;}
+.flabel{font-family:var(--font-mono);font-size:8.5px;letter-spacing:.18em;color:var(--fg3);margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;text-transform:uppercase;}
+.flabel-tag{font-size:7.5px;color:var(--sf);border:1px solid rgba(255,107,0,0.2);padding:1px 5px;}
+.finput-wrap{position:relative;}
+.finput-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--fg3);pointer-events:none;transition:color .2s;}
+.finput-icon svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.finput-wrap:focus-within .finput-icon{color:var(--sf);}
+.finput{width:100%;padding:11px 36px;background:var(--bg3);border:1px solid var(--border2);color:var(--fg);font-family:var(--font-mono);font-size:11px;letter-spacing:.03em;outline:none;transition:border-color .2s,box-shadow .2s;}
+.finput:focus{border-color:rgba(255,107,0,0.45);box-shadow:0 0 0 3px rgba(255,107,0,0.07);}
+.finput.err{border-color:rgba(224,48,48,0.5)!important;}
+.finput.ok{border-color:rgba(13,184,95,0.4)!important;}
+.finput::placeholder{color:var(--fg3);}
+.fline{position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--sf);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.finput:focus~.fline{transform:scaleX(1);}
+.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--fg3);cursor:pointer;font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;padding:3px;transition:color .2s;z-index:1;}
+.pw-toggle:hover{color:var(--sf);}
+.ferr{font-family:var(--font-mono);font-size:8.5px;color:#ff6060;margin-top:5px;display:none;}
+.ferr.show{display:block;}
+
+/* STRENGTH */
+.str-row{display:flex;gap:3px;margin-top:6px;}
+.str-seg{flex:1;height:2px;background:var(--border2);border-radius:1px;transition:background .3s;}
+.s-weak{background:var(--red)!important;}
+.s-fair{background:var(--gold2)!important;}
+.s-good{background:var(--sf)!important;}
+.s-strong{background:var(--gr2)!important;}
+.str-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;margin-top:3px;text-align:right;color:var(--fg3);min-height:12px;}
+
+/* ROLE CARDS */
+.role-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;}
+.rcard{position:relative;border:1px solid var(--border2);background:var(--bg3);padding:10px 10px 8px;cursor:pointer;transition:all .2s;user-select:none;}
+.rcard input{position:absolute;opacity:0;pointer-events:none;}
+.rcard:hover{border-color:rgba(255,107,0,0.3);}
+.rcard.on{border-color:rgba(255,107,0,0.5);background:rgba(255,107,0,0.04);}
+.rcard.on::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--sf);}
+.rcard-icon{font-size:14px;margin-bottom:4px;}
+.rcard-name{font-family:var(--font-display);font-size:13px;letter-spacing:.08em;}
+.rcard-desc{font-size:9px;color:var(--fg3);margin-top:2px;line-height:1.3;}
+.rcheck{position:absolute;top:6px;right:6px;width:12px;height:12px;border:1px solid var(--border2);background:var(--bg2);display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.rcard.on .rcheck{background:var(--sf);border-color:var(--sf);}
+.rcheck svg{width:7px;height:7px;stroke:#000;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0;transition:opacity .2s;}
+.rcard.on .rcheck svg{opacity:1;}
+
+/* CONFIRM INPUT */
+.confirm-input{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid rgba(224,48,48,0.3);color:var(--fg);font-family:var(--font-mono);font-size:11px;outline:none;margin-top:8px;transition:border-color .2s;}
+.confirm-input:focus{border-color:rgba(224,48,48,0.6);box-shadow:0 0 0 3px rgba(224,48,48,0.07);}
+
+/* BUTTONS */
+.btn-sf{background:var(--sf);color:#000;font-family:var(--font-display);font-size:16px;letter-spacing:.1em;border:none;padding:12px 24px;cursor:pointer;width:100%;transition:background .2s,transform .15s;}
+.btn-sf:hover{background:var(--sf2);transform:translateY(-1px);}
+.btn-sf:disabled{background:#555;cursor:not-allowed;transform:none;}
+.btn-red{background:var(--red);color:#fff;font-family:var(--font-display);font-size:15px;letter-spacing:.1em;border:none;padding:10px 20px;cursor:pointer;transition:all .2s;}
+.btn-red:hover{background:var(--red2);}
+.btn-red:disabled{opacity:.4;cursor:not-allowed;}
+.btn-ghost{background:none;border:1px solid var(--border2);color:var(--fg3);font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:10px 18px;cursor:pointer;transition:all .2s;}
+.btn-ghost:hover{color:var(--fg);border-color:var(--border2);}
+
+/* FOOTER */
+.page-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.1em;}
+.fdot{display:inline-block;width:5px;height:5px;background:var(--gr);border-radius:50%;margin-right:6px;animation:fp 2s ease-in-out infinite;}
+@keyframes fp{0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,.5)}50%{box-shadow:0 0 0 5px rgba(13,184,95,0)}}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="admin-ticker">
+  <div class="ticker-label">VEKTOR ADMIN</div>
+  <div class="ticker-track">
+    <div class="ticker-item">ADMIN MANAGEMENT HUB<div class="ticker-dot"></div>ROLE-BASED ACCESS CONTROL<div class="ticker-dot"></div>SUPERADMIN ZONE<div class="ticker-dot"></div>HIGH SECURITY<div class="ticker-dot"></div>VEKTOR SS/26<div class="ticker-dot"></div></div>
+    <div class="ticker-item">ADMIN MANAGEMENT HUB<div class="ticker-dot"></div>ROLE-BASED ACCESS CONTROL<div class="ticker-dot"></div>SUPERADMIN ZONE<div class="ticker-dot"></div>HIGH SECURITY<div class="ticker-dot"></div>VEKTOR SS/26<div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="admin-sidebar">
+  <div class="sb-logo">VEKTOR</div>
+  <a href="/admin/dashboard" class="sb-btn" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
+  <a href="/admin/products" class="sb-btn" title="Products"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></a>
+  <a href="/admin/orders" class="sb-btn" title="Orders"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></a>
+  <a href="/admin/customers" class="sb-btn" title="Customers"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></a>
+  <a href="/admin/analytics" class="sb-btn" title="Analytics"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></a>
+  <a href="/admin/manage-admins" class="sb-btn active" title="Manage Admins"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></a>
+  <a href="/admin/settings" class="sb-btn" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></a>
+  <div class="sb-divider"></div>
+  <a href="/admin/switch" class="sb-btn" title="Switch Account"><svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></a>
+  <a href="/admin/logout" class="sb-btn" title="Logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></a>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">{{ session.get('admin_name','VK')[:2].upper() }}</div>
+</div>
+
+<!-- MAIN -->
+<div class="admin-shell">
+<div class="admin-main">
+
+  <div class="page-hdr">
+    <div>
+      <div class="page-eyebrow">SUPERADMIN ONLY · उच्च सुरक्षा क्षेत्र</div>
+      <div class="page-title">ADMIN <span>MANAGEMENT</span></div>
+      <div class="page-sub">।। केवळ सुपरअॅडमिनला प्रवेश ।। — Role Based Access Control</div>
+    </div>
+    <div class="hdr-right">
+      <a href="/admin/dashboard" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        DASHBOARD
+      </a>
+      <button class="btn-create" onclick="openCreate()">+ CREATE ADMIN</button>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+      <div class="flash-msg {% if cat == 'success' %}flash-success{% else %}flash-error{% endif %}">
+        <span class="flash-tag">{% if cat == 'success' %}✅ SUCCESS{% else %}❌ ERROR{% endif %}</span>{{ msg }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card" style="--ac:var(--sf)">
+      <div class="stat-label">TOTAL ADMINS</div>
+      <div class="stat-num" style="color:var(--sf)">{{ admins|length }}</div>
+      <div class="stat-sub">All roles</div>
+    </div>
+    <div class="stat-card" style="--ac:var(--gr2)">
+      <div class="stat-label">ACTIVE</div>
+      <div class="stat-num" style="color:var(--gr2)">{{ admins|selectattr('is_active')|list|length }}</div>
+      <div class="stat-sub">Currently active</div>
+    </div>
+    <div class="stat-card" style="--ac:var(--red2)">
+      <div class="stat-label">BLOCKED</div>
+      <div class="stat-num" style="color:var(--red2)">{{ admins|rejectattr('is_active')|list|length }}</div>
+      <div class="stat-sub">Access revoked</div>
+    </div>
+    <div class="stat-card" style="--ac:var(--sf)">
+      <div class="stat-label">SUPERADMINS</div>
+      <div class="stat-num" style="color:var(--sf)">{{ admins|selectattr('level','equalto','superadmin')|list|length }}</div>
+      <div class="stat-sub">Full access</div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <div class="fsearch">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search name or email..." id="searchQ" oninput="applyFilter()">
+    </div>
+    <button class="fbtn on" data-level="all"   onclick="setLevel(this)">ALL</button>
+    <button class="fbtn"    data-level="superadmin" onclick="setLevel(this)">SUPERADMIN</button>
+    <button class="fbtn"    data-level="manager"    onclick="setLevel(this)">MANAGER</button>
+    <button class="fbtn"    data-level="viewer"     onclick="setLevel(this)">VIEWER</button>
+    <button class="fbtn"    data-status="active"    onclick="setStatus(this)">ACTIVE</button>
+    <button class="fbtn"    data-status="blocked"   onclick="setStatus(this)">BLOCKED</button>
+    <div class="fcount">SHOWING <b id="visCount">{{ admins|length }}</b> / {{ admins|length }}</div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="tpanel">
+    <div class="tpanel-hdr">
+      <div class="tpanel-title">ADMIN ACCOUNTS · प्रशासक खाती</div>
+      <div class="tpanel-tag">🔐 SUPERADMIN VIEW</div>
+    </div>
+    <div class="twrap">
+      <table class="atable" id="aTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ADMIN · प्रशासक</th>
+            <th>LEVEL</th>
+            <th>STATUS</th>
+            <th>LOGINS</th>
+            <th>CREATED</th>
+            <th>LAST LOGIN</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for a in admins %}
+        {% set ava_colors = [
+          ['rgba(255,107,0,0.15)','#FF6B00'],
+          ['rgba(13,184,95,0.12)','#0db85f'],
+          ['rgba(59,125,216,0.15)','#7aacff'],
+          ['rgba(200,148,26,0.15)','#e0aa30'],
+          ['rgba(160,80,200,0.15)','#c07aff']
+        ] %}
+        {% set c = ava_colors[loop.index0 % 5] %}
+        {% set is_me = (a.id == session.get('admin_id')) %}
+        {% set is_super = (a.level == 'superadmin') %}
+        <tr data-level="{{ a.level }}"
+            data-status="{{ 'active' if a.is_active else 'blocked' }}"
+            data-name="{{ a.name|lower }}"
+            data-email="{{ a.email|lower }}">
+          <td style="font-family:var(--font-mono);font-size:10px;color:var(--fg3)">{{ '%02d'|format(loop.index) }}</td>
+          <td>
+            <div class="name-cell">
+              <div class="ava" style="background:{{ c[0] }};color:{{ c[1] }}">{{ a.name[:2].upper() }}</div>
+              <div>
+                <div class="name-main">
+                  {{ a.name }}
+                  {% if is_me %}<span class="you-tag">YOU</span>{% endif %}
+                </div>
+                <div class="name-email">{{ a.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="lbadge lb-{{ a.level }}">
+              {% if a.level == 'superadmin' %}👑 {% endif %}{{ a.level|upper }}
+            </span>
+          </td>
+          <td>
+            <span class="sbadge {{ 'sb-active' if a.is_active else 'sb-blocked' }}">
+              <span class="pulse {{ 'pulse-on' if a.is_active else 'pulse-off' }}"></span>
+              {{ 'ACTIVE' if a.is_active else 'BLOCKED' }}
+            </span>
+          </td>
+          <td><div class="login-count">{{ a.login_count or 0 }}</div></td>
+          <td>
+            <div class="date-cell">
+              {% if a.created_at %}{{ a.created_at.strftime('%d %b %Y') }}<br>
+              <span style="font-size:8px">{{ a.created_at.strftime('%H:%M') }}</span>{% else %}—{% endif %}
+            </div>
+          </td>
+          <td>
+            <div class="date-cell" style="{{ 'color:var(--gr2)' if a.last_login else '' }}">
+              {% if a.last_login %}{{ a.last_login.strftime('%d %b %Y') }}<br>
+              <span style="font-size:8px">{{ a.last_login.strftime('%H:%M') }}</span>
+              {% else %}<span style="color:var(--fg3)">NEVER</span>{% endif %}
+            </div>
+          </td>
+          <td>
+            <div class="act-btns">
+              <button class="act-btn act-edit"
+                onclick="openEdit({{ a.id }},'{{ a.name }}','{{ a.email }}','{{ a.level }}')">
+                EDIT
+              </button>
+              {% if not is_super and not is_me %}
+                <button class="act-btn {{ 'act-unblock' if not a.is_active else 'act-block' }}"
+                  onclick="openToggle({{ a.id }},'{{ a.name }}',{{ 'true' if a.is_active else 'false' }})">
+                  {{ 'UNBLOCK' if not a.is_active else 'BLOCK' }}
+                </button>
+                <button class="act-btn act-delete"
+                  onclick="openDelete({{ a.id }},'{{ a.name }}')">
+                  DELETE
+                </button>
+              {% else %}
+                <button class="act-btn act-block" disabled title="{% if is_me %}Cannot block yourself{% else %}Cannot block superadmin{% endif %}">BLOCK</button>
+                <button class="act-btn act-delete" disabled title="{% if is_me %}Cannot delete yourself{% else %}Cannot delete superadmin{% endif %}">DELETE</button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr class="empty-row"><td colspan="8"><div class="empty-icon">👤</div><div class="empty-txt">NO ADMINS FOUND</div></td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span><span class="fdot"></span>VEKTOR ADMIN v2.6 · SS/26</span>
+    <span>।। वस्त्रं शौर्यस्य चिन्हम् ।।</span>
+    <span id="clock"></span>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     CREATE DRAWER
+══════════════════════════════════════ -->
+<div class="drawer" id="createDrawer">
+  <div class="drawer-bar"></div>
+  <div class="drawer-hdr">
+    <div>
+      <div class="drawer-title">CREATE ADMIN</div>
+      <div class="drawer-sub">नवीन प्रशासक तयार करा · Secure Access</div>
+    </div>
+    <button class="drawer-close" onclick="closeCreate()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <form method="POST" action="/admin/create-admin" id="createForm" autocomplete="off" novalidate>
+
+      <div class="fg">
+        <label class="flabel">ADMIN NAME · नाव</label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="finput" type="text" name="name" id="c_name" placeholder="Full Name" oninput="cv('c_name','cNameErr',v=>v.length>=2,'Min 2 characters')">
+          <div class="fline"></div>
+        </div>
+        <div class="ferr" id="cNameErr">Min 2 characters required</div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">EMAIL · ईमेल <span class="flabel-tag">UNIQUE</span></label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          <input class="finput" type="email" name="email" id="c_email" placeholder="admin@vektor.in" oninput="cv('c_email','cEmailErr',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),'Invalid email')">
+          <div class="fline"></div>
+        </div>
+        <div class="ferr" id="cEmailErr">Enter a valid email</div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">PASSWORD · पासवर्ड <span class="flabel-tag">MIN 8</span></label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+          <input class="finput" type="password" name="password" id="c_pw" placeholder="Uppercase · Number · Symbol" autocomplete="new-password" oninput="checkStr();cv('c_pw','cPwErr',v=>v.length>=8&&/[A-Z]/.test(v)&&/[0-9]/.test(v),'8+ chars, uppercase, number required')">
+          <button type="button" class="pw-toggle" onclick="togPw('c_pw',this)">SHOW</button>
+          <div class="fline"></div>
+        </div>
+        <div class="str-row"><div class="str-seg" id="ss1"></div><div class="str-seg" id="ss2"></div><div class="str-seg" id="ss3"></div><div class="str-seg" id="ss4"></div></div>
+        <div class="str-lbl" id="strLbl"></div>
+        <div class="ferr" id="cPwErr">Min 8 chars, 1 uppercase, 1 number</div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">ACCESS LEVEL · स्तर</label>
+        <div class="role-cards">
+          <label class="rcard on" onclick="pickRole(this)">
+            <input type="radio" name="level" value="manager" checked>
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">⚙️</div>
+            <div class="rcard-name">MANAGER</div>
+            <div class="rcard-desc">Products & orders</div>
+          </label>
+          <label class="rcard" onclick="pickRole(this)">
+            <input type="radio" name="level" value="viewer">
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">👁️</div>
+            <div class="rcard-name">VIEWER</div>
+            <div class="rcard-desc">Read only</div>
+          </label>
+          <label class="rcard" onclick="pickRole(this)">
+            <input type="radio" name="level" value="superadmin">
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">👑</div>
+            <div class="rcard-name">SUPER</div>
+            <div class="rcard-desc">Full access</div>
+          </label>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-sf" onclick="submitCreate()">CREATE ADMIN — तयार करा</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EDIT DRAWER
+══════════════════════════════════════ -->
+<div class="drawer" id="editDrawer">
+  <div class="drawer-bar"></div>
+  <div class="drawer-hdr">
+    <div>
+      <div class="drawer-title">EDIT ADMIN</div>
+      <div class="drawer-sub">प्रशासक संपादित करा · Update Access</div>
+    </div>
+    <button class="drawer-close" onclick="closeEdit()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <form method="POST" id="editForm" autocomplete="off" novalidate>
+
+      <div class="fg">
+        <label class="flabel">ADMIN NAME</label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+          <input class="finput" type="text" name="name" id="e_name" placeholder="Full Name">
+          <div class="fline"></div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">EMAIL</label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+          <input class="finput" type="email" name="email" id="e_email" placeholder="admin@vektor.in">
+          <div class="fline"></div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">NEW PASSWORD <span class="flabel-tag">LEAVE BLANK TO KEEP</span></label>
+        <div class="finput-wrap">
+          <span class="finput-icon"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+          <input class="finput" type="password" name="password" id="e_pw" placeholder="Leave blank = keep current" autocomplete="new-password">
+          <button type="button" class="pw-toggle" onclick="togPw('e_pw',this)">SHOW</button>
+          <div class="fline"></div>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label class="flabel">ACCESS LEVEL</label>
+        <div class="role-cards" id="editRoleCards">
+          <label class="rcard" onclick="pickRole(this)">
+            <input type="radio" name="level" value="manager">
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">⚙️</div>
+            <div class="rcard-name">MANAGER</div>
+            <div class="rcard-desc">Products & orders</div>
+          </label>
+          <label class="rcard" onclick="pickRole(this)">
+            <input type="radio" name="level" value="viewer">
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">👁️</div>
+            <div class="rcard-name">VIEWER</div>
+            <div class="rcard-desc">Read only</div>
+          </label>
+          <label class="rcard" onclick="pickRole(this)">
+            <input type="radio" name="level" value="superadmin">
+            <div class="rcheck"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="rcard-icon">👑</div>
+            <div class="rcard-name">SUPER</div>
+            <div class="rcard-desc">Full access</div>
+          </label>
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn-sf" onclick="submitEdit()">SAVE CHANGES — जतन करा</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BLOCK / UNBLOCK MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="toggleOverlay">
+  <div class="cmodal">
+    <div class="cmodal-bar" id="toggleBar"></div>
+
+    <div class="cmodal-body">
+      <div class="cmodal-icon" id="toggleIcon"></div>
+      <div class="cmodal-title" id="toggleTitle"></div>
+      <div class="cmodal-sub" id="toggleSub"></div>
+    </div>
+
+    <div class="cmodal-footer">
+      <button class="btn-ghost" onclick="closeToggle()">CANCEL</button>
+
+      <!-- ✅ FIXED (POST FORM) -->
+      <form id="toggleForm" method="POST" style="margin:0;">
+        <button type="submit"
+                class="act-btn"
+                id="toggleConfirmBtn"
+                style="padding:10px 20px;font-size:10px;letter-spacing:.1em;">
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     DELETE MODAL
+══════════════════════════════════════ -->
+<div class="overlay" id="deleteOverlay">
+  <div class="cmodal">
+    <div class="cmodal-bar" style="background:var(--red)"></div>
+    <div class="cmodal-body">
+      <div class="cmodal-icon">🗑️</div>
+      <div class="cmodal-title" style="color:var(--red2)">DELETE ADMIN</div>
+      <div class="cmodal-sub">
+        This action is <strong style="color:var(--red2)">permanent and irreversible</strong>.<br>
+        Type <strong id="deleteNameDisplay" style="color:var(--fg);font-family:var(--font-mono)"></strong> to confirm:
+      </div>
+      <input type="text" class="confirm-input" id="deleteConfirmInput"
+             placeholder="Type exact name here..."
+             oninput="checkDeleteConfirm()">
+    </div>
+    <form method="POST" id="deleteForm">
+      <input type="hidden" name="confirm_name" id="deleteConfirmHidden">
+      <div class="cmodal-footer">
+        <button type="button" class="btn-ghost" onclick="closeDelete()">CANCEL</button>
+        <button type="submit" class="btn-red" id="deleteBtn" disabled>DELETE PERMANENTLY</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DRAWER OVERLAY -->
+<div class="overlay" id="drawerOverlay" onclick="closeCreate();closeEdit();"></div>
+
+<script>
+/* ── FILTER ── */
+let activeLevel = 'all', activeStatus = 'all';
+
+function applyFilter() {
+  const q = document.getElementById('searchQ').value.toLowerCase();
+  const rows = document.querySelectorAll('#aTable tbody tr[data-level]');
+  let vis = 0;
+  rows.forEach(r => {
+    const ml = activeLevel === 'all' || r.dataset.level === activeLevel;
+    const ms = activeStatus === 'all' || r.dataset.status === activeStatus;
+    const mq = !q || r.dataset.name.includes(q) || r.dataset.email.includes(q);
+    const show = ml && ms && mq;
+    r.style.display = show ? '' : 'none';
+    if (show) vis++;
+  });
+  document.getElementById('visCount').textContent = vis;
+}
+
+function setLevel(btn) {
+  document.querySelectorAll('.fbtn[data-level]').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  activeLevel = btn.dataset.level;
+  applyFilter();
+}
+
+function setStatus(btn) {
+  const already = btn.classList.contains('on');
+  document.querySelectorAll('.fbtn[data-status]').forEach(b => b.classList.remove('on'));
+  if (!already) { btn.classList.add('on'); activeStatus = btn.dataset.status; }
+  else activeStatus = 'all';
+  applyFilter();
+}
+
+/* ── ROLE CARDS ── */
+function pickRole(card) {
+  const parent = card.closest('.role-cards');
+  parent.querySelectorAll('.rcard').forEach(c => c.classList.remove('on'));
+  card.classList.add('on');
+  card.querySelector('input[type="radio"]').checked = true;
+}
+
+/* ── PW TOGGLE ── */
+function togPw(id, btn) {
+  const f = document.getElementById(id);
+  f.type = f.type === 'password' ? 'text' : 'password';
+  btn.textContent = f.type === 'password' ? 'SHOW' : 'HIDE';
+}
+
+/* ── STRENGTH ── */
+function checkStr() {
+  const v = document.getElementById('c_pw').value;
+  const segs = ['ss1','ss2','ss3','ss4'].map(i => document.getElementById(i));
+  const lbl = document.getElementById('strLbl');
+  segs.forEach(s => s.className = 'str-seg');
+  if (!v) { lbl.textContent = ''; return; }
+  let sc = 0;
+  if (v.length >= 8) sc++;
+  if (/[A-Z]/.test(v)) sc++;
+  if (/[0-9]/.test(v)) sc++;
+  if (/[^A-Za-z0-9]/.test(v)) sc++;
+  const map = [{cls:'s-weak',txt:'WEAK',col:'#e03030'},{cls:'s-fair',txt:'FAIR',col:'#e0aa30'},{cls:'s-good',txt:'GOOD',col:'#FF6B00'},{cls:'s-strong',txt:'STRONG',col:'#0db85f'}];
+  if (!sc) return;
+  const lvl = map[sc-1];
+  for (let i = 0; i < sc; i++) segs[i].classList.add(lvl.cls);
+  lbl.textContent = lvl.txt; lbl.style.color = lvl.col;
+}
+
+/* ── INLINE VALIDATION ── */
+function cv(inputId, errId, rule, msg) {
+  const inp = document.getElementById(inputId);
+  const err = document.getElementById(errId);
+  const v = inp.value.trim();
+  if (!v) { inp.classList.remove('ok','err'); err.classList.remove('show'); return; }
+  if (rule(v)) { inp.classList.add('ok'); inp.classList.remove('err'); err.classList.remove('show'); }
+  else { inp.classList.add('err'); inp.classList.remove('ok'); err.textContent = msg; err.classList.add('show'); }
+}
+
+/* ── CREATE DRAWER ── */
+function openCreate() {
+  document.getElementById('createDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeCreate() {
+  document.getElementById('createDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function submitCreate() {
+  const n = document.getElementById('c_name').value.trim();
+  const e = document.getElementById('c_email').value.trim();
+  const p = document.getElementById('c_pw').value;
+  if (!n || n.length < 2) { document.getElementById('cNameErr').classList.add('show'); return; }
+  if (!e || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) { document.getElementById('cEmailErr').classList.add('show'); return; }
+  if (!p || p.length < 8 || !/[A-Z]/.test(p) || !/[0-9]/.test(p)) { document.getElementById('cPwErr').classList.add('show'); return; }
+  document.getElementById('createForm').submit();
+}
+
+/* ── EDIT DRAWER ── */
+function openEdit(id, name, email, level) {
+  document.getElementById('editForm').action = `/admin/edit-admin/${id}`;
+  document.getElementById('e_name').value  = name;
+  document.getElementById('e_email').value = email;
+  document.getElementById('e_pw').value    = '';
+  // Set role card
+  document.querySelectorAll('#editRoleCards .rcard').forEach(c => {
+    const val = c.querySelector('input').value;
+    c.classList.toggle('on', val === level);
+    c.querySelector('input').checked = (val === level);
+  });
+  document.getElementById('editDrawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+}
+function closeEdit() {
+  document.getElementById('editDrawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+}
+function submitEdit() {
+  document.getElementById('editForm').submit();
+}
+
+/* ── TOGGLE MODAL ── */
+function openToggle(id, name, isActive) {
+  const bar  = document.getElementById('toggleBar');
+  const icon = document.getElementById('toggleIcon');
+  const title= document.getElementById('toggleTitle');
+  const sub  = document.getElementById('toggleSub');
+  const btn  = document.getElementById('toggleConfirmBtn');
+  const link = document.getElementById('toggleActionBtn');
+
+  if (isActive) {
+    bar.style.background   = 'var(--gold2)';
+    icon.textContent       = '🔒';
+    title.textContent      = `BLOCK ${name.toUpperCase()}`;
+    sub.textContent        = `This admin will lose all access immediately. They cannot login until unblocked.`;
+    btn.textContent        = 'BLOCK ADMIN';
+    btn.className          = 'act-btn act-block';
+    btn.style.cssText      = 'padding:10px 20px;font-size:10px;letter-spacing:.1em;';
+  } else {
+    bar.style.background   = 'var(--gr2)';
+    icon.textContent       = '🔓';
+    title.textContent      = `UNBLOCK ${name.toUpperCase()}`;
+    sub.textContent        = `This admin will regain full access based on their role immediately.`;
+    btn.textContent        = 'UNBLOCK ADMIN';
+    btn.className          = 'act-btn act-unblock';
+    btn.style.cssText      = 'padding:10px 20px;font-size:10px;letter-spacing:.1em;';
+  }
+  document.getElementById('toggleForm').action = `/admin/toggle-admin/${id}`;
+  document.getElementById('toggleOverlay').classList.add('open');
+}
+function closeToggle() {
+  document.getElementById('toggleOverlay').classList.remove('open');
+}
+
+/* ── DELETE MODAL ── */
+let deleteTargetName = '';
+function openDelete(id, name) {
+  deleteTargetName = name;
+  document.getElementById('deleteNameDisplay').textContent = name;
+  document.getElementById('deleteConfirmInput').value = '';
+  document.getElementById('deleteBtn').disabled = true;
+  document.getElementById('deleteForm').action = `/admin/delete-admin/${id}`;
+  document.getElementById('deleteOverlay').classList.add('open');
+}
+function closeDelete() {
+  document.getElementById('deleteOverlay').classList.remove('open');
+}
+function checkDeleteConfirm() {
+  const val = document.getElementById('deleteConfirmInput').value;
+  const btn = document.getElementById('deleteBtn');
+  const hidden = document.getElementById('deleteConfirmHidden');
+  const match = val === deleteTargetName;
+  btn.disabled = !match;
+  hidden.value = val;
+  document.getElementById('deleteConfirmInput').style.borderColor =
+    val ? (match ? 'rgba(13,184,95,0.5)' : 'rgba(224,48,48,0.5)') : '';
+}
+
+/* ── CLOCK ── */
+setInterval(() => {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}, 1000);
+</script>
+</body>
+</html>

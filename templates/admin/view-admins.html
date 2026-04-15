@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — Manage Admins</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
+  --fg:#f0ece4;--fg2:#a09890;--fg3:#555;
+  --sf:#FF6B00;--sf2:#ff8c38;--gold:#c8941a;--gold2:#e0aa30;
+  --gr:#0aab5a;--gr2:#0db85f;--blue:#3b7dd8;--blue2:#7aacff;
+  --red:#e03030;--red2:#ff5555;
+  --font-display:'Bebas Neue',sans-serif;
+  --font-mono:'Space Mono',monospace;
+  --font-body:'DM Sans',sans-serif;
+  --font-dev:'Tiro Devanagari Sanskrit',serif;
+  --sb-w:52px;--ticker-h:34px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:13px;overflow:hidden;}
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:var(--sf);}
+
+/* TICKER */
+.admin-ticker{position:fixed;top:0;left:0;right:0;height:var(--ticker-h);background:var(--sf);z-index:200;display:flex;align-items:center;overflow:hidden;}
+.ticker-label{font-family:var(--font-display);font-size:13px;letter-spacing:.15em;color:#000;padding:0 16px;white-space:nowrap;border-right:2px solid rgba(0,0,0,0.25);height:100%;display:flex;align-items:center;background:rgba(0,0,0,0.12);flex-shrink:0;}
+.ticker-track{display:flex;animation:ticker 32s linear infinite;white-space:nowrap;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:14px;padding:0 14px;font-family:var(--font-mono);font-size:10px;color:#000;font-weight:700;letter-spacing:.1em;}
+.ticker-dot{width:4px;height:4px;background:rgba(0,0,0,0.4);border-radius:50%;}
+
+/* SIDEBAR */
+.admin-sidebar{position:fixed;top:var(--ticker-h);left:0;bottom:0;width:var(--sb-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:0 0 16px;z-index:100;gap:4px;}
+.sb-logo{font-family:var(--font-display);font-size:10px;letter-spacing:.2em;color:var(--sf);writing-mode:vertical-rl;transform:rotate(180deg);padding:16px 0;text-align:center;height:80px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);width:100%;margin-bottom:8px;}
+.sb-btn{width:38px;height:38px;border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--fg3);text-decoration:none;transition:all .2s;position:relative;border:1px solid transparent;}
+.sb-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.sb-btn:hover{color:var(--fg);background:var(--bg3);border-color:var(--border);}
+.sb-btn.active{color:var(--sf);background:rgba(255,107,0,0.1);border-color:rgba(255,107,0,0.25);}
+.sb-spacer{flex:1;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--sf),var(--gold));color:#000;font-family:var(--font-display);font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid var(--sf);}
+.sb-divider{width:28px;height:1px;background:var(--border);margin:4px 0;}
+
+/* MAIN */
+.admin-shell{display:flex;height:100vh;padding-top:var(--ticker-h);}
+.admin-main{margin-left:var(--sb-w);flex:1;overflow-y:auto;overflow-x:hidden;padding:0 24px 40px;display:flex;flex-direction:column;gap:16px;}
+
+/* HEADER */
+.admin-hdr{position:sticky;top:0;z-index:90;background:linear-gradient(to bottom,var(--bg) 70%,transparent);padding:20px 0 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;}
+.admin-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--fg3);margin-bottom:5px;}
+.admin-title{font-family:var(--font-display);font-size:38px;letter-spacing:.04em;line-height:1;}
+.admin-title span{color:var(--sf);}
+.admin-sub{font-family:var(--font-dev);font-size:11px;color:var(--fg3);margin-top:6px;}
+.hdr-actions{display:flex;align-items:center;gap:10px;}
+.btn-primary{display:flex;align-items:center;gap:8px;background:var(--sf);color:#000;font-family:var(--font-display);font-size:14px;letter-spacing:.1em;padding:10px 20px;text-decoration:none;border:none;cursor:pointer;transition:background .2s,transform .15s;}
+.btn-primary:hover{background:var(--sf2);transform:translateY(-1px);}
+.btn-back{display:flex;align-items:center;gap:6px;color:var(--fg3);font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;text-decoration:none;border:1px solid var(--border2);padding:8px 14px;transition:all .2s;}
+.btn-back:hover{color:var(--sf);border-color:rgba(255,107,0,0.3);}
+.btn-back svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat-mini{background:var(--bg2);border:1px solid var(--border);padding:16px 20px;position:relative;overflow:hidden;}
+.stat-mini::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);}
+.stat-mini-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--fg3);margin-bottom:8px;}
+.stat-mini-num{font-family:var(--font-display);font-size:28px;letter-spacing:.02em;line-height:1;}
+.stat-mini-sub{font-size:10px;color:var(--fg3);margin-top:4px;}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--bg2);border:1px solid var(--border);}
+.filter-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);padding:8px 14px;flex:1;max-width:300px;transition:border-color .2s;}
+.filter-search:focus-within{border-color:rgba(255,107,0,0.4);}
+.filter-search svg{width:12px;height:12px;stroke:var(--fg3);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;}
+.filter-search input{background:none;border:none;outline:none;color:var(--fg);font-family:var(--font-mono);font-size:10px;width:100%;}
+.filter-search input::placeholder{color:var(--fg3);}
+.filter-btn{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:8px 14px;border:1px solid var(--border2);background:none;color:var(--fg3);cursor:pointer;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{color:var(--sf);border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.05);}
+.filter-count{margin-left:auto;font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--fg3);}
+.filter-count span{color:var(--fg);}
+
+/* TABLE */
+.table-panel{background:var(--bg2);border:1px solid var(--border);overflow:hidden;}
+.table-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.table-panel-title{font-family:var(--font-display);font-size:16px;letter-spacing:.06em;}
+.table-wrap{overflow-x:auto;}
+.admins-table{width:100%;border-collapse:collapse;}
+.admins-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);text-align:left;padding:10px 20px;border-bottom:1px solid var(--border);font-weight:400;white-space:nowrap;}
+.admins-table td{padding:14px 20px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.admins-table tr:last-child td{border-bottom:none;}
+.admins-table tbody tr{transition:background .15s;}
+.admins-table tbody tr:hover td{background:var(--bg3);}
+
+/* ADMIN AVATAR */
+.admin-ava{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:13px;letter-spacing:.05em;flex-shrink:0;}
+
+/* NAME CELL */
+.name-cell{display:flex;align-items:center;gap:12px;}
+.name-info{}
+.name-main{font-size:13px;font-weight:500;color:var(--fg);margin-bottom:2px;}
+.name-email{font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.04em;}
+
+/* LEVEL BADGE */
+.level-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;padding:4px 10px;display:inline-flex;align-items:center;gap:5px;}
+.level-badge::before{content:'';width:5px;height:5px;border-radius:50%;}
+.badge-superadmin{background:rgba(255,107,0,0.12);color:var(--sf);border:1px solid rgba(255,107,0,0.25);}
+.badge-superadmin::before{background:var(--sf);}
+.badge-manager{background:rgba(59,125,216,0.12);color:var(--blue2);border:1px solid rgba(59,125,216,0.25);}
+.badge-manager::before{background:var(--blue2);}
+.badge-viewer{background:rgba(160,152,144,0.12);color:var(--fg2);border:1px solid rgba(160,152,144,0.2);}
+.badge-viewer::before{background:var(--fg2);}
+
+/* STATUS BADGE */
+.status-badge{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:3px 9px;}
+.status-active{background:rgba(13,184,95,0.1);color:var(--gr2);border:1px solid rgba(13,184,95,0.2);}
+.status-inactive{background:rgba(224,48,48,0.1);color:var(--red2);border:1px solid rgba(224,48,48,0.2);}
+
+/* CREATED BY */
+.created-by{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--fg3);}
+.created-by-dot{width:5px;height:5px;border-radius:50%;background:var(--sf);opacity:.6;flex-shrink:0;}
+
+/* DATE */
+.date-cell{font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.04em;line-height:1.6;}
+
+/* LAST LOGIN */
+.last-login{font-family:var(--font-mono);font-size:9px;color:var(--fg3);}
+.last-login.recent{color:var(--gr2);}
+
+/* YOU TAG */
+.you-tag{font-family:var(--font-mono);font-size:8px;letter-spacing:.1em;padding:2px 6px;background:rgba(255,107,0,0.15);color:var(--sf);border:1px solid rgba(255,107,0,0.2);margin-left:6px;}
+
+/* EMPTY STATE */
+.empty-state{padding:60px 20px;text-align:center;}
+.empty-icon{font-size:32px;margin-bottom:12px;opacity:.4;}
+.empty-text{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--fg3);}
+
+/* FLASH */
+.flash-msg{display:flex;align-items:center;gap:10px;padding:12px 16px;font-size:11px;margin-bottom:4px;}
+.flash-success{background:rgba(13,184,95,0.08);border:1px solid rgba(13,184,95,0.2);border-left:2px solid var(--gr2);color:#3dffa0;}
+.flash-error{background:rgba(224,48,48,0.07);border:1px solid rgba(224,48,48,0.2);border-left:2px solid var(--red);color:#ff7070;}
+.flash-label-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;font-weight:700;margin-right:6px;}
+
+/* FOOTER */
+.admin-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.1em;}
+.footer-dot{display:inline-block;width:5px;height:5px;background:var(--gr);border-radius:50%;margin-right:6px;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,.5)}50%{box-shadow:0 0 0 5px rgba(13,184,95,0)}}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="admin-ticker">
+  <div class="ticker-label">VEKTOR ADMIN</div>
+  <div class="ticker-track">
+    <div class="ticker-item">SUPERADMIN PANEL<div class="ticker-dot"></div>ADMIN MANAGEMENT<div class="ticker-dot"></div>ROLE-BASED ACCESS CONTROL<div class="ticker-dot"></div>HIGH SECURITY ZONE<div class="ticker-dot"></div>VEKTOR SS/26<div class="ticker-dot"></div></div>
+    <div class="ticker-item">SUPERADMIN PANEL<div class="ticker-dot"></div>ADMIN MANAGEMENT<div class="ticker-dot"></div>ROLE-BASED ACCESS CONTROL<div class="ticker-dot"></div>HIGH SECURITY ZONE<div class="ticker-dot"></div>VEKTOR SS/26<div class="ticker-dot"></div></div>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="admin-sidebar">
+  <div class="sb-logo">VEKTOR</div>
+  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+  </a>
+  <a href="/admin/products" class="sb-btn" title="Products">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  </a>
+  <a href="/admin/orders" class="sb-btn" title="Orders">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </a>
+  <a href="/admin/customers" class="sb-btn" title="Customers">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+  </a>
+  <a href="/admin/analytics" class="sb-btn" title="Analytics">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </a>
+  <a href="/admin/manage-admins" class="sb-btn active" title="Manage Admins">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+  </a>
+  <a href="/admin/settings" class="sb-btn" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </a>
+  <div class="sb-divider"></div>
+  <a href="/admin/switch" class="sb-btn" title="Switch Account">
+    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+  </a>
+  <a href="/admin/logout" class="sb-btn" title="Logout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </a>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">{{ session.get('admin_name','VK')[:2].upper() }}</div>
+</div>
+
+<!-- MAIN -->
+<div class="admin-shell">
+<div class="admin-main">
+
+  <!-- HEADER -->
+  <div class="admin-hdr">
+    <div>
+      <div class="admin-eyebrow">SUPERADMIN ONLY · उच्च सुरक्षा</div>
+      <div class="admin-title">MANAGE <span>ADMINS</span></div>
+      <div class="admin-sub">।। केवळ सुपरअॅडमिनला प्रवेश ।। — Role Based Access Control</div>
+    </div>
+    <div class="hdr-actions">
+      <a href="/admin/dashboard" class="btn-back">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        DASHBOARD
+      </a>
+      <a href="/admin/create-admin" class="btn-primary">
+        + CREATE ADMIN
+      </a>
+    </div>
+  </div>
+
+  <!-- FLASH -->
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash-msg {% if category == 'success' %}flash-success{% else %}flash-error{% endif %}">
+          <span class="flash-label-tag">{% if category == 'success' %}SUCCESS{% else %}ERROR{% endif %}</span>
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-mini" style="--accent:var(--sf)">
+      <div class="stat-mini-label">TOTAL ADMINS</div>
+      <div class="stat-mini-num" style="color:var(--sf)">{{ admins|length }}</div>
+      <div class="stat-mini-sub">All roles combined</div>
+    </div>
+    <div class="stat-mini" style="--accent:var(--sf)">
+      <div class="stat-mini-label">SUPERADMINS</div>
+      <div class="stat-mini-num" style="color:var(--sf)">{{ admins|selectattr('level','equalto','superadmin')|list|length }}</div>
+      <div class="stat-mini-sub">Full access</div>
+    </div>
+    <div class="stat-mini" style="--accent:var(--blue)">
+      <div class="stat-mini-label">MANAGERS</div>
+      <div class="stat-mini-num" style="color:var(--blue2)">{{ admins|selectattr('level','equalto','manager')|list|length }}</div>
+      <div class="stat-mini-sub">Products · Orders</div>
+    </div>
+    <div class="stat-mini" style="--accent:var(--fg3)">
+      <div class="stat-mini-label">VIEWERS</div>
+      <div class="stat-mini-num" style="color:var(--fg2)">{{ admins|selectattr('level','equalto','viewer')|list|length }}</div>
+      <div class="stat-mini-sub">Read only</div>
+    </div>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <div class="filter-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search by name or email..." id="searchInput" oninput="filterTable()">
+    </div>
+    <button class="filter-btn active" onclick="filterLevel('all',this)">ALL</button>
+    <button class="filter-btn" onclick="filterLevel('superadmin',this)">SUPERADMIN</button>
+    <button class="filter-btn" onclick="filterLevel('manager',this)">MANAGER</button>
+    <button class="filter-btn" onclick="filterLevel('viewer',this)">VIEWER</button>
+    <div class="filter-count">SHOWING <span id="visibleCount">{{ admins|length }}</span> OF {{ admins|length }}</div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-panel">
+    <div class="table-panel-hdr">
+      <div class="table-panel-title">ADMIN ACCOUNTS · प्रशासक</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.1em;">
+        🔐 SUPERADMIN VIEW ONLY
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="admins-table" id="adminsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>ADMIN</th>
+            <th>LEVEL · स्तर</th>
+            <th>STATUS</th>
+            <th>CREATED BY</th>
+            <th>CREATED ON</th>
+            <th>LAST LOGIN</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in admins %}
+          {% set colors = [
+            ['rgba(255,107,0,0.15)','#FF6B00'],
+            ['rgba(13,184,95,0.12)','#0db85f'],
+            ['rgba(59,125,216,0.15)','#7aacff'],
+            ['rgba(200,148,26,0.15)','#e0aa30'],
+            ['rgba(160,80,200,0.15)','#c07aff']
+          ] %}
+          {% set c = colors[loop.index0 % 5] %}
+          <tr data-level="{{ a.level }}" data-name="{{ a.name|lower }}" data-email="{{ a.email|lower }}">
+            <td style="font-family:var(--font-mono);font-size:10px;color:var(--fg3);">
+              {{ '%02d'|format(loop.index) }}
+            </td>
+            <td>
+              <div class="name-cell">
+                <div class="admin-ava" style="background:{{ c[0] }};color:{{ c[1] }}">
+                  {{ a.name[:2].upper() }}
+                </div>
+                <div class="name-info">
+                  <div class="name-main">
+                    {{ a.name }}
+                    {% if a.id == session.get('admin_id') %}
+                      <span class="you-tag">YOU</span>
+                    {% endif %}
+                  </div>
+                  <div class="name-email">{{ a.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="level-badge badge-{{ a.level }}">
+                {% if a.level == 'superadmin' %}👑 {% endif %}
+                {{ a.level|upper }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge {% if a.is_active %}status-active{% else %}status-inactive{% endif %}">
+                {% if a.is_active %}ACTIVE{% else %}INACTIVE{% endif %}
+              </span>
+            </td>
+            <td>
+              <div class="created-by">
+                <div class="created-by-dot"></div>
+                {% if a.level == 'superadmin' and loop.first %}
+                  SYSTEM
+                {% else %}
+                  SUPERADMIN
+                {% endif %}
+              </div>
+            </td>
+            <td>
+              <div class="date-cell">
+                {% if a.created_at %}
+                  {{ a.created_at.strftime('%d %b %Y') }}<br>
+                  <span style="color:var(--fg3);font-size:8px">{{ a.created_at.strftime('%H:%M') }}</span>
+                {% else %}
+                  —
+                {% endif %}
+              </div>
+            </td>
+            <td>
+              <div class="last-login {% if a.last_login %}recent{% endif %}">
+                {% if a.last_login %}
+                  {{ a.last_login.strftime('%d %b %Y') }}<br>
+                  <span style="font-size:8px">{{ a.last_login.strftime('%H:%M') }}</span>
+                {% else %}
+                  <span style="color:var(--fg3)">NEVER</span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="7">
+              <div class="empty-state">
+                <div class="empty-icon">👤</div>
+                <div class="empty-text">NO ADMINS FOUND</div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="admin-footer">
+    <span><span class="footer-dot"></span>VEKTOR ADMIN v2.6 · SS/26</span>
+    <span>।। वस्त्रं शौर्यस्य चिन्हम् ।।</span>
+    <span id="footerTime"></span>
+  </div>
+
+</div>
+</div>
+
+<script>
+function filterTable() {
+  const q     = document.getElementById('searchInput').value.toLowerCase();
+  const level = document.querySelector('.filter-btn.active')?.dataset.level || 'all';
+  const rows  = document.querySelectorAll('#adminsTable tbody tr[data-level]');
+  let visible = 0;
+  rows.forEach(r => {
+    const matchSearch = !q || r.dataset.name.includes(q) || r.dataset.email.includes(q);
+    const matchLevel  = level === 'all' || r.dataset.level === level;
+    const show = matchSearch && matchLevel;
+    r.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  document.getElementById('visibleCount').textContent = visible;
+}
+
+function filterLevel(level, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  btn.dataset.level = level;
+  filterTable();
+}
+
+function updateClock() {
+  document.getElementById('footerTime').textContent =
+    new Date().toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
+</body>
+</html>

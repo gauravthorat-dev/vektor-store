@@ -1,0 +1,1015 @@
+{% extends "base.html" %}
+{% set active_page = "shop" %}
+{% block title %}Shop — VEKTOR{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ═══════════════════════════════════════════════════════
+   VEKTOR SHOP — KINETIC EDITORIAL
+   Direction: High-fashion magazine × Indian streetwear
+   One thing they'll remember: cards that feel physical
+═══════════════════════════════════════════════════════ */
+
+:root {
+  --ink:    #060608;
+  --sf:     #FF6B00;
+  --sf2:    #FF8C35;
+  --gr:     #046A38;
+  --gr2:    #0A8A4A;
+  --white:  #F7F3EC;
+  --gold:   #C8941A;
+  --border: rgba(247,243,236,0.07);
+  --card:   #0E0E12;
+  --mid:    #111116;
+  --smoke:  #0A0A0E;
+}
+
+/* ── PAGE BASE ── */
+.vk-shop { background: var(--ink); min-height: 100vh; overflow-x: hidden; }
+
+/* ── HERO MARQUEE STRIP ── */
+.shop-marquee-hero {
+  background: var(--sf);
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0;
+  border-bottom: none;
+  position: relative;
+}
+.smh-track {
+  display: inline-flex;
+  animation: marqueeRun 18s linear infinite;
+}
+.smh-item {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  letter-spacing: 4px;
+  color: var(--ink);
+  padding: 7px 28px;
+  display: inline-block;
+}
+.smh-dot { color: rgba(6,6,8,.35); margin: 0 4px; }
+@keyframes marqueeRun { to { transform: translateX(-50%); } }
+
+/* ── GIANT EDITORIAL HEADER ── */
+.shop-editorial-header {
+  padding: 48px 48px 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  border-bottom: 0.5px solid var(--border);
+}
+
+.seh-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 6px;
+  color: var(--sf);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.seh-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1.5px;
+  background: var(--sf);
+  flex-shrink: 0;
+}
+
+.seh-title-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.seh-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 10vw, 140px);
+  line-height: .88;
+  color: var(--white);
+  letter-spacing: -1px;
+  position: relative;
+}
+
+/* Giant ghost text behind title */
+.seh-title::after {
+  content: 'दुकान';
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: .45em;
+  color: rgba(255,107,0,0.06);
+  letter-spacing: 0;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.seh-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  padding-bottom: 14px;
+}
+.seh-count {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: var(--sf);
+  line-height: 1;
+}
+.seh-count-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(247,243,236,.25);
+  text-transform: uppercase;
+}
+
+/* ── CATEGORY STRIP ── */
+.shop-cat-strip {
+  display: flex;
+  border-top: 0.5px solid var(--border);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.shop-cat-strip::-webkit-scrollbar { display: none; }
+
+.scs-item {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 28px;
+  border-right: 0.5px solid var(--border);
+  text-decoration: none;
+  transition: background .2s;
+  position: relative;
+  gap: 2px;
+}
+.scs-item:hover { background: rgba(255,107,0,.04); }
+.scs-item.active { background: rgba(255,107,0,.07); }
+.scs-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--sf);
+}
+.scs-en {
+  font-family: 'Space Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 2.5px;
+  color: rgba(247,243,236,.4);
+  text-transform: uppercase;
+}
+.scs-item.active .scs-en { color: var(--sf); }
+.scs-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 10px;
+  color: rgba(247,243,236,.18);
+}
+
+/* ── MAIN LAYOUT ── */
+.shop-body {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  align-items: start;
+  min-height: 80vh;
+}
+
+/* ── FILTER PANEL ── */
+.vk-filter-panel {
+  border-right: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,107,0,.15) transparent;
+  background: var(--smoke);
+}
+.vk-filter-panel::-webkit-scrollbar { width: 2px; }
+.vk-filter-panel::-webkit-scrollbar-thumb { background: rgba(255,107,0,.2); }
+
+/* Filter panel header */
+.fp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 14px;
+  border-bottom: 0.5px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--smoke);
+  z-index: 2;
+}
+.fp-head-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 5px;
+  color: var(--sf);
+  text-transform: uppercase;
+}
+.fp-clear {
+  font-family: 'Space Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: rgba(247,243,236,.2);
+  background: none;
+  border: 0.5px solid rgba(247,243,236,.1);
+  padding: 4px 9px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all .2s;
+  text-decoration: none;
+}
+.fp-clear:hover { border-color: var(--sf); color: var(--sf); }
+
+/* Active chips */
+.fp-chips { display: flex; flex-wrap: wrap; gap: 5px; padding: 10px 16px; min-height: 0; }
+.fp-chip {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 8px;
+  background: rgba(255,107,0,.08);
+  border: 0.5px solid rgba(255,107,0,.25);
+  font-family: 'Space Mono', monospace;
+  font-size: 7px; letter-spacing: 1px;
+  color: var(--sf); text-transform: uppercase;
+}
+.fp-chip-x {
+  background: none; border: none; color: rgba(255,107,0,.5);
+  font-size: 10px; cursor: pointer; padding: 0 1px; line-height: 1;
+  transition: color .15s;
+}
+.fp-chip-x:hover { color: var(--sf); }
+
+/* Accordion */
+.fp-section { border-bottom: 0.5px solid var(--border); }
+.fp-trigger {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; background: none; border: none; cursor: pointer;
+  text-align: left; gap: 12px; transition: background .2s;
+}
+.fp-trigger:hover { background: rgba(255,255,255,.02); }
+.fp-trigger-label {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.fp-trigger-en {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 2.5px; color: rgba(247,243,236,.5); text-transform: uppercase;
+}
+.fp-section.open .fp-trigger-en { color: var(--sf); }
+.fp-trigger-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 10px; color: rgba(247,243,236,.15);
+}
+.fp-arrow {
+  width: 12px; height: 12px; color: rgba(247,243,236,.2); flex-shrink: 0;
+  transition: transform .28s cubic-bezier(.4,0,.2,1);
+}
+.fp-section.open .fp-arrow { transform: rotate(180deg); }
+.fp-body {
+  overflow: hidden; max-height: 0;
+  transition: max-height .35s cubic-bezier(.4,0,.2,1), padding .35s;
+  padding: 0 20px;
+}
+.fp-section.open .fp-body { max-height: 360px; padding: 0 20px 18px; }
+
+/* Price slider */
+.price-slider-wrap { position: relative; margin-bottom: 10px; }
+.price-slider-wrap input[type="range"] {
+  width: 100%; -webkit-appearance: none;
+  height: 2px; background: rgba(255,255,255,.08);
+  border: none; outline: none; cursor: pointer;
+}
+.price-slider-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px;
+  background: var(--sf); border: 2px solid var(--ink);
+  border-radius: 50%; cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(255,107,0,.25);
+}
+.price-fill-bar {
+  position: absolute; top: 50%; height: 2px;
+  background: var(--sf); transform: translateY(-50%);
+  pointer-events: none; z-index: 1; transition: width .1s; left: 0;
+}
+.price-vals-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px;
+}
+.price-val-lbl { font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(247,243,236,.2); }
+.price-val-cur { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--sf); font-weight: 700; letter-spacing: 1px; }
+.fp-apply-btn {
+  width: 100%; margin-top: 12px; padding: 9px;
+  background: var(--sf); color: var(--ink);
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  border: none; cursor: pointer; font-weight: 700;
+  transition: background .2s;
+}
+.fp-apply-btn:hover { background: var(--sf2); }
+
+/* Size grid */
+.sz-g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+.sz-g button {
+  padding: 9px 4px; border: 0.5px solid var(--border);
+  background: none; color: rgba(247,243,236,.35);
+  font-family: 'Space Mono', monospace; font-size: 8.5px;
+  letter-spacing: 1px; cursor: pointer; text-align: center;
+  transition: all .18s;
+}
+.sz-g button:hover { border-color: rgba(255,107,0,.4); color: rgba(247,243,236,.7); }
+.sz-g button.active { background: var(--sf); border-color: var(--sf); color: var(--ink); font-weight: 700; }
+
+/* Color dots */
+.color-g { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.color-dot-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
+.color-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid transparent; transition: all .18s;
+}
+.color-dot-wrap:hover .color-dot { transform: scale(1.15); }
+.color-dot-wrap.active .color-dot { border-color: var(--white); box-shadow: 0 0 0 2px var(--sf); }
+.color-dot-label {
+  font-family: 'Space Mono', monospace; font-size: 6px;
+  letter-spacing: 0.5px; color: rgba(247,243,236,.2);
+  text-transform: uppercase; text-align: center;
+}
+
+
+/* ══════════════════════════════════════
+   PRODUCT AREA
+══════════════════════════════════════ */
+.shop-products-area { min-width: 0; }
+
+/* ── SORT / CONTROL BAR ── */
+.sp-control {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 20px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--smoke);
+  position: sticky; top: 0; z-index: 5;
+  gap: 12px;
+}
+
+.sp-view-toggle {
+  display: flex; gap: 0;
+  border: 0.5px solid var(--border);
+}
+.sp-view-btn {
+  width: 34px; height: 34px; background: none; border: none;
+  color: rgba(247,243,236,.25); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.sp-view-btn.active { background: rgba(255,107,0,.1); color: var(--sf); }
+.sp-view-btn:hover:not(.active) { color: rgba(247,243,236,.6); }
+
+.sp-sort {
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 1.5px; color: rgba(247,243,236,.4);
+  background: var(--card); border: 0.5px solid var(--border);
+  padding: 8px 28px 8px 12px; cursor: pointer;
+  text-transform: uppercase; outline: none; appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(247,243,236,.3)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  transition: border-color .2s;
+}
+.sp-sort:hover { border-color: rgba(255,107,0,.3); }
+.sp-sort option { background: var(--card); color: var(--white); }
+
+.sp-filter-mob {
+  display: none; align-items: center; gap: 7px;
+  padding: 7px 14px; border: 0.5px solid var(--border);
+  background: none; color: rgba(247,243,236,.4);
+  font-family: 'Space Mono', monospace; font-size: 8px;
+  letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.sp-filter-mob:hover { border-color: var(--sf); color: var(--sf); }
+
+
+/* ══════════════════════════════════════
+   PRODUCT GRID — THE HERO
+══════════════════════════════════════ */
+.vk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 2px;
+  background: var(--border);
+}
+.vk-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+
+/* ── PRODUCT CARD — physical tilt effect ── */
+.vk-card {
+  background: var(--card);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .4s cubic-bezier(.175,.885,.32,1.275),
+              box-shadow .4s ease;
+  transform-origin: center bottom;
+  transform-style: preserve-3d;
+}
+.vk-card:hover {
+  transform: translateY(-6px) rotateX(2deg) scale(1.01);
+  box-shadow: 0 24px 48px rgba(0,0,0,.7), 0 0 0 0.5px rgba(255,107,0,.2);
+  z-index: 2;
+}
+
+/* Image wrapper */
+.vk-card-img {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+  background: var(--mid);
+}
+.vk-card-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .7s cubic-bezier(.25,.46,.45,.94);
+  display: block;
+}
+.vk-card:hover .vk-card-img img { transform: scale(1.06); }
+
+/* Placeholder when no image */
+.vk-no-img {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 80px; color: rgba(255,255,255,.04); letter-spacing: 6px;
+  transition: transform .6s; user-select: none;
+}
+.vk-card:hover .vk-no-img { transform: scale(1.06); }
+
+/* Badge */
+.vk-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 10px; padding: 4px 12px;
+  background: var(--sf); color: var(--ink); z-index: 2;
+}
+.vk-badge-off {
+  position: absolute; top: 12px; right: 12px;
+  background: var(--gr); padding: 4px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 1px;
+  color: var(--white); font-weight: 700; z-index: 2;
+}
+
+/* Diagonal overlay on hover */
+.vk-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, transparent 55%, rgba(255,107,0,.12) 100%);
+  opacity: 0; transition: opacity .35s;
+  pointer-events: none; z-index: 1;
+}
+.vk-card:hover .vk-card-overlay { opacity: 1; }
+
+/* Quick add — slides up */
+.vk-quick {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  transform: translateY(100%);
+  transition: transform .32s cubic-bezier(.4,0,.2,1);
+  z-index: 3;
+}
+.vk-card:hover .vk-quick { transform: translateY(0); }
+.vk-quick-btn {
+  width: 100%; padding: 12px;
+  background: rgba(6,6,8,.92);
+  border: none; border-top: 0.5px solid rgba(255,107,0,.3);
+  color: var(--sf);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px; letter-spacing: 3px;
+  text-transform: uppercase; cursor: pointer;
+  font-weight: 700; transition: background .2s;
+  backdrop-filter: blur(8px);
+}
+.vk-quick-btn:hover { background: var(--sf); color: var(--ink); }
+
+/* Tricolour flag bar */
+.vk-flag { position: absolute; bottom: 0; left: 0; right: 0; height: 4px; display: flex; z-index: 2; }
+.vk-card:hover .vk-flag { display: none; } /* hides when quick-add shows */
+
+/* ── CARD INFO ── */
+.vk-card-info {
+  padding: 14px 16px 16px;
+  border-top: 0.5px solid var(--border);
+  background: var(--card);
+  position: relative;
+}
+
+/* Animated orange accent line */
+.vk-card-info::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  height: 1.5px; width: 0;
+  background: linear-gradient(90deg, var(--sf), transparent);
+  transition: width .4s ease;
+}
+.vk-card:hover .vk-card-info::before { width: 100%; }
+
+.vk-name {
+  font-size: 15px; color: var(--white);
+  margin-bottom: 2px; line-height: 1.3;
+  transition: color .2s;
+}
+.vk-card:hover .vk-name { color: var(--sf); }
+.vk-name-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 11px; color: rgba(247,243,236,.22);
+  margin-bottom: 10px;
+}
+.vk-price-row { display: flex; align-items: center; justify-content: space-between; }
+.vk-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px; color: var(--sf); letter-spacing: 2px;
+}
+.vk-price-old {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; color: rgba(247,243,236,.2);
+  text-decoration: line-through; letter-spacing: 1px; margin-left: 6px;
+}
+.vk-add {
+  padding: 8px 14px;
+  background: var(--sf); color: var(--ink);
+  font-family: 'Space Mono', monospace; font-size: 7px;
+  letter-spacing: 2px; text-transform: uppercase;
+  border: none; cursor: pointer; font-weight: 700;
+  transition: background .2s, transform .15s;
+}
+.vk-add:hover { background: var(--sf2); transform: scale(1.05); }
+
+/* ── EMPTY STATE ── */
+.vk-empty {
+  padding: 100px 40px; text-align: center;
+}
+.vk-empty-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px,8vw,100px);
+  color: rgba(255,107,0,.05); letter-spacing: 4px;
+  margin-bottom: 16px; line-height: 1;
+}
+.vk-empty-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 16px; color: rgba(247,243,236,.2); margin-bottom: 24px;
+}
+.vk-empty-btn {
+  display: inline-block; padding: 11px 28px;
+  border: 0.5px solid var(--sf); color: var(--sf);
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 3px; text-decoration: none; text-transform: uppercase;
+  transition: background .2s;
+}
+.vk-empty-btn:hover { background: rgba(255,107,0,.08); }
+
+/* ── PAGINATION ── */
+.vk-pagination { display: flex; justify-content: center; gap: 4px; padding: 36px 20px; }
+.vk-pg {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 36px; height: 36px; padding: 0 10px;
+  border: 0.5px solid var(--border);
+  color: rgba(247,243,236,.3);
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  text-decoration: none; transition: all .2s; letter-spacing: 1px;
+}
+.vk-pg:hover { border-color: var(--sf); color: var(--sf); }
+.vk-pg.active { background: var(--sf); border-color: var(--sf); color: var(--ink); font-weight: 700; }
+
+/* ── MOBILE SIDEBAR SLIDE ── */
+.fp-backdrop {
+  display: none; position: fixed; inset: 0;
+  background: rgba(6,6,8,.75); z-index: 99;
+  opacity: 0; transition: opacity .3s;
+}
+.fp-backdrop.vis { opacity: 1; }
+
+@media (max-width: 900px) {
+  .shop-body { grid-template-columns: 1fr; }
+  .vk-filter-panel {
+    position: fixed; top: 0; left: -290px; width: 270px;
+    height: 100vh; z-index: 100;
+    transition: left .32s cubic-bezier(.4,0,.2,1);
+    border-right: 0.5px solid rgba(255,107,0,.2);
+    box-shadow: none;
+  }
+  .vk-filter-panel.open { left: 0; box-shadow: 16px 0 48px rgba(0,0,0,.7); }
+  .fp-backdrop { display: block; pointer-events: none; }
+  .fp-backdrop.vis { pointer-events: all; }
+  .sp-filter-mob { display: flex; }
+  .vk-grid { grid-template-columns: repeat(2, 1fr); }
+  .seh-title { font-size: clamp(52px, 10vw, 80px); }
+}
+@media (max-width: 480px) {
+  .vk-grid { grid-template-columns: 1fr; }
+  .shop-editorial-header { padding: 28px 20px 0; }
+  .shop-cat-strip .scs-item { padding: 12px 16px; }
+}
+
+/* ── STAGGER ANIMATIONS ── */
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.vk-card {
+  animation: cardIn 0.5s ease both;
+}
+{% for i in range(12) %}
+.vk-card:nth-child({{ i+1 }}) { animation-delay: {{ i * 0.05 }}s; }
+{% endfor %}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="vk-shop">
+
+  <!-- Marquee strip -->
+  <div class="shop-marquee-hero">
+    <div class="smh-track">
+      {% for _ in range(2) %}
+      <span class="smh-item">SS/26 COLLECTION LIVE</span><span class="smh-dot">·</span>
+      <span class="smh-item">नवीन संग्रह आला</span><span class="smh-dot">·</span>
+      <span class="smh-item">UP TO {{ 46 }}% OFF THIS WEEK</span><span class="smh-dot">·</span>
+      <span class="smh-item">FREE SHIPPING ₹999+</span><span class="smh-dot">·</span>
+      <span class="smh-item">मोफत डिलिव्हरी</span><span class="smh-dot">·</span>
+      <span class="smh-item">100% MADE IN INDIA</span><span class="smh-dot">·</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Editorial header -->
+  <div class="shop-editorial-header">
+    <div class="seh-eyebrow">दुकान · Shop · {{ request.args.get('category', 'All') }}</div>
+    <div class="seh-title-row">
+      <div class="seh-title">
+        {% if request.args.get('category') %}
+          {{ request.args.get('category').upper() }}
+        {% else %}
+          ALL<br>PRODUCTS
+        {% endif %}
+      </div>
+      <div class="seh-meta">
+        <div class="seh-count">{{ pagination.total if pagination else products|length }}</div>
+        <div class="seh-count-label">Items · उत्पादने</div>
+      </div>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="shop-cat-strip">
+      {% set cur = request.args.get('category','') %}
+      {% for val, en, mr in [
+        ('','All · सर्व','सर्व'),
+        ('Shirts','Shirts · शर्ट','शर्ट'),
+        ('T-Shirts','T-Shirts','टी-शर्ट'),
+        ('Jeans','Jeans · जीन्स','जीन्स'),
+        ('Jackets','Jackets','जॅकेट'),
+        ('Trousers','Trousers','ट्राउझर्स'),
+        ('Ethnic Wear','Ethnic Wear','पारंपरिक'),
+      ] %}
+      <a href="/shop{% if val %}?category={{ val }}{% endif %}{% if request.args.get('sort') %}{{ '&' if val else '?' }}sort={{ request.args.get('sort') }}{% endif %}"
+         class="scs-item {% if cur == val %}active{% endif %}">
+        <span class="scs-en">{{ en }}</span>
+        <span class="scs-mr">{{ mr }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Mobile backdrop -->
+  <div class="fp-backdrop" id="fpBackdrop" onclick="closeSidebar()"></div>
+
+  <div class="shop-body">
+
+    <!-- ══ FILTER PANEL ══ -->
+    <div class="vk-filter-panel" id="filterPanel">
+
+      <div class="fp-head">
+        <div class="fp-head-title">Filters · फिल्टर</div>
+        <a href="/shop{% if request.args.get('category') %}?category={{ request.args.get('category') }}{% endif %}"
+           class="fp-clear">Clear All</a>
+      </div>
+
+      <!-- Active chips -->
+      <div class="fp-chips">
+        {% if price_max and price_max|int < 10000 %}
+        <div class="fp-chip">₹{{ price_max }}<button class="fp-chip-x" onclick="removeFilter('price_max')">×</button></div>
+        {% endif %}
+        {% for s in sel_sizes %}<div class="fp-chip">{{ s }}<button class="fp-chip-x" onclick="removeFilter('size','{{ s }}')">×</button></div>{% endfor %}
+        {% if sel_color %}<div class="fp-chip">{{ sel_color }}<button class="fp-chip-x" onclick="removeFilter('color')">×</button></div>{% endif %}
+      </div>
+
+      <!-- Price -->
+      <div class="fp-section open" id="fpPrice">
+        <button class="fp-trigger" onclick="toggleFp('fpPrice')">
+          <div class="fp-trigger-label"><span class="fp-trigger-en">Price Range · किंमत</span><span class="fp-trigger-mr">किंमत निवडा</span></div>
+          <svg class="fp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fp-body">
+          <div class="price-slider-wrap">
+            <div class="price-fill-bar" id="pfBar"></div>
+            <input type="range" id="priceRange" min="500" max="10000" step="500" value="{{ price_max or 10000 }}" oninput="onPrice(this.value)">
+          </div>
+          <div class="price-vals-row">
+            <span class="price-val-lbl">₹500</span>
+            <span class="price-val-cur" id="priceVal">₹{{ "{:,}".format((price_max or 10000)|int) }}</span>
+            <span class="price-val-lbl">₹10K</span>
+          </div>
+          <button class="fp-apply-btn" onclick="applyPrice()">Apply Price · लागू करा</button>
+        </div>
+      </div>
+
+      <!-- Size -->
+      <div class="fp-section open" id="fpSize">
+        <button class="fp-trigger" onclick="toggleFp('fpSize')">
+          <div class="fp-trigger-label"><span class="fp-trigger-en">Size · साईझ</span><span class="fp-trigger-mr">साईझ निवडा</span></div>
+          <svg class="fp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fp-body">
+          <div class="sz-g">
+            {% for sz in ['S','M','L','XL','XXL','3XL'] %}
+            <button class="{{ 'active' if sz in sel_sizes else '' }}" onclick="toggleSize('{{ sz }}')">{{ sz }}</button>
+            {% endfor %}
+          </div>
+          <form id="szForm" method="GET" action="/shop" style="display:none">
+            {% if request.args.get('category') %}<input type="hidden" name="category" value="{{ request.args.get('category') }}">{% endif %}
+            {% if request.args.get('sort') %}<input type="hidden" name="sort" value="{{ request.args.get('sort') }}">{% endif %}
+            {% if price_max and price_max|int < 10000 %}<input type="hidden" name="price_max" value="{{ price_max }}">{% endif %}
+            <div id="szInputs">{% for s in sel_sizes %}<input type="hidden" name="size" value="{{ s }}">{% endfor %}</div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Color -->
+      <div class="fp-section open" id="fpColor">
+        <button class="fp-trigger" onclick="toggleFp('fpColor')">
+          <div class="fp-trigger-label"><span class="fp-trigger-en">Color · रंग</span><span class="fp-trigger-mr">रंग निवडा</span></div>
+          <svg class="fp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fp-body">
+          <div class="color-g">
+            {% for name, hex in [
+              ('Navy','#1a2e4a'),('Black','#1a1a1a'),('White','#e8e0d0'),
+              ('Brown','#8b4513'),('Olive','#4a5240'),('Rust','#cc4400'),
+              ('Maroon','#6e1212'),('Grey','#4a4a4a'),
+            ] %}
+            <div class="color-dot-wrap {{ 'active' if sel_color == name else '' }}" onclick="applyColor('{{ name }}')">
+              <div class="color-dot" style="background:{{ hex }}"></div>
+              <div class="color-dot-label">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+          {% if sel_color %}<div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:7.5px;letter-spacing:1px;color:var(--sf)">✓ {{ sel_color }} selected</div>{% endif %}
+        </div>
+      </div>
+
+      <!-- Category inside sidebar -->
+      <div class="fp-section" id="fpCat">
+        <button class="fp-trigger" onclick="toggleFp('fpCat')">
+          <div class="fp-trigger-label"><span class="fp-trigger-en">Category · श्रेणी</span><span class="fp-trigger-mr">उत्पादन प्रकार</span></div>
+          <svg class="fp-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="fp-body">
+          {% set cur = request.args.get('category','') %}
+          {% for val, en in [('','All'),('Shirts','Shirts'),('T-Shirts','T-Shirts'),('Jeans','Jeans'),('Jackets','Jackets'),('Trousers','Trousers'),('Ethnic Wear','Ethnic')] %}
+          <a href="/shop{% if val %}?category={{ val }}{% endif %}{% if price_max and price_max|int < 10000 %}&price_max={{ price_max }}{% endif %}"
+             style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--border);text-decoration:none;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s;color:{{ 'var(--sf)' if cur == val else 'rgba(247,243,236,.4)' }}">
+            {{ en }} {% if cur == val %}<span>✓</span>{% endif %}
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>{# end filter panel #}
+
+
+    <!-- ══ PRODUCTS ══ -->
+    <div class="shop-products-area">
+
+      <!-- Sort bar -->
+      <div class="sp-control">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="sp-filter-mob" onclick="openSidebar()">
+            <svg width="13" height="10" viewBox="0 0 13 10" fill="none" stroke="currentColor" stroke-width="1.5">
+              <line x1="0" y1="1" x2="13" y2="1"/><line x1="2" y1="5" x2="11" y2="5"/><line x1="4" y1="9" x2="9" y2="9"/>
+            </svg>
+            FILTERS
+          </button>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.3);text-transform:uppercase">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--sf);vertical-align:middle;margin-right:4px">{{ products|length }}</span>
+            of {{ pagination.total if pagination else products|length }} products
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:8px">
+          <!-- Grid view toggle -->
+          <div class="sp-view-toggle">
+            <button class="sp-view-btn active" id="v3btn" onclick="setView(3)" title="3 columns">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="0" y="0" width="4" height="14"/><rect x="5" y="0" width="4" height="14"/><rect x="10" y="0" width="4" height="14"/>
+              </svg>
+            </button>
+            <button class="sp-view-btn" id="v2btn" onclick="setView(2)" title="2 columns">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                <rect x="0" y="0" width="6" height="14"/><rect x="8" y="0" width="6" height="14"/>
+              </svg>
+            </button>
+          </div>
+
+          <select class="sp-sort"
+            onchange="window.location.href='/shop?sort='+this.value+'{% if request.args.get('category') %}&category={{ request.args.get('category') }}{% endif %}{% if price_max and price_max|int < 10000 %}&price_max={{ price_max }}{% endif %}'">
+            <option value="new"  {% if request.args.get('sort','new') == 'new'  %}selected{% endif %}>Newest First</option>
+            <option value="low"  {% if request.args.get('sort') == 'low'  %}selected{% endif %}>Price: Low → High</option>
+            <option value="high" {% if request.args.get('sort') == 'high' %}selected{% endif %}>Price: High → Low</option>
+          </select>
+        </div>
+      </div>
+
+      {% if products %}
+      <div class="vk-grid" id="vkGrid">
+        {% for product in products %}
+        <div class="vk-card" onclick="window.location.href='/product?id={{ product.id }}'">
+
+          <div class="vk-card-img">
+            <div class="vk-badge">{{ product.badge or 'नवीन' }}</div>
+            {% if product.discount and product.discount > 0 %}
+            <div class="vk-badge-off">{{ product.discount }}% OFF</div>
+            {% endif %}
+
+            {% if product.image %}
+            <img src="{{ url_for('static', filename='uploads/' + product.image) }}"
+                 alt="{{ product.name }}" loading="lazy"
+                 onerror="this.parentElement.querySelector('.vk-no-img') && (this.style.display='none')">
+            {% endif %}
+            <div class="vk-no-img" {% if product.image %}style="display:none"{% endif %}>VK</div>
+
+            <div class="vk-card-overlay"></div>
+
+            <!-- Quick add slides up on hover -->
+            <div class="vk-quick">
+              <button class="vk-quick-btn"
+                onclick="event.stopPropagation();window.location.href='{{ url_for('shop.add_to_cart', product_id=product.id) }}'">
+                🛒 QUICK ADD TO CART
+              </button>
+            </div>
+
+            <div class="vk-flag">
+              <div style="flex:1;background:var(--sf)"></div>
+              <div style="flex:1;background:rgba(247,243,236,.15)"></div>
+              <div style="flex:1;background:var(--gr)"></div>
+            </div>
+          </div>
+
+          <div class="vk-card-info">
+            <div class="vk-name">{{ product.name }}</div>
+            <div class="vk-name-mr">{{ product.name_mr or product.category }}</div>
+            <div class="vk-price-row">
+              <div style="display:flex;align-items:baseline;gap:6px">
+                <span class="vk-price">₹{{ "{:,.0f}".format(product.final_price) }}</span>
+                {% if product.discount and product.discount > 0 %}
+                <span class="vk-price-old">₹{{ "{:,.0f}".format(product.price) }}</span>
+                {% endif %}
+              </div>
+              <button class="vk-add"
+                onclick="event.stopPropagation();window.location.href='{{ url_for('shop.add_to_cart', product_id=product.id) }}'">
+                + CART
+              </button>
+            </div>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pagination -->
+      {% if pagination and pagination.pages > 1 %}
+      <div class="vk-pagination">
+        {% if pagination.has_prev %}
+        <a href="/shop?page={{ pagination.prev_num }}{% if request.args.get('category') %}&category={{ request.args.get('category') }}{% endif %}{% if request.args.get('sort') %}&sort={{ request.args.get('sort') }}{% endif %}{% if price_max and price_max|int < 10000 %}&price_max={{ price_max }}{% endif %}" class="vk-pg">← Prev</a>
+        {% endif %}
+        {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+          {% if p %}
+          <a href="/shop?page={{ p }}{% if request.args.get('category') %}&category={{ request.args.get('category') }}{% endif %}{% if request.args.get('sort') %}&sort={{ request.args.get('sort') }}{% endif %}{% if price_max and price_max|int < 10000 %}&price_max={{ price_max }}{% endif %}" class="vk-pg {{ 'active' if p == pagination.page else '' }}">{{ p }}</a>
+          {% else %}
+          <span style="color:rgba(247,243,236,.1);padding:0 8px;display:flex;align-items:center">…</span>
+          {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+        <a href="/shop?page={{ pagination.next_num }}{% if request.args.get('category') %}&category={{ request.args.get('category') }}{% endif %}{% if request.args.get('sort') %}&sort={{ request.args.get('sort') }}{% endif %}{% if price_max and price_max|int < 10000 %}&price_max={{ price_max }}{% endif %}" class="vk-pg">Next →</a>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% else %}
+      <div class="vk-empty">
+        <div class="vk-empty-big">NOTHING<br>HERE</div>
+        <div class="vk-empty-mr">कोणतेही उत्पादन नाही · Adjust your filters</div>
+        <a href="/shop{% if request.args.get('category') %}?category={{ request.args.get('category') }}{% endif %}" class="vk-empty-btn">CLEAR FILTERS</a>
+      </div>
+      {% endif %}
+
+    </div>{# end shop-products-area #}
+  </div>{# end shop-body #}
+</div>{# end vk-shop #}
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* ── Accordion ── */
+function toggleFp(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+/* ── Mobile sidebar ── */
+function openSidebar() {
+  document.getElementById('filterPanel').classList.add('open');
+  const bd = document.getElementById('fpBackdrop');
+  bd.style.display = 'block';
+  setTimeout(() => bd.classList.add('vis'), 10);
+}
+function closeSidebar() {
+  document.getElementById('filterPanel').classList.remove('open');
+  const bd = document.getElementById('fpBackdrop');
+  bd.classList.remove('vis');
+  setTimeout(() => bd.style.display = 'none', 320);
+}
+
+/* ── Price slider ── */
+function onPrice(val) {
+  const pct = (val - 500) / (10000 - 500) * 100;
+  document.getElementById('pfBar').style.width = pct + '%';
+  document.getElementById('priceVal').textContent = '₹' + parseInt(val).toLocaleString('en-IN');
+}
+function applyPrice() {
+  const val = document.getElementById('priceRange').value;
+  const p = new URLSearchParams(window.location.search);
+  p.set('price_max', val); p.delete('page');
+  window.location.href = '/shop?' + p.toString();
+}
+(function(){ const el = document.getElementById('priceRange'); if(el) onPrice(el.value); })();
+
+/* ── Size filter ── */
+let selSizes = {{ sel_sizes | tojson }};
+function toggleSize(sz) {
+  const idx = selSizes.indexOf(sz);
+  idx === -1 ? selSizes.push(sz) : selSizes.splice(idx, 1);
+  document.querySelectorAll('.sz-g button').forEach(b => {
+    b.classList.toggle('active', selSizes.includes(b.textContent.trim()));
+  });
+  document.getElementById('szInputs').innerHTML = selSizes.map(s => `<input type="hidden" name="size" value="${s}">`).join('');
+  clearTimeout(window._szT);
+  window._szT = setTimeout(() => document.getElementById('szForm').submit(), 400);
+}
+
+/* ── Color filter ── */
+function applyColor(name) {
+  const p = new URLSearchParams(window.location.search);
+  p.get('color') === name ? p.delete('color') : p.set('color', name);
+  p.delete('page');
+  window.location.href = '/shop?' + p.toString();
+}
+
+/* ── Remove filter chip ── */
+function removeFilter(key, val) {
+  const p = new URLSearchParams(window.location.search);
+  if (key === 'size' && val) {
+    const sizes = p.getAll('size').filter(s => s !== val);
+    p.delete('size'); sizes.forEach(s => p.append('size', s));
+  } else { p.delete(key); }
+  p.delete('page');
+  window.location.href = '/shop?' + p.toString();
+}
+
+/* ── Grid view toggle ── */
+function setView(cols) {
+  const grid = document.getElementById('vkGrid');
+  grid.classList.toggle('two-col', cols === 2);
+  document.getElementById('v3btn').classList.toggle('active', cols === 3);
+  document.getElementById('v2btn').classList.toggle('active', cols === 2);
+}
+
+/* ── 3D card tilt on mousemove ── */
+document.querySelectorAll('.vk-card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width  - 0.5;
+    const y = (e.clientY - r.top)  / r.height - 0.5;
+    card.style.transform = `perspective(600px) rotateY(${x * 6}deg) rotateX(${-y * 4}deg) translateY(-6px) scale(1.01)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transform = '';
+  });
+});
+
+/* ESC closes sidebar */
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+</script>
+{% endblock %}

@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}Your Cart — VEKTOR{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;padding:0;background:var(--ink)">
+
+  <!-- ══ PAGE HEADER ══ -->
+  <div style="padding:40px 5% 28px;border-bottom:1px solid var(--border);background:var(--smoke);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Shopping Cart · खरेदी कार्ट</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,64px);letter-spacing:2px;color:var(--white);line-height:.9">
+        YOUR CART
+        <span style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:16px;color:rgba(247,243,236,.25);display:block;margin-top:8px;letter-spacing:1px">
+          तुमची कार्ट · {{ items|length }} item{% if items|length != 1 %}s{% endif %}
+        </span>
+      </div>
+    </div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:11px 24px;border:0.5px solid var(--border);color:rgba(247,243,236,.35);text-decoration:none;text-transform:uppercase;transition:all .2s"
+       onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'"
+       onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">
+      ← CONTINUE SHOPPING
+    </a>
+  </div>
+
+  {% if items %}
+
+  <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:0;align-items:start;padding:0 5%">
+
+    <!-- ══ CART ITEMS ══ -->
+    <div style="border-right:1px solid var(--border);padding:36px 40px 60px 0">
+
+      <!-- Free shipping progress bar -->
+      {% set progress = [[total / 999 * 100, 100]|min, 0]|max %}
+      <div style="background:var(--card);border:0.5px solid var(--border);padding:16px 20px;margin-bottom:3px;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase">
+          {% if total >= 999 %}
+          <span style="color:var(--gr2)">🎉 Free Shipping unlocked! · मोफत डिलिव्हरी मिळाली!</span>
+          {% else %}
+          <span style="color:rgba(247,243,236,.4)">Add ₹{{ "{:,}".format((999 - total)|int) }} more for Free Shipping</span>
+          <span style="color:var(--sf)">₹999</span>
+          {% endif %}
+        </div>
+        <div style="height:3px;background:var(--border);overflow:hidden">
+          <div style="height:100%;width:{{ [total / 999 * 100, 100]|min }}%;background:{% if total >= 999 %}var(--gr2){% else %}var(--sf){% endif %};transition:width .5s ease"></div>
+        </div>
+      </div>
+
+      <!-- Item list -->
+      <div style="display:flex;flex-direction:column;gap:3px;margin-top:3px">
+        {% for item in items %}
+        <div class="cart-item-row" style="background:var(--card);border:0.5px solid var(--border);display:flex;gap:16px;padding:20px;transition:border-color .25s">
+
+          <!-- Product image -->
+          <!-- FIX: use url_for to build the correct image path -->
+          <a href="/product?id={{ item.id }}" style="flex-shrink:0;text-decoration:none">
+            <div style="width:80px;height:100px;background:var(--mid);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative">
+              {% if item.image %}
+              <img src="{{ url_for('static', filename='uploads/' + item.image) }}"
+                   alt="{{ item.name }}"
+                   style="width:100%;height:100%;object-fit:cover"
+                   onerror="this.style.display='none'">
+              {% else %}
+              <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:rgba(255,255,255,.06)">VK</span>
+              {% endif %}
+              <!-- Tricolour strip -->
+              <div style="position:absolute;bottom:0;left:0;right:0;height:3px;display:flex">
+                <div style="flex:1;background:var(--sf)"></div>
+                <div style="flex:1;background:rgba(247,243,236,.15)"></div>
+                <div style="flex:1;background:var(--gr)"></div>
+              </div>
+            </div>
+          </a>
+
+          <!-- Details -->
+          <div style="flex:1;min-width:0">
+            <a href="/product?id={{ item.id }}" style="text-decoration:none">
+              <div style="font-size:16px;color:var(--white);margin-bottom:3px;transition:color .2s"
+                   onmouseover="this.style.color='var(--sf)'" onmouseout="this.style.color='var(--white)'">
+                {{ item.name }}
+              </div>
+            </a>
+
+            <!-- Size + Color tags -->
+            <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;margin-top:4px">
+              {% if item.size %}
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;border:0.5px solid rgba(255,107,0,.3);color:var(--sf);text-transform:uppercase">
+                SIZE: {{ item.size }}
+              </div>
+              {% endif %}
+              {% if item.color %}
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;border:0.5px solid var(--border);color:rgba(247,243,236,.4);text-transform:uppercase">
+                {{ item.color }}
+              </div>
+              {% endif %}
+              {% if not item.size and not item.color %}
+              <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.2)">
+                — No size/color selected
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Qty controls + price row -->
+            <!-- FIX: form uses item.cart_id (the cart row id), NOT item.id (product id) -->
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+              <form method="POST" action="/update-cart/{{ item.cart_id }}"
+                    style="display:flex;align-items:center;border:0.5px solid var(--border);width:fit-content">
+                <button name="action" value="decrease" type="submit"
+                        style="width:36px;height:36px;background:none;border:none;color:rgba(247,243,236,.5);font-size:18px;cursor:pointer;transition:all .2s;font-family:'Space Mono',monospace;display:flex;align-items:center;justify-content:center"
+                        onmouseover="this.style.color='var(--sf)';this.style.background='rgba(255,107,0,.08)'"
+                        onmouseout="this.style.color='rgba(247,243,236,.5)';this.style.background='none'">−</button>
+                <div style="width:44px;text-align:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);border-left:0.5px solid var(--border);border-right:0.5px solid var(--border);height:36px;display:flex;align-items:center;justify-content:center">
+                  {{ item.quantity }}
+                </div>
+                <button name="action" value="increase" type="submit"
+                        style="width:36px;height:36px;background:none;border:none;color:rgba(247,243,236,.5);font-size:18px;cursor:pointer;transition:all .2s;font-family:'Space Mono',monospace;display:flex;align-items:center;justify-content:center"
+                        onmouseover="this.style.color='var(--sf)';this.style.background='rgba(255,107,0,.08)'"
+                        onmouseout="this.style.color='rgba(247,243,236,.5)';this.style.background='none'">+</button>
+              </form>
+
+              <div style="text-align:right">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--sf);line-height:1">
+                  ₹{{ "{:,}".format(item.subtotal|int) }}
+                </div>
+                {% if item.quantity > 1 %}
+                <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(247,243,236,.25);letter-spacing:1px">
+                  ₹{{ "{:,}".format((item.subtotal / item.quantity)|int) }} each
+                </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <!-- Remove button -->
+          <!-- FIX: uses /remove-cart/<cart_id> with item.cart_id (not item.id) -->
+          <div style="flex-shrink:0">
+            <a href="/remove-cart/{{ item.cart_id }}"
+               onclick="return confirm('Remove {{ item.name }}?')"
+               style="width:32px;height:32px;border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;color:rgba(247,243,236,.25);text-decoration:none;font-size:14px;transition:all .2s"
+               onmouseover="this.style.borderColor='rgba(224,48,48,.4)';this.style.color='#ff7070';this.style.background='rgba(224,48,48,.06)'"
+               onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.25)';this.style.background='transparent'">✕</a>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Clear all cart link -->
+      <div style="margin-top:16px;text-align:right">
+        <a href="/clear-cart"
+           onclick="return confirm('Clear all items from cart?')"
+           style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.2);text-decoration:none;text-transform:uppercase;transition:color .2s"
+           onmouseover="this.style.color='#ff7070'"
+           onmouseout="this.style.color='rgba(247,243,236,.2)'">
+          ✕ Clear Entire Cart
+        </a>
+      </div>
+
+    </div>
+
+    <!-- ══ ORDER SUMMARY SIDEBAR ══ -->
+    <div style="padding:36px 0 60px 40px;position:sticky;top:80px">
+
+      <div style="background:var(--card);border:0.5px solid var(--border)">
+
+        <!-- Header -->
+        <div style="padding:16px 20px;border-bottom:0.5px solid var(--border);background:var(--smoke)">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white)">ORDER SUMMARY</div>
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:11px;color:rgba(247,243,236,.28);margin-top:2px">ऑर्डर सारांश</div>
+        </div>
+
+        <div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+
+          <!-- Subtotal -->
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(247,243,236,.5);padding-bottom:12px;border-bottom:0.5px solid var(--border)">
+            <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase">
+              Subtotal ({{ items|length }} item{% if items|length != 1 %}s{% endif %})
+            </span>
+            <span>₹{{ "{:,}".format(total|int) }}</span>
+          </div>
+
+          <!-- Shipping -->
+          <div style="display:flex;justify-content:space-between;font-size:13px;color:rgba(247,243,236,.5);padding-bottom:12px;border-bottom:0.5px solid var(--border)">
+            <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase">Shipping</span>
+            <span style="color:{% if total >= 999 %}var(--gr2){% else %}rgba(247,243,236,.5){% endif %}">
+              {% if total >= 999 %}FREE 🎉{% else %}₹79{% endif %}
+            </span>
+          </div>
+
+          <!-- Coupon -->
+          {% if session.get('coupon_code') %}
+          <div style="display:flex;justify-content:space-between;font-size:13px;padding-bottom:12px;border-bottom:0.5px solid var(--border)">
+            <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--gr2)">
+              🎟 Coupon: {{ session.get('coupon_code') }}
+            </span>
+            <span style="color:var(--gr2)">−₹{{ "{:,}".format(session.get('coupon_discount', 0)|int) }}</span>
+          </div>
+          {% endif %}
+
+          <!-- Coupon input -->
+          <div style="padding-bottom:12px;border-bottom:0.5px solid var(--border)">
+            <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;margin-bottom:8px">
+              Coupon Code · कूपन
+            </div>
+            <form method="POST" action="/apply-coupon" style="display:flex;border:0.5px solid var(--border)">
+              <input type="text" name="coupon" placeholder="VEKTOR40"
+                     style="flex:1;background:transparent;border:none;color:var(--white);font-family:'Space Mono',monospace;font-size:11px;padding:11px 14px;outline:none;letter-spacing:.04em"
+                     value="{{ session.get('coupon_code', '') }}">
+              <button type="submit"
+                      style="background:var(--mid);border:none;border-left:0.5px solid var(--border);padding:0 16px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.4);cursor:pointer;text-transform:uppercase;transition:all .2s"
+                      onmouseover="this.style.color='var(--sf)'"
+                      onmouseout="this.style.color='rgba(247,243,236,.4)'">APPLY</button>
+            </form>
+          </div>
+
+          <!-- Total -->
+          {% set shipping = 0 if total >= 999 else 79 %}
+          {% set discount = session.get('coupon_discount', 0) %}
+          {% set grand_total = total + shipping - discount %}
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:4px 0">
+            <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.3);text-transform:uppercase">Total · एकूण</span>
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--sf);line-height:1">
+              ₹{{ "{:,}".format(grand_total|int) }}
+            </span>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(247,243,236,.2);text-align:right">
+            Inclusive of all taxes · सर्व कर समाविष्ट
+          </div>
+
+          <!-- Savings callout -->
+          {% if total >= 999 or (product.discount if product is defined else False) %}
+          <div style="background:rgba(10,138,74,.08);border:0.5px solid rgba(10,138,74,.25);padding:10px 14px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--gr2);text-transform:uppercase">
+            ✓ You are saving ₹{{ "{:,}".format((79 + discount)|int) }} on this order!
+          </div>
+          {% endif %}
+
+        </div>
+
+        <!-- CTA Buttons -->
+        <div style="padding:0 20px 20px;display:flex;flex-direction:column;gap:8px">
+          <a href="/checkout"
+             style="display:block;padding:16px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;text-transform:uppercase;font-weight:700;text-decoration:none;text-align:center;transition:background .25s;position:relative;overflow:hidden"
+             onmouseover="this.style.background='var(--sf2)'"
+             onmouseout="this.style.background='var(--sf)'">
+            ⚡ CHECKOUT — चेकआउट करा
+          </a>
+          <a href="{{ url_for('shop.shop_page') }}"
+             style="display:block;padding:12px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.35);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;text-decoration:none;text-align:center;transition:all .2s"
+             onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'"
+             onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">
+            CONTINUE SHOPPING / खरेदी सुरू ठेवा
+          </a>
+        </div>
+
+        <!-- Trust mini row -->
+        <div style="padding:16px 20px;border-top:0.5px solid var(--border);background:rgba(255,255,255,.015);display:flex;justify-content:space-around">
+          {% for icon, text in [('🔒','Secure Pay'),('🚀','Fast Delivery'),('🔄','Easy Returns')] %}
+          <div style="text-align:center">
+            <div style="font-size:16px;margin-bottom:3px">{{ icon }}</div>
+            <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:1px;color:rgba(247,243,236,.25);text-transform:uppercase">{{ text }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+
+      <!-- Sanskrit shloka -->
+      <div style="margin-top:3px;background:var(--mid);border:0.5px solid var(--border);padding:16px 20px">
+        <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:var(--gold);margin-bottom:3px">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
+        <div style="font-size:11px;color:rgba(247,243,236,.25);font-style:italic">"Clothing is the symbol of courage." — VEKTOR</div>
+      </div>
+
+      <!-- Payment logos -->
+      <div style="margin-top:3px;background:var(--card);border:0.5px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;color:rgba(247,243,236,.2);text-transform:uppercase">We Accept</div>
+        {% for label in ['UPI', 'COD', 'Cards', 'EMI'] %}
+        <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(247,243,236,.3);border:0.5px solid var(--border);padding:4px 10px">{{ label }}</div>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+
+  {% else %}
+
+  <!-- ══ EMPTY CART ══ -->
+  <div style="text-align:center;padding:80px 20px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(60px,15vw,120px);color:rgba(255,107,0,.05);letter-spacing:4px;margin-bottom:20px;line-height:1">EMPTY</div>
+    <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:22px;color:rgba(247,243,236,.3);margin-bottom:8px">कार्ट रिकामी आहे</div>
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;color:rgba(247,243,236,.2);margin-bottom:36px;text-transform:uppercase">Your cart is empty — start shopping</div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;padding:16px 48px;background:var(--sf);color:var(--ink);text-decoration:none;font-weight:700;display:inline-block;transition:background .25s"
+       onmouseover="this.style.background='var(--sf2)'"
+       onmouseout="this.style.background='var(--sf)'">
+      संग्रह पाहा — SHOP NOW
+    </a>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<style>
+.cart-item-row:hover {
+  border-color: rgba(255,107,0,.18) !important;
+}
+@media (max-width: 900px) {
+  /* stack layout on mobile */
+  div[style*="grid-template-columns:1.4fr 1fr"] {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  div[style*="border-right:1px solid var(--border)"] {
+    border-right: none !important;
+    padding-right: 0 !important;
+  }
+  div[style*="padding:36px 0 60px 40px"] {
+    padding-left: 0 !important;
+    position: static !important;
+  }
+}
+</style>
+
+{% endblock %}

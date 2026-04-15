@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+.tryon-page {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0b0b0c, #151515);
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tryon-page::before {
+    content: 'TRY ON';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(80px, 18vw, 200px);
+    font-weight: 900;
+    color: rgba(212,175,55,0.04);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: -4px;
+}
+
+/* ── HEADER ── */
+.tryon-header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 2;
+}
+
+.tryon-header .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #d4af37;
+    margin-bottom: 16px;
+    border: 1px solid rgba(212,175,55,0.3);
+    padding: 6px 18px;
+    border-radius: 2px;
+}
+
+.tryon-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 64px);
+    color: #f0ece4;
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0 0 14px;
+}
+
+.tryon-header p {
+    color: #6b6b6b;
+    font-size: 15px;
+    font-weight: 300;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+/* ── CARDS ── */
+.tryon-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 880px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+}
+
+.tryon-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.15);
+    border-radius: 4px;
+    padding: 48px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+    text-decoration: none;
+    display: block;
+    position: relative;
+    overflow: hidden;
+}
+
+.tryon-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(212,175,55,0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.tryon-card:hover {
+    border-color: rgba(212,175,55,0.5);
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+}
+
+.tryon-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.card-badge {
+    display: inline-block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #d4af37;
+    background: rgba(212,175,55,0.1);
+    border: 1px solid rgba(212,175,55,0.25);
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+}
+
+.tryon-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: #f0ece4;
+    margin: 0 0 12px;
+    font-weight: 700;
+}
+
+.tryon-card p {
+    color: #5a5a5a;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0 0 24px;
+    font-weight: 300;
+}
+
+.card-arrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #d4af37;
+    font-weight: 500;
+    transition: gap 0.3s ease;
+}
+
+.tryon-card:hover .card-arrow {
+    gap: 14px;
+}
+
+/* ── RECOMMENDED BADGE ── */
+.tryon-card.recommended {
+    border-color: rgba(212,175,55,0.4);
+    background: rgba(212,175,55,0.04);
+}
+
+.recommended-ribbon {
+    position: absolute;
+    top: 16px;
+    right: -28px;
+    background: linear-gradient(145deg, #d4af37, #b8902a);
+    color: #111;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 36px;
+    transform: rotate(45deg);
+}
+
+@media(max-width:600px){
+    .tryon-cards { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="tryon-page">
+
+    <div class="tryon-header">
+        <span class="tag">FashionHub Studio</span>
+        <h1>Virtual Try‑On</h1>
+        <p>See how clothes look on you before you buy — zero AI, zero server, instant results.</p>
+    </div>
+
+    <div class="tryon-cards">
+
+        <!-- AVATAR TRY-ON (RECOMMENDED) -->
+        <a href="/avatar-tryon" class="tryon-card recommended">
+            <div class="recommended-ribbon">Best</div>
+            <span class="card-icon">🧍</span>
+            <div class="card-badge">Smart Avatar</div>
+            <h3>Avatar Try‑On</h3>
+            <p>Enter your height & weight — we pick the perfect avatar and dress it in any outfit instantly.</p>
+            <span class="card-arrow">Start &rarr;</span>
+        </a>
+
+        <!-- UPLOAD PHOTO -->
+        <a href="/upload-photo" class="tryon-card">
+            <span class="card-icon">📸</span>
+            <div class="card-badge">Photo Overlay</div>
+            <h3>Photo Try‑On</h3>
+            <p>Upload your photo and drag clothes on top of yourself to preview the look.</p>
+            <span class="card-arrow">Start &rarr;</span>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

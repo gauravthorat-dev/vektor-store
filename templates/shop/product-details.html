@@ -1,0 +1,908 @@
+{% extends "base.html" %}
+{% set active_page = "shop" %}
+
+{% block title %}{{ product.name }} — VEKTOR{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/product-details.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ ZOOM MODAL ══ -->
+<div class="zoom-modal" id="zoomModal">
+  <button class="zoom-close" onclick="closeZoom()">✕ Close / बंद</button>
+  <img id="zoomImg" src="" alt="Zoomed View">
+</div>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a class="bc-item" href="/">Home</a>
+  <span class="bc-sep">›</span>
+  <a class="bc-item" href="/shop">Shop</a>
+  <span class="bc-sep">›</span>
+  <a class="bc-item" href="/shop?category={{ product.category }}">{{ product.category }}</a>
+  <span class="bc-sep">›</span>
+  <span class="bc-item bc-active">{{ product.name }}</span>
+</div>
+
+<!-- ══ MAIN PRODUCT SECTION ══ -->
+<div class="product-wrap">
+
+  <!-- GALLERY SIDE -->
+  <div class="gallery-side">
+    <div class="thumb-col" id="thumbCol"></div>
+    <div class="main-gallery" id="mainGallery">
+      <div class="gallery-badge">{{ product.badge or "नवीन" }}</div>
+      {% if product.discount and product.discount > 0 %}
+      <div class="gallery-save-badge"><span>{{ product.discount }}% OFF</span></div>
+      {% endif %}
+      <div class="gallery-img-counter" id="imgCounter">1 / 1</div>
+      <div class="gallery-overlay-btns">
+        <button class="gal-btn" onclick="prevImg()" title="Previous">‹</button>
+        <button class="gal-btn" onclick="nextImg()" title="Next">›</button>
+        <button class="gal-btn" onclick="openZoom()" title="Zoom">⤢</button>
+      </div>
+      <div class="flag-bar-gal">
+        <div class="pfb sf"></div>
+        <div class="pfb wh"></div>
+        <div class="pfb gr"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFO SIDE -->
+  <div class="info-side">
+
+    <!-- Collection tag -->
+    <div class="info-top-tag reveal">
+      <div class="prod-collection">{{ product.collection or (product.category + " Collection") }}</div>
+      <span class="prod-ss26">{{ product.season or "SS/26" }}</span>
+    </div>
+
+    <!-- Title -->
+    <h1 class="prod-title reveal">{{ product.name }}</h1>
+    <div class="prod-title-mr reveal">
+      {{ product.name_mr or product.name }}
+      <br><span style="font-size:13px;color:rgba(247,243,236,.18)">{{ product.tagline_sk or "।। वस्त्रं शौर्यस्य चिन्हम् ।।" }}</span>
+    </div>
+
+    <!-- Rating -->
+    <div class="prod-rating-row reveal">
+      <span class="stars-big">★★★★★</span>
+      <span class="rating-num">{{ product.rating_display or 4.9 }}</span>
+      <span class="review-count">
+        {% if reviews %}{{ reviews|length }} Reviews{% elif product.review_count %}{{ product.review_count }} Reviews{% else %}New Arrival{% endif %}
+      </span>
+      <span class="verified-badge">✓ Verified</span>
+    </div>
+
+    <!-- Price -->
+    <div class="price-block reveal">
+      <div class="price-main">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+      <div class="price-row">
+        {% if product.discount and product.discount > 0 %}
+        <span class="price-old">₹{{ "{:,.0f}".format(product.price) }}</span>
+        <span class="price-save">
+          {{ product.save_text or ("SAVE ₹{:,.0f} · बचत".format(product.price - product.final_price)) }}
+        </span>
+        {% endif %}
+      </div>
+      <div class="price-inc">{{ product.tax_info or "Inclusive of all taxes · सर्व कर समाविष्ट" }}</div>
+    </div>
+
+    <!-- STOCK STATUS -->
+    {% if not product.in_stock %}
+    <div style="margin-bottom:16px;padding:10px 16px;background:rgba(255,80,80,.08);border:0.5px solid rgba(255,80,80,.2);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:#ff7070">
+      ✕ OUT OF STOCK — स्टॉक संपला
+    </div>
+    {% endif %}
+
+    <!-- ══ COLOR SELECTOR ══ (FIX: was missing from template) -->
+    {% if product.colors %}
+    <div class="select-section reveal">
+      <div class="select-label">Color / रंग — <span id="colorName">{{ product.colors[0].name }}</span></div>
+      <div class="color-row" id="colorRow">
+        {% for col in product.colors %}
+        <button
+          class="color-opt {% if loop.first %}sel{% endif %}"
+          style="background:{{ col.hex }};"
+          onclick="selectColor(this, '{{ col.name }}')"
+          title="{{ col.name }}"
+          data-color="{{ col.name }}">
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- SIZE -->
+    <div class="select-section reveal">
+      <div class="select-label">Size / साईझ — <span id="sizeName">{{ product.default_size or "M" }}</span></div>
+      <div class="size-row" id="sizeRow">
+        {% set prod_sizes = product.sizes if product.sizes else ["S","M","L","XL","XXL"] %}
+        {% set default_sz = product.default_size or "M" %}
+        {% for sz in prod_sizes %}
+        <button class="size-btn {{ 'sel' if sz == default_sz else '' }}" onclick="selectSize(this,'{{ sz }}')">{{ sz }}</button>
+        {% endfor %}
+      </div>
+      <a href="javascript:void(0)" class="size-guide-link" onclick="switchTab('sizeguide')">
+        📏 Size Guide / साईझ गाईड →
+      </a>
+    </div>
+
+    <!-- QTY -->
+    <div class="select-section reveal">
+      <div class="select-label">Quantity / प्रमाण</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-num" id="qtyNum">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+
+    <!-- CTA STACK -->
+    <div class="cta-stack reveal">
+      {% if product.in_stock %}
+      <!-- FIX: form POST so qty + size + color are sent to add_to_cart -->
+      <form method="POST" action="{{ url_for('shop.add_to_cart_post', product_id=product.id) }}" id="cartForm">
+        <input type="hidden" name="qty"   id="hiddenQty"   value="1">
+        <input type="hidden" name="size"  id="hiddenSize"  value="{{ product.default_size or 'M' }}">
+        <input type="hidden" name="color" id="hiddenColor" value="{{ product.colors[0].name if product.colors else '' }}">
+        <button type="submit" class="btn-add-cart" id="addCartBtn">
+          🛒 कार्टमध्ये घाला — ADD TO CART
+        </button>
+      </form>
+      <button class="btn-buy-now" onclick="handleBuyNow()">
+        ⚡ आत्ता विकत घ्या — BUY NOW
+      </button>
+      {% else %}
+      <button class="btn-add-cart" style="opacity:.4;cursor:not-allowed" disabled>
+        ✕ OUT OF STOCK
+      </button>
+      {% endif %}
+      <button class="btn-wishlist" id="wishlistBtn" onclick="toggleWishlist()">
+        <span class="wishlist-icon" id="wishlistIcon">{% if is_wishlisted %}❤️{% else %}♡{% endif %}</span>
+        <span id="wishlistText">{% if is_wishlisted %}Wishlisted / विशलिस्टमध्ये आहे{% else %}Add to Wishlist / विशलिस्टमध्ये जोडा{% endif %}</span>
+      </button>
+    </div>
+
+    <!-- OFFERS -->
+    <div class="offer-box reveal">
+      <div class="offer-title">Available Offers · ऑफर</div>
+      <div class="offer-items">
+        {% if product.offers %}
+          {% for offer in product.offers %}
+          <div class="offer-item">
+            <span class="offer-icon">{{ offer.icon }}</span>
+            <div class="offer-text"><strong>{{ offer.title }}</strong> {{ offer.desc }}</div>
+          </div>
+          {% endfor %}
+        {% else %}
+        <div class="offer-item"><span class="offer-icon">💳</span><div class="offer-text"><strong>10% Instant Discount</strong> on HDFC / SBI / Kotak Credit Cards</div></div>
+        <div class="offer-item"><span class="offer-icon">🎁</span><div class="offer-text"><strong>Buy 2 Get 1 Free</strong> — कोणतेही ३ शर्ट खरेदी करा</div></div>
+        <div class="offer-item"><span class="offer-icon">🚚</span><div class="offer-text"><strong>Free Shipping</strong> on orders above ₹999</div></div>
+        <div class="offer-item"><span class="offer-icon">🔄</span><div class="offer-text"><strong>30-Day Easy Returns</strong> — No questions asked</div></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- TRUST BADGES -->
+    <div class="trust-row reveal">
+      <div class="trust-item">
+        <span class="trust-icon">🇮🇳</span>
+        <span class="trust-en">100% Made in India</span>
+        <span class="trust-mr">भारतात बनवलेले</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🛡️</span>
+        <span class="trust-en">5-Year Warranty</span>
+        <span class="trust-mr">५ वर्ष वॉरंटी</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">⚡</span>
+        <span class="trust-en">Fast Dispatch 24hr</span>
+        <span class="trust-mr">२४ तास डिस्पॅच</span>
+      </div>
+      <div class="trust-item">
+        <span class="trust-icon">🔒</span>
+        <span class="trust-en">Secure Payment</span>
+        <span class="trust-mr">सुरक्षित पेमेंट</span>
+      </div>
+    </div>
+
+    <!-- DELIVERY BOX -->
+    <!-- FIX: use product.delivery['key'] (dict) not product.delivery.key (object) -->
+    {% set del = product.delivery %}
+    <div class="delivery-box reveal">
+      <div class="del-row">
+        <div class="del-icon">📦</div>
+        <div>
+          <div class="del-en">Estimated Delivery: <span class="del-highlight">{{ del.get('standard_days', '3–5 Business Days') if del else '3–5 Business Days' }}</span></div>
+          <div class="del-mr">अपेक्षित डिलिव्हरी · ३-५ कामाचे दिवस</div>
+        </div>
+      </div>
+      <div class="del-separator"></div>
+      <div>
+        <div class="del-en" style="font-family:'Space Mono',monospace;font-size:8px;color:rgba(247,243,236,.25);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">
+          Check delivery for your pincode
+        </div>
+        <div class="pincode-row">
+          <input type="text" class="pincode-input" id="pincodeInput"
+                 placeholder="ENTER PINCODE" maxlength="6"
+                 oninput="this.value=this.value.replace(/\D/g,'')">
+          <button class="pincode-btn" onclick="checkPincode()">CHECK</button>
+        </div>
+        <div class="pincode-result" id="pincodeResult"></div>
+      </div>
+    </div>
+
+    <!-- SHARE -->
+    <div class="share-row reveal">
+      <span class="share-label">Share / शेअर</span>
+      <button class="share-btn" onclick="shareProduct('whatsapp')" title="WhatsApp">💬</button>
+      <button class="share-btn" onclick="shareProduct('copy')" title="Copy Link">🔗</button>
+      <button class="share-btn" onclick="shareProduct('twitter')" title="Twitter / X">𝕏</button>
+    </div>
+
+  </div><!-- /info-side -->
+</div><!-- /product-wrap -->
+
+
+<!-- ══ TABS ══ -->
+<div class="tabs-section">
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="switchTab('description')">Description / वर्णन</button>
+    <button class="tab-btn"        onclick="switchTab('sizeguide')">Size Guide / साईझ</button>
+    <button class="tab-btn"        onclick="switchTab('reviews')">
+      Reviews {% if reviews %}({{ reviews|length }}){% endif %} / पुनरावलोकने
+    </button>
+    <button class="tab-btn"        onclick="switchTab('shipping')">Shipping / डिलिव्हरी</button>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="tab-content active" id="tab-description">
+    <div class="desc-grid">
+      <div class="desc-main">
+        <div class="desc-sk-quote">
+          ।। वस्त्रं शौर्यस्य चिन्हम् ।।<br>
+          <span style="font-size:13px;font-style:italic;color:rgba(200,148,26,.55)">"Clothing is the symbol of courage."</span>
+        </div>
+        <p class="desc-body">
+          {% if product.description %}
+            {{ product.description }}
+          {% else %}
+            {{ product.name }} is a VEKTOR signature piece — born in Maharashtra, built for the world.
+          {% endif %}
+        </p>
+        <div class="desc-highlights">
+          <div class="desc-hl-title">Key Features · वैशिष्ट्ये</div>
+          {% if product.highlights %}
+            {% for hl in product.highlights %}
+            <div class="desc-hl-item">
+              <div class="desc-hl-dot"></div>
+              <div>
+                <div class="desc-hl-en">{{ hl.en }}</div>
+                <div class="desc-hl-mr">{{ hl.mr }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          {% else %}
+          <div class="desc-hl-item"><div class="desc-hl-dot"></div><div><div class="desc-hl-en">100% Premium quality fabric — breathable, durable</div><div class="desc-hl-mr">१००% प्रीमियम दर्जाचे कापड</div></div></div>
+          <div class="desc-hl-item"><div class="desc-hl-dot"></div><div><div class="desc-hl-en">Indian-fit cut — tailored for the Indian body type</div><div class="desc-hl-mr">भारतीय शरीरासाठी विशेष कट</div></div></div>
+          <div class="desc-hl-item"><div class="desc-hl-dot"></div><div><div class="desc-hl-en">Machine washable, wrinkle-resistant fabric</div><div class="desc-hl-mr">मशीनमध्ये धुता येते · सुरकुत्या नाहीत</div></div></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="desc-specs">
+        <div class="spec-title">PRODUCT SPECS</div>
+        {% if product.specs %}
+          {% for sp in product.specs %}
+          <div class="spec-row"><span class="spec-key">{{ sp.key }}</span><span class="spec-val">{{ sp.val }}</span></div>
+          {% endfor %}
+        {% else %}
+        <div class="spec-row"><span class="spec-key">Product</span>  <span class="spec-val">{{ product.name }}</span></div>
+        <div class="spec-row"><span class="spec-key">Category</span> <span class="spec-val">{{ product.category }}</span></div>
+        <div class="spec-row"><span class="spec-key">Price</span>    <span class="spec-val">₹{{ "{:,.0f}".format(product.final_price) }}</span></div>
+        <div class="spec-row"><span class="spec-key">In Stock</span> <span class="spec-val">{{ "Yes ✓" if product.in_stock else "No ✕" }}</span></div>
+        <div class="spec-row"><span class="spec-key">Made In</span>  <span class="spec-val">🇮🇳 Maharashtra, India</span></div>
+        <div class="spec-row"><span class="spec-key">Warranty</span> <span class="spec-val">5 Years Fabric Guarantee</span></div>
+        {% endif %}
+        <div style="margin-top:16px;padding-top:14px;border-top:0.5px solid var(--border)">
+          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:12px;color:rgba(247,243,236,.2);line-height:1.7">
+            ।। मराठी माणसाने बनवलेले — मराठी माणसासाठी ।।
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIZE GUIDE -->
+  <div class="tab-content" id="tab-sizeguide">
+    <div style="max-width:800px">
+      <div style="margin-bottom:24px">
+        <div class="sec-tag" style="margin-bottom:8px">साईझ गाईड · Size Guide</div>
+        <p style="font-size:15px;color:rgba(247,243,236,.38);line-height:1.7">
+          Vektor products are tailored for the Indian body. Measure over a light T-shirt for best results.
+          If between sizes, go UP. · जर दोन साईझमध्ये असाल तर मोठा साईझ निवडा.
+        </p>
+      </div>
+      <table class="size-guide-table">
+        <thead>
+          <tr>
+            <th>Size</th><th>Chest (in)</th><th>Chest (cm)</th>
+            <th>Shoulder (in)</th><th>Sleeve (in)</th><th>Body Length</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>S</td>  <td>36–38</td><td>91–97</td>   <td>16.5</td><td>24.5</td><td>28</td></tr>
+          <tr><td>M</td>  <td>39–41</td><td>99–104</td>  <td>17.5</td><td>25</td>  <td>29</td></tr>
+          <tr><td>L</td>  <td>42–44</td><td>107–112</td> <td>18.5</td><td>25.5</td><td>30</td></tr>
+          <tr><td>XL</td> <td>45–47</td><td>114–119</td> <td>19.5</td><td>26</td>  <td>30.5</td></tr>
+          <tr><td>XXL</td><td>48–50</td><td>122–127</td> <td>20.5</td><td>26.5</td><td>31</td></tr>
+          <tr><td>3XL</td><td>51–53</td><td>130–135</td> <td>21.5</td><td>27</td>  <td>31.5</td></tr>
+        </tbody>
+      </table>
+      <div class="size-tips">
+        <div class="size-tip">
+          <div class="size-tip-title">How to Measure Chest</div>
+          <div class="size-tip-body">Measure the fullest part of your chest, keeping the tape horizontal and snug. Add 1 inch for comfort.</div>
+        </div>
+        <div class="size-tip">
+          <div class="size-tip-title">Still Unsure? / अजून शंका?</div>
+          <div class="size-tip-body">WhatsApp us your measurements and our sizing expert will guide you personally.</div>
+        </div>
+        <div class="size-tip">
+          <div class="size-tip-title">Easy Exchange</div>
+          <div class="size-tip-body">Wrong size? Exchange within 30 days, no questions asked. Free pickup from your door.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="tab-content" id="tab-reviews">
+
+    <!-- ══ FLASH MESSAGES (show inside reviews tab) ══ -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div style="margin-bottom:16px;padding:12px 16px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;
+        {% if category == 'success' %}background:rgba(13,184,95,0.08);border:0.5px solid rgba(13,184,95,0.25);color:#4dffaa;
+        {% else %}background:rgba(255,80,80,0.08);border:0.5px solid rgba(255,80,80,0.2);color:#ff7070;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endwith %}
+
+    <!-- ══ WRITE A REVIEW FORM ══ -->
+    {% if can_review %}
+    <div style="margin-bottom:36px;padding:28px;background:rgba(255,107,0,0.04);border:1px solid rgba(255,107,0,0.18);border-left:3px solid var(--sf)">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--sf);margin-bottom:6px">VERIFIED BUYER</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.08em;margin-bottom:18px">WRITE YOUR REVIEW · रिव्यू लिहा</div>
+
+      <form method="POST" action="/product/{{ product.id }}/review">
+
+        <!-- STAR RATING -->
+        <div style="margin-bottom:18px">
+          <div style="font-size:9px;letter-spacing:.18em;color:rgba(247,243,236,.35);margin-bottom:10px;font-family:'Space Mono',monospace">RATING · रेटिंग *</div>
+          <div class="star-picker" id="starPicker">
+            {% for i in [1,2,3,4,5] %}
+            <span class="star-pick" data-val="{{ i }}" onclick="pickStar({{ i }})" title="{{ i }} star">★</span>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="rating" id="ratingInput" value="">
+          <div id="ratingLabel" style="font-size:10px;color:rgba(247,243,236,.3);font-family:'Space Mono',monospace;margin-top:6px;min-height:14px"></div>
+        </div>
+
+        <!-- REVIEW TITLE -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:9px;letter-spacing:.18em;color:rgba(247,243,236,.35);margin-bottom:8px;font-family:'Space Mono',monospace">REVIEW TITLE · शीर्षक</div>
+          <input type="text" name="title" maxlength="150" placeholder="e.g. Great quality shirt!"
+            style="width:100%;padding:11px 14px;background:var(--bg2);border:1px solid var(--border2);color:var(--fg);font-family:'Space Mono',monospace;font-size:12px;outline:none;box-sizing:border-box"
+            onfocus="this.style.borderColor='rgba(255,107,0,0.4)'"
+            onblur="this.style.borderColor='var(--border2)'">
+        </div>
+
+        <!-- REVIEW BODY -->
+        <div style="margin-bottom:20px">
+          <div style="font-size:9px;letter-spacing:.18em;color:rgba(247,243,236,.35);margin-bottom:8px;font-family:'Space Mono',monospace">YOUR REVIEW · तुमचा अभिप्राय *</div>
+          <textarea name="body" rows="4" maxlength="1000" required placeholder="Share your experience with this product..."
+            style="width:100%;padding:11px 14px;background:var(--bg2);border:1px solid var(--border2);color:var(--fg);font-family:'Space Mono',monospace;font-size:12px;outline:none;resize:vertical;box-sizing:border-box;line-height:1.6"
+            onfocus="this.style.borderColor='rgba(255,107,0,0.4)'"
+            onblur="this.style.borderColor='var(--border2)'"></textarea>
+        </div>
+
+        <button type="submit"
+          style="padding:13px 32px;background:var(--sf);color:#000;font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.1em;border:none;cursor:pointer;transition:background .2s"
+          onmouseover="this.style.background='var(--sf2)'"
+          onmouseout="this.style.background='var(--sf)'">
+          SUBMIT REVIEW — रिव्यू सबमिट करा
+        </button>
+      </form>
+    </div>
+
+    {% elif already_reviewed %}
+    <div style="margin-bottom:28px;padding:16px 20px;background:rgba(13,184,95,0.06);border:0.5px solid rgba(13,184,95,0.2);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;color:#4dffaa">
+      ✓ YOU HAVE ALREADY REVIEWED THIS PRODUCT · तुम्ही रिव्यू दिला आहे
+    </div>
+
+    {% elif session.get('user_id') %}
+    <div style="margin-bottom:28px;padding:16px 20px;background:rgba(247,243,236,0.03);border:0.5px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;color:rgba(247,243,236,.3)">
+      🛒 PURCHASE THIS PRODUCT TO WRITE A REVIEW · खरेदी केल्यानंतरच रिव्यू देता येईल
+    </div>
+
+    {% else %}
+    <div style="margin-bottom:28px;padding:16px 20px;background:rgba(247,243,236,0.03);border:0.5px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;color:rgba(247,243,236,.3)">
+      🔒 <a href="/login" style="color:var(--sf);text-decoration:none">LOGIN</a> AND PURCHASE TO WRITE A REVIEW · रिव्यू देण्यासाठी लॉगिन व खरेदी करा
+    </div>
+    {% endif %}
+
+    <!-- ══ EXISTING REVIEWS ══ -->
+    {% if reviews %}
+    <div class="reviews-header">
+      <div>
+        <div class="rating-big-num">{{ product.rating_display or 4.9 }}</div>
+        <div class="rating-big-stars">★★★★★</div>
+        <div class="rating-big-count">{{ reviews|length }} Verified Reviews</div>
+      </div>
+      <div class="rating-bars">
+        <div class="rating-bar-row">
+          <span class="rating-bar-label">5 ★</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" style="width:88%"></div></div>
+          <span class="rating-bar-count">{{ (reviews|length * 0.88)|int }}</span>
+        </div>
+        <div class="rating-bar-row">
+          <span class="rating-bar-label">4 ★</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" style="width:8%;background:var(--gold2)"></div></div>
+          <span class="rating-bar-count">{{ (reviews|length * 0.08)|int }}</span>
+        </div>
+        <div class="rating-bar-row">
+          <span class="rating-bar-label">3 ★</span>
+          <div class="rating-bar-track"><div class="rating-bar-fill" style="width:2%;background:rgba(200,148,26,.5)"></div></div>
+          <span class="rating-bar-count">{{ (reviews|length * 0.02)|int }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="reviews-grid">
+      {% for review in reviews %}
+      <div class="review-card">
+        <div class="review-flag"><div class="rrf sf"></div><div class="rrf wh"></div><div class="rrf gr"></div></div>
+        <div class="review-stars">{% for i in range(review.rating) %}★{% endfor %}</div>
+        <div class="review-title">{{ review.title or "Verified Review" }}</div>
+        <p class="review-body">{{ review.body or review.comment }}</p>
+        <div class="review-meta">
+          <div class="review-author">
+            <div class="review-av">{{ review.user.name[0].upper() if review.user else "?" }}</div>
+            <div>
+              <div class="review-name">{{ review.user.name if review.user else "Customer" }}</div>
+              <div class="review-loc">Verified Buyer</div>
+            </div>
+          </div>
+          <div class="review-verified">✓ Verified</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div style="padding:60px;text-align:center;color:rgba(247,243,236,.25);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px">
+      NO REVIEWS YET — BE THE FIRST · पहिला रिव्यू द्या
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ══ STAR PICKER CSS + JS ══ -->
+  <style>
+  .star-picker { display:flex; gap:6px; }
+  .star-pick {
+    font-size:28px;
+    color:rgba(247,243,236,.15);
+    cursor:pointer;
+    transition:color .15s, transform .15s;
+    user-select:none;
+  }
+  .star-pick.active,
+  .star-pick:hover { color:var(--sf); transform:scale(1.15); }
+  </style>
+  <script>
+  const ratingLabels = ['','Poor · खराब','Fair · ठीक आहे','Good · चांगले','Very Good · खूप चांगले','Excellent · उत्कृष्ट'];
+  function pickStar(val){
+    document.getElementById('ratingInput').value = val;
+    document.getElementById('ratingLabel').textContent = ratingLabels[val];
+    document.querySelectorAll('.star-pick').forEach((s,i)=>{
+      s.classList.toggle('active', i < val);
+    });
+  }
+  </script>
+
+  <!-- SHIPPING -->
+  <!-- FIX: use del.get('key') for dict access — dot notation silently fails in Jinja2 -->
+  {% set del = product.delivery %}
+  <div class="tab-content" id="tab-shipping">
+    <div style="max-width:700px;display:grid;grid-template-columns:1fr 1fr;gap:32px">
+      <div>
+        <div class="sec-tag" style="margin-bottom:16px">Shipping / डिलिव्हरी</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="del-row"><div class="del-icon">🚀</div><div>
+            <div class="del-en"><strong style="color:var(--white)">Standard Delivery</strong> — {{ del.get('standard_days','3–5 Business Days') if del else '3–5 Business Days' }}</div>
+            <div class="del-mr">सामान्य डिलिव्हरी · ₹{{ del.get('standard_price','79') if del else '79' }}</div>
+          </div></div>
+          <div class="del-row"><div class="del-icon">⚡</div><div>
+            <div class="del-en"><strong style="color:var(--sf)">Express Delivery</strong> — {{ del.get('express_days','1–2 Business Days') if del else '1–2 Business Days' }}</div>
+            <div class="del-mr">एक्सप्रेस डिलिव्हरी · ₹{{ del.get('express_price','149') if del else '149' }}</div>
+          </div></div>
+          <div class="del-row"><div class="del-icon">🎁</div><div>
+            <div class="del-en"><strong style="color:var(--gr2)">Free Shipping</strong> on orders ₹{{ del.get('free_above','999') if del else '999' }}+</div>
+            <div class="del-mr">₹{{ del.get('free_above','999') if del else '999' }}+ वर मोफत शिपिंग</div>
+          </div></div>
+          <div class="del-row"><div class="del-icon">📍</div><div>
+            <div class="del-en">Shipping across all 28 states of India</div>
+            <div class="del-mr">भारतातील सर्व राज्यांमध्ये शिपिंग</div>
+          </div></div>
+        </div>
+      </div>
+      <div>
+        <div class="sec-tag" style="margin-bottom:16px">Returns / परतावा</div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="del-row"><div class="del-icon">🔄</div><div>
+            <div class="del-en"><strong style="color:var(--white)">{{ del.get('return_window','30') if del else '30' }}-Day Returns</strong> — No questions asked</div>
+            <div class="del-mr">{{ del.get('return_window','30') if del else '30' }} दिवस परतावा</div>
+          </div></div>
+          <div class="del-row"><div class="del-icon">🚪</div><div>
+            <div class="del-en"><strong style="color:var(--sf)">Free Pickup</strong> from your doorstep</div>
+            <div class="del-mr">घरून मोफत पिकअप</div>
+          </div></div>
+          <div class="del-row"><div class="del-icon">💰</div><div>
+            <div class="del-en"><strong style="color:var(--gr2)">Instant Refund</strong> within {{ del.get('refund_days','3–5 business days') if del else '3–5 business days' }}</div>
+            <div class="del-mr">{{ del.get('refund_days','3–5') if del else '3–5' }} दिवसांत रिफंड</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tabs-section -->
+
+
+<!-- ══ RELATED PRODUCTS ══ -->
+{% if related %}
+<div class="related-sec">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px">
+    <div>
+      <div class="sec-tag">You May Also Like · हे पण आवडेल</div>
+      <div class="sec-head">RELATED PICKS<span class="sec-mr">संबंधित उत्पादने</span></div>
+    </div>
+    <a href="{{ url_for('shop.shop_page') }}"
+       style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:rgba(247,243,236,.22);text-decoration:none;text-transform:uppercase;border:0.5px solid rgba(255,255,255,.08);padding:8px 16px">
+      सगळ्या पाहा ↗
+    </a>
+  </div>
+  <div class="related-grid">
+    {% for rp in related %}
+    <a href="{{ url_for('shop.product') }}?id={{ rp.id }}" class="prod-link">
+      <div class="prod-card">
+        <div class="prod-img h240" style="position:relative">
+          {% if rp.image %}
+            <img src="{{ url_for('static', filename='uploads/' + rp.image) }}"
+                 alt="{{ rp.name }}"
+                 style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+          {% else %}
+            <div class="prod-img-txt">VK</div>
+          {% endif %}
+          <div class="prod-quick">
+            <button class="prod-qa"
+              onclick="event.preventDefault();event.stopPropagation();window.location.href='{{ url_for('shop.add_to_cart', product_id=rp.id) }}'">
+              + Cart
+            </button>
+          </div>
+          <div class="prod-flag-bar">
+            <div class="pfb sf"></div><div class="pfb wh"></div><div class="pfb gr"></div>
+          </div>
+        </div>
+        <div class="prod-details">
+          <div class="prod-name-en">{{ rp.name }}</div>
+          <div class="prod-name-mr">{{ rp.name_mr or rp.name }}</div>
+          <div class="prod-bot">
+            <div>
+              <div class="prod-price">₹{{ "{:,.0f}".format(rp.final_price) }}</div>
+              {% if rp.discount and rp.discount > 0 %}
+              <div class="prod-old">₹{{ "{:,.0f}".format(rp.price) }}</div>
+              {% endif %}
+            </div>
+            <button class="prod-add-mini"
+              onclick="event.preventDefault();event.stopPropagation();window.location.href='{{ url_for('shop.add_to_cart', product_id=rp.id) }}'">
+              + CART
+            </button>
+          </div>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+
+<!-- ══ STICKY BUY BAR ══ -->
+<div class="sticky-buy-bar" id="stickyBar">
+  <div class="sticky-prod-info">
+    <div class="sticky-prod-thumb">
+      {% if product.image %}
+      <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}">
+      {% else %}
+      <div style="width:100%;height:100%;background:var(--mid);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:12px;color:rgba(255,255,255,.1)">VK</div>
+      {% endif %}
+    </div>
+    <div>
+      <div class="sticky-prod-name">{{ product.name }}</div>
+      <div class="sticky-prod-price">
+        ₹{{ "{:,.0f}".format(product.final_price) }}
+        {% if product.discount and product.discount > 0 %}
+        · <span style="font-size:9px;color:rgba(247,243,236,.2);text-decoration:line-through">₹{{ "{:,.0f}".format(product.price) }}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="sticky-btns">
+    {% if product.in_stock %}
+    <a href="{{ url_for('shop.add_to_cart', product_id=product.id) }}" class="sticky-btn-cart">
+      🛒 ADD TO CART
+    </a>
+    <button class="sticky-btn-buy" onclick="handleBuyNow()">⚡ BUY NOW</button>
+    {% else %}
+    <button class="sticky-btn-cart" style="opacity:.4;cursor:not-allowed" disabled>✕ OUT OF STOCK</button>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast" id="toastEl">
+  <span id="toastMsg"></span>
+  <span class="toast-mr" id="toastMr"></span>
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+/* ── PRODUCT DATA ── */
+const PRODUCT = {
+  id:    {{ product.id }},
+  name:  '{{ product.name | replace("'", "\\'") }}',
+  price: {{ product.final_price }},
+  image: '{% if product.image %}{{ url_for("static", filename="uploads/" + product.image) }}{% endif %}'
+};
+
+/* ── GALLERY ── */
+const images = [
+  {% if product.image %}
+  { src: '{{ url_for("static", filename="uploads/" + product.image) }}', label: 'Front View' },
+  {% endif %}
+  {% if product.image_2 %}
+  { src: '{{ url_for("static", filename="uploads/" + product.image_2) }}', label: 'Back View' },
+  {% endif %}
+  {% if product.image_3 %}
+  { src: '{{ url_for("static", filename="uploads/" + product.image_3) }}', label: 'Detail View' },
+  {% endif %}
+  {% if product.image_4 %}
+  { src: '{{ url_for("static", filename="uploads/" + product.image_4) }}', label: 'Worn Look' },
+  {% endif %}
+];
+if (images.length === 0) images.push({ src: null, label: 'VEKTOR' });
+
+let currentImg    = 0;
+let selectedSize  = '{{ product.default_size or "M" }}';
+let selectedColor = '{{ product.colors[0].name if product.colors else "" }}';
+let qty           = 1;
+let wishlisted    = {{ 'true' if is_wishlisted else 'false' }};
+
+/* ── GALLERY FUNCTIONS ── */
+function buildGallery() {
+  const thumbCol = document.getElementById('thumbCol');
+  thumbCol.innerHTML = '';
+  images.forEach((img, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'thumb-btn' + (i === 0 ? ' active' : '');
+    if (img.src) {
+      btn.innerHTML = `<img src="${img.src}" alt="${img.label}" style="width:72px;height:72px;object-fit:cover">`;
+    } else {
+      btn.innerHTML = `<div style="width:72px;height:72px;background:var(--mid);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:11px;color:rgba(255,255,255,.1)">VK</div>`;
+    }
+    btn.onclick = () => setImage(i);
+    thumbCol.appendChild(btn);
+  });
+  updateMainImg();
+}
+
+function updateMainImg() {
+  const mainGal = document.getElementById('mainGallery');
+  const existing = document.getElementById('mainImg');
+  if (existing) existing.remove();
+
+  const img = images[currentImg];
+  const el  = document.createElement('div');
+  el.id     = 'mainImg';
+
+  if (img.src) {
+    el.style.cssText = 'width:100%;height:100%;position:absolute;top:0;left:0;';
+    el.innerHTML = `<img src="${img.src}" alt="${img.label}" style="width:100%;height:100%;object-fit:cover;display:block;" onclick="openZoom()">`;
+  } else {
+    el.textContent = 'VEKTOR';
+    el.onclick = openZoom;
+  }
+
+  mainGal.insertBefore(el, mainGal.querySelector('.gallery-overlay-btns'));
+  document.getElementById('imgCounter').textContent = (currentImg + 1) + ' / ' + images.length;
+  document.querySelectorAll('.thumb-btn').forEach((b, i) => b.classList.toggle('active', i === currentImg));
+}
+
+function setImage(i)  { currentImg = i; updateMainImg(); }
+function nextImg()    { currentImg = (currentImg + 1) % images.length; updateMainImg(); }
+function prevImg()    { currentImg = (currentImg - 1 + images.length) % images.length; updateMainImg(); }
+
+/* ── ZOOM ── */
+function openZoom() {
+  const modal = document.getElementById('zoomModal');
+  const zImg  = document.getElementById('zoomImg');
+  const img   = images[currentImg];
+  zImg.src = img.src || '';
+  modal.classList.add('open');
+}
+function closeZoom() { document.getElementById('zoomModal').classList.remove('open'); }
+
+/* ── COLOR SELECTOR (FIX: was missing) ── */
+function selectColor(btn, colorName) {
+  document.querySelectorAll('#colorRow .color-opt').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedColor = colorName;
+  const nameEl = document.getElementById('colorName');
+  if (nameEl) nameEl.textContent = colorName;
+  // sync hidden form field
+  const hc = document.getElementById('hiddenColor');
+  if (hc) hc.value = colorName;
+}
+
+/* ── SIZE SELECTOR ── */
+function selectSize(btn, size) {
+  document.querySelectorAll('#sizeRow .size-btn').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+  selectedSize = size;
+  document.getElementById('sizeName').textContent = size;
+  // sync hidden form field
+  const hs = document.getElementById('hiddenSize');
+  if (hs) hs.value = size;
+}
+
+/* ── QUANTITY (FIX: now syncs hidden form field) ── */
+function changeQty(delta) {
+  qty = Math.max(1, Math.min(10, qty + delta));
+  document.getElementById('qtyNum').textContent = qty;
+  const hq = document.getElementById('hiddenQty');
+  if (hq) hq.value = qty;
+}
+
+/* ── BUY NOW ── */
+function handleBuyNow() {
+  // Submit the cart form then redirect — or go direct
+  window.location.href = '{{ url_for("shop.add_to_cart", product_id=product.id) }}';
+}
+
+/* ── WISHLIST (FIX: now hits backend) ── */
+function toggleWishlist() {
+  const btn  = document.getElementById('wishlistBtn');
+  const icon = document.getElementById('wishlistIcon');
+  const text = document.getElementById('wishlistText');
+
+  fetch('/wishlist/toggle/{{ product.id }}', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.wishlisted) {
+      btn.classList.add('active');
+      icon.textContent = '❤️';
+      text.textContent = 'Wishlisted / विशलिस्टमध्ये आहे';
+      showToast('Added to Wishlist 💖', 'विशलिस्टमध्ये जोडले');
+    } else {
+      btn.classList.remove('active');
+      icon.textContent = '♡';
+      text.textContent = 'Add to Wishlist / विशलिस्टमध्ये जोडा';
+      showToast('Removed from Wishlist', 'विशलिस्टमधून काढले');
+    }
+    wishlisted = data.wishlisted;
+  })
+  .catch(() => {
+    // Not logged in — redirect
+    window.location.href = '/login';
+  });
+}
+
+/* ── TABS ── */
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  const target = document.getElementById('tab-' + tabId);
+  if (target) target.classList.add('active');
+  const map = { description: 0, sizeguide: 1, reviews: 2, shipping: 3 };
+  const idx = map[tabId];
+  if (idx !== undefined) document.querySelectorAll('.tab-btn')[idx]?.classList.add('active');
+  document.querySelector('.tabs-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── PINCODE ── */
+function checkPincode() {
+  const pin    = document.getElementById('pincodeInput').value;
+  const result = document.getElementById('pincodeResult');
+  if (pin.length !== 6) {
+    showToast('Enter valid 6-digit pincode', 'योग्य पिनकोड टाका');
+    return;
+  }
+  result.style.display = 'block';
+  result.style.color   = 'var(--gr2)';
+  result.textContent   = '✓ Delivery available — 3–5 business days · Free shipping on this order!';
+}
+
+/* ── SHARE (FIX: removed broken Instagram handler) ── */
+function shareProduct(platform) {
+  const url  = window.location.href;
+  const text = 'Check out {{ product.name | replace("'", "\\'") }} from VEKTOR! 🇮🇳 ' + url;
+  if (platform === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  } else if (platform === 'twitter') {
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text), '_blank');
+  } else if (platform === 'copy') {
+    navigator.clipboard?.writeText(url).then(() => {
+      showToast('Link copied!', 'लिंक कॉपी केली!');
+    });
+  }
+}
+
+/* ── TOAST ── */
+function showToast(msg, mr) {
+  const el = document.getElementById('toastEl');
+  document.getElementById('toastMsg').textContent = msg;
+  const mrEl = document.getElementById('toastMr');
+  if (mrEl) mrEl.textContent = mr || '';
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ── STICKY BAR ── */
+const stickyBar  = document.getElementById('stickyBar');
+const addCartBtn = document.getElementById('addCartBtn');
+window.addEventListener('scroll', () => {
+  if (addCartBtn) {
+    const rect = addCartBtn.getBoundingClientRect();
+    stickyBar?.classList.toggle('visible', rect.bottom < 0);
+  }
+});
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') nextImg();
+  if (e.key === 'ArrowLeft')  prevImg();
+  if (e.key === 'Escape')     closeZoom();
+});
+
+/* ── SCROLL REVEAL (FIX: force-show after timeout so content never stays hidden) ── */
+const prodObserver = new IntersectionObserver(entries => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => entry.target.classList.add('vis'), i * 55);
+      prodObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.05 });
+
+document.querySelectorAll('.reveal').forEach(el => prodObserver.observe(el));
+
+// Safety fallback — if observer never fires (e.g. element already visible), show after 800ms
+setTimeout(() => {
+  document.querySelectorAll('.reveal:not(.vis)').forEach(el => el.classList.add('vis'));
+}, 800);
+
+/* ── INIT ── */
+buildGallery();
+</script>
+{% endblock %}

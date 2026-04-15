@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>AR Virtual Try-On</title>
+<style>
+body{
+    margin:0;
+    background:black;
+    text-align:center;
+    color:white;
+    font-family:sans-serif;
+}
+
+.container{
+    position:relative;
+    width:360px;
+    margin:auto;
+}
+
+video{
+    width:100%;
+    border-radius:15px;
+}
+
+.shirt{
+    position:absolute;
+    top:120px;
+    left:60px;
+    width:240px;
+    opacity:0.85;
+    pointer-events:none;
+}
+
+button{
+    margin-top:20px;
+    padding:12px 20px;
+    border:none;
+    border-radius:20px;
+    background:gold;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>AR Virtual Try-On Demo</h2>
+
+<div class="container">
+    <video id="video" autoplay playsinline></video>
+    <img src="https://i.imgur.com/9Q9Z6Kd.png" class="shirt">
+</div>
+
+<button onclick="startCamera()">Start AR Try-On</button>
+
+<script>
+async function startCamera(){
+    const video=document.getElementById('video');
+    const stream=await navigator.mediaDevices.getUserMedia({video:true});
+    video.srcObject=stream;
+}
+</script>
+
+</body>
+</html>

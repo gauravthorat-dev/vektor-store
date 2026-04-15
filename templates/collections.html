@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set active_page = "collections" %}
+{% block title %}Collections — VEKTOR{% endblock %}
+
+{% block content %}
+<div class="page active" id="page-collections">
+  <div class="coll-hero">
+    <div class="coll-hero-bg">
+      <svg viewBox="0 0 400 600" fill="none">
+        <circle cx="200" cy="200" r="180" stroke="white" stroke-width="1.5"/>
+        <circle cx="200" cy="200" r="20" fill="white"/>
+        <g stroke="white" stroke-width="1">
+          <line x1="200" y1="20"  x2="200" y2="380"/>
+          <line x1="20"  y1="200" x2="380" y2="200"/>
+          <line x1="73"  y1="73"  x2="327" y2="327"/>
+          <line x1="327" y1="73"  x2="73"  y2="327"/>
+          <circle cx="200" cy="200" r="80" stroke-dasharray="5 4"/>
+        </g>
+      </svg>
+    </div>
+    <div class="sec-tag">संग्रह · Collections</div>
+    <div class="sec-head" style="font-size:clamp(44px,6vw,80px)">OUR COLLECTIONS<span class="sec-mr">आमचे संग्रह · हमारे संग्रह</span></div>
+    <p style="font-size:16px;color:rgba(247,243,236,.35);margin-top:14px;max-width:500px;line-height:1.7">Every collection tells the story of a Maharashtrian man. हर संग्रह एक कहानी सुनाता है.</p>
+    <div class="coll-featured">
+      <div class="coll-feat-main">
+        <div class="coll-feat-num">26</div>
+        <div class="coll-feat-tag">Featured Collection · विशेष संग्रह</div>
+        <div class="coll-feat-title">Vसंत<br>COLLECTION</div>
+        <div class="coll-feat-mr">वसंत संग्रह — Spring/Summer 2026</div>
+        <button class="coll-feat-btn" onclick="window.location='{{ url_for('shop.shop_page') }}'">संग्रह पाहा — Shop Now</button>
+      </div>
+      <div class="coll-feat-side">
+        <div class="coll-side-card"><div class="coll-side-num">01</div><div class="coll-side-title">URBAN WARRIOR</div><div class="coll-side-mr">शहरी योद्धा</div><div class="coll-side-count">24 pieces · २४ वस्तू</div><div class="coll-side-bar"></div></div>
+        <div class="coll-side-card"><div class="coll-side-num">02</div><div class="coll-side-title">HERITAGE LINE</div><div class="coll-side-mr">वारसा रेषा</div><div class="coll-side-count">18 pieces · १८ वस्तू</div><div class="coll-side-bar"></div></div>
+        <div class="coll-side-card"><div class="coll-side-num">03</div><div class="coll-side-title">STREET PRIDE</div><div class="coll-side-mr">रस्त्याचा अभिमान</div><div class="coll-side-count">31 pieces · ३१ वस्तू</div><div class="coll-side-bar"></div></div>
+      </div>
+    </div>
+  </div>
+  <section class="sec-wrap">
+    <div class="sec-top">
+      <div><div class="sec-tag">All Collections · सर्व संग्रह</div><div class="sec-head">BROWSE ALL<span class="sec-mr">सर्व पाहा</span></div></div>
+    </div>
+    <div class="coll-all-grid">
+      <div class="coll-card"><div class="coll-card-num">01</div><div class="coll-card-tag">SS/26</div><div class="coll-card-title">VASANT COLLECTION</div><div class="coll-card-mr">वसंत संग्रह</div><div class="coll-card-sk">।। वसंतः ऋतुराजः ।।</div><div class="coll-card-count">48 styles · ४८ शैली</div><div class="coll-card-bar" style="background:var(--sf)"></div></div>
+      <div class="coll-card"><div class="coll-card-num">02</div><div class="coll-card-tag">Heritage</div><div class="coll-card-title">MARATHA LEGACY</div><div class="coll-card-mr">मराठा वारसा</div><div class="coll-card-sk">।। वीर मराठा ।।</div><div class="coll-card-count">32 styles · ३२ शैली</div><div class="coll-card-bar" style="background:var(--gold)"></div></div>
+      <div class="coll-card"><div class="coll-card-num">03</div><div class="coll-card-tag">Urban</div><div class="coll-card-title">URBAN WARRIOR</div><div class="coll-card-mr">शहरी योद्धा</div><div class="coll-card-sk">।। शौर्यम् धनम् ।।</div><div class="coll-card-count">24 styles · २४ शैली</div><div class="coll-card-bar" style="background:var(--gr2)"></div></div>
+      <div class="coll-card"><div class="coll-card-num">04</div><div class="coll-card-tag">Formal</div><div class="coll-card-title">BOARDROOM EDIT</div><div class="coll-card-mr">बोर्डरूम</div><div class="coll-card-sk">।। ज्ञानम् शक्तिः ।।</div><div class="coll-card-count">19 styles · १९ शैली</div><div class="coll-card-bar" style="background:var(--blue)"></div></div>
+      <div class="coll-card"><div class="coll-card-num">05</div><div class="coll-card-tag">Casual</div><div class="coll-card-title">SUNDAY MODE</div><div class="coll-card-mr">रविवार शैली</div><div class="coll-card-sk">।। सुखं जीवनम् ।।</div><div class="coll-card-count">27 styles · २७ शैली</div><div class="coll-card-bar" style="background:var(--sf)"></div></div>
+      <div class="coll-card"><div class="coll-card-num">06</div><div class="coll-card-tag">Sale</div><div class="coll-card-title">SALE ARCHIVE</div><div class="coll-card-mr">सेल संग्रह</div><div class="coll-card-sk">।। बचत करा ।।</div><div class="coll-card-count">40% OFF · ४०% सवलत</div><div class="coll-card-bar" style="background:var(--gold)"></div></div>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR Admin — Add Product</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<style>
+/* ── ADD-PRODUCT PAGE EXTRAS ── */
+.ap-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.ap-section-hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  cursor: pointer;
+  user-select: none;
+}
+.ap-section-hdr:hover { background: rgba(255,107,0,0.04); }
+.ap-section-icon {
+  width: 28px; height: 28px;
+  background: rgba(255,107,0,0.1);
+  border: 1px solid rgba(255,107,0,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.ap-section-title {
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: .06em;
+  flex: 1;
+}
+.ap-section-tag {
+  font-size: 8px;
+  letter-spacing: .14em;
+  color: var(--sf);
+  text-transform: uppercase;
+}
+.ap-section-chevron {
+  font-size: 10px;
+  color: var(--fg3);
+  transition: transform .25s;
+}
+.ap-section.collapsed .ap-section-chevron { transform: rotate(-90deg); }
+.ap-section.collapsed .ap-section-body { display: none; }
+.ap-section-body { padding: 20px; }
+
+/* ── COLOR BUILDER ── */
+.color-builder { display: flex; flex-direction: column; gap: 8px; }
+.color-entry {
+  display: grid;
+  grid-template-columns: 36px 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  transition: border-color .2s;
+}
+.color-entry:hover { border-color: rgba(255,107,0,0.2); }
+.color-swatch {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.color-hex-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  outline: none;
+  padding: 4px 0;
+  letter-spacing: .04em;
+  width: 80px;
+}
+.color-name-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  outline: none;
+  padding: 4px 0;
+}
+.color-remove {
+  width: 24px; height: 24px;
+  background: none;
+  border: 1px solid rgba(224,48,48,0.2);
+  color: #ff7070;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.color-remove:hover { background: rgba(224,48,48,0.15); }
+.add-color-btn, .add-img-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  background: transparent;
+  border: 1px dashed var(--border2);
+  color: var(--fg3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  cursor: pointer;
+  transition: all .2s;
+  width: 100%;
+  justify-content: center;
+}
+.add-color-btn:hover, .add-img-btn:hover {
+  border-color: var(--sf);
+  color: var(--sf);
+  background: rgba(255,107,0,0.04);
+}
+
+/* ── SIZE SELECTOR ── */
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.size-toggle {
+  display: none;
+}
+.size-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  border: 1px solid var(--border2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--fg3);
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+  position: relative;
+}
+.size-label:hover { border-color: var(--sf); color: var(--sf); }
+.size-toggle:checked + .size-label {
+  background: var(--sf);
+  color: #000;
+  border-color: var(--sf);
+  font-weight: 700;
+}
+
+/* ── IMAGE SLOTS ── */
+.img-slots {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.img-slot {
+  aspect-ratio: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.img-slot:hover { border-color: rgba(255,107,0,0.4); }
+.img-slot.has-img { border-color: rgba(255,107,0,0.3); }
+.img-slot .slot-num {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: rgba(255,107,0,0.1);
+}
+.img-slot .slot-label {
+  font-size: 8px;
+  letter-spacing: .12em;
+  color: var(--fg3);
+  text-transform: uppercase;
+}
+.img-slot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.img-slot .slot-remove {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 20px; height: 20px;
+  background: rgba(224,48,48,0.8);
+  color: white;
+  border: none;
+  display: none;
+  align-items: center; justify-content: center;
+  font-size: 11px;
+  cursor: pointer;
+}
+.img-slot.has-img .slot-remove { display: flex; }
+
+/* ── HIGHLIGHTS LIST ── */
+.highlight-list { display: flex; flex-direction: column; gap: 6px; }
+.highlight-entry {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.highlight-entry input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.highlight-entry input:focus { border-color: rgba(255,107,0,0.4); }
+.hl-remove {
+  width: 32px; height: 32px;
+  background: none;
+  border: 1px solid rgba(224,48,48,0.2);
+  color: #ff7070;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.hl-remove:hover { background: rgba(224,48,48,0.15); }
+
+/* ── SPEC ROWS ── */
+.spec-builder { display: flex; flex-direction: column; gap: 6px; }
+.spec-entry {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.spec-entry input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.spec-entry input:focus { border-color: rgba(255,107,0,0.4); }
+.spec-remove {
+  width: 32px; height: 32px;
+  background: none;
+  border: 1px solid rgba(224,48,48,0.2);
+  color: #ff7070;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.spec-remove:hover { background: rgba(224,48,48,0.15); }
+
+/* ── CARE ICONS ── */
+.care-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.care-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+}
+.care-item input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  outline: none;
+  flex: 1;
+  padding: 2px 0;
+}
+.care-emoji { font-size: 16px; flex-shrink: 0; }
+
+/* ── REVIEW ENTRY ── */
+.review-builder { display: flex; flex-direction: column; gap: 10px; }
+.review-entry {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+.review-entry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 80px;
+  gap: 8px;
+}
+.review-entry input, .review-entry textarea, .review-entry select {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color .2s;
+  width: 100%;
+}
+.review-entry input:focus,
+.review-entry textarea:focus { border-color: rgba(255,107,0,0.4); }
+.review-entry textarea { resize: vertical; min-height: 60px; }
+.review-remove {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: none;
+  border: 1px solid rgba(224,48,48,0.2);
+  color: #ff7070;
+  width: 24px; height: 24px;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+}
+.review-remove:hover { background: rgba(224,48,48,0.15); }
+
+/* ── OFFER BUILDER ── */
+.offer-builder { display: flex; flex-direction: column; gap: 6px; }
+.offer-entry {
+  display: grid;
+  grid-template-columns: 40px 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.offer-entry input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color .2s;
+}
+.offer-entry input:focus { border-color: rgba(255,107,0,0.4); }
+.offer-emoji-inp {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-size: 16px;
+  text-align: center;
+  padding: 6px 4px;
+  outline: none;
+  width: 40px;
+}
+.offer-remove {
+  width: 32px; height: 32px;
+  background: none;
+  border: 1px solid rgba(224,48,48,0.2);
+  color: #ff7070;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.offer-remove:hover { background: rgba(224,48,48,0.15); }
+
+/* ── PREVIEW CARD ── */
+.preview-sticky {
+  position: sticky;
+  top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.preview-main-img {
+  background: #1a2e3a;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 70px;
+  color: rgba(255,255,255,0.05);
+  letter-spacing: 4px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.preview-flag {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  display: flex;
+}
+.pf { flex: 1; }
+.pf.sf { background: #FF6B00; }
+.pf.wh { background: rgba(247,243,236,0.22); }
+.pf.gr { background: #046A38; }
+.preview-badge {
+  position: absolute;
+  top: 10px; left: 10px;
+  font-family: var(--font-dev);
+  font-size: 10px;
+  padding: 4px 11px;
+}
+.preview-save {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: #046A38;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .1em;
+  color: #fff;
+  font-weight: 700;
+}
+.preview-info { padding: 16px; background: var(--card); border: 1px solid var(--border); }
+.preview-collection {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: .24em;
+  color: var(--sf);
+  text-transform: uppercase;
+  border: 0.5px solid rgba(255,107,0,0.3);
+  padding: 3px 10px;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+.preview-name {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: .04em;
+  line-height: 0.9;
+  margin-bottom: 8px;
+}
+.preview-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.preview-price { font-family: var(--font-display); font-size: 28px; color: var(--sf); }
+.preview-old   { font-family: var(--font-mono); font-size: 12px; color: var(--fg3); text-decoration: line-through; }
+.preview-save-txt { font-family: var(--font-mono); font-size: 10px; color: var(--gr2); }
+.preview-colors { display: flex; gap: 6px; margin-bottom: 10px; }
+.preview-color-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.1); }
+.preview-sizes { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+.preview-size-chip {
+  padding: 4px 10px;
+  border: 0.5px solid rgba(255,255,255,0.1);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: rgba(247,243,236,0.4);
+}
+.preview-size-chip.sel {
+  background: var(--sf);
+  color: #000;
+  border-color: var(--sf);
+}
+.preview-cta {
+  width: 100%;
+  padding: 13px;
+  background: var(--sf);
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: .12em;
+  border: none;
+  cursor: default;
+  text-align: center;
+}
+.preview-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 0.5px solid var(--border);
+}
+.preview-stars { color: var(--gold); font-size: 12px; letter-spacing: 2px; }
+
+/* ── SUBMIT BAR ── */
+.submit-bar {
+  position: sticky;
+  bottom: 0;
+  background: rgba(10,10,10,0.96);
+  border-top: 1px solid rgba(255,107,0,0.2);
+  backdrop-filter: blur(16px);
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 8px;
+  z-index: 100;
+}
+.submit-bar-info {
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--fg3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.submit-bar-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gr2); animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+.submit-btns { display: flex; gap: 8px; }
+
+/* ── CHAR COUNTER ── */
+.char-counter {
+  text-align: right;
+  font-size: 9px;
+  letter-spacing: .06em;
+  color: var(--fg3);
+  margin-top: 4px;
+}
+
+/* ── BADGE TOGGLE ── */
+.badge-opts { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge-opt-input { display: none; }
+.badge-opt-label {
+  padding: 6px 14px;
+  font-family: var(--font-dev);
+  font-size: 11px;
+  border: 1px solid var(--border2);
+  color: var(--fg3);
+  cursor: pointer;
+  transition: all .2s;
+  user-select: none;
+}
+.badge-opt-label:hover { border-color: var(--sf); color: var(--sf); }
+.badge-opt-input:checked + .badge-opt-label { background: var(--sf); color: #000; border-color: var(--sf); }
+.badge-opt-input[data-color="gr"]:checked + .badge-opt-label { background: var(--gr); color: #fff; border-color: var(--gr); }
+.badge-opt-input[data-color="gold"]:checked + .badge-opt-label { background: var(--gold); color: #000; border-color: var(--gold); }
+
+/* ── DELIVERY TIMING ── */
+.delivery-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="admin-shell">
+
+  <!-- TICKER -->
+  <div class="admin-ticker">
+    <div class="ticker-label">VEKTOR ADMIN</div>
+    <div class="ticker-track">
+      <div class="ticker-item"><span>ADD PRODUCT</span><div class="ticker-dot"></div><span>नवीन उत्पादन जोडा</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div><span>ALL FIELDS MATCH PRODUCT PAGE</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>ADD PRODUCT</span><div class="ticker-dot"></div><span>नवीन उत्पादन जोडा</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div><span>ALL FIELDS MATCH PRODUCT PAGE</span><div class="ticker-dot"></div></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+<div class="admin-sidebar">
+  <div class="sb-logo">VEKTOR</div>
+  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+  </a>
+  <a href="/admin/products" class="sb-btn active" title="Products">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  </a>
+  <a href="/admin/orders" class="sb-btn" title="Orders">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </a>
+  <a href="/admin/customers" class="sb-btn" title="Customers">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+  </a>
+  <a href="/admin/analytics" class="sb-btn" title="Analytics">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </a>
+  <a href="/admin/settings" class="sb-btn" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </a>
+  {% if session.get('admin_level') == 'superadmin' %}
+<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
+  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+</a>
+{% endif %}
+  <div class="sb-divider"></div>
+  <a href="/admin/switch" class="sb-btn" title="Switch Account">
+    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+  </a>
+  <a href="/admin/logout" class="sb-btn" title="Logout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </a>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">VK</div>
+</div>
+
+
+  <!-- MAIN -->
+  <div class="admin-main">
+
+    <!-- HEADER -->
+    <div class="admin-hdr">
+      <div>
+        <div class="admin-eyebrow">Products · उत्पादने</div>
+        <div class="admin-title">ADD <span>PRODUCT</span></div>
+        <div class="admin-sub">नवीन उत्पादन जोडा · All fields match the product detail page</div>
+      </div>
+      <a href="/admin/products">
+        <button class="admin-btn admin-btn-ghost">← BACK TO PRODUCTS</button>
+      </a>
+    </div>
+
+    <!-- FLASH -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}{% for msg in messages %}
+        <div class="admin-flash">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    <!-- MAIN GRID -->
+    <form method="POST" action="/admin/add-product" id="addProductForm" enctype="multipart/form-data">
+    <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;align-items:start">
+
+      <!-- ═══════════════ LEFT: ALL FORM SECTIONS ═══════════════ -->
+      <div>
+
+        <!-- ①  BASIC INFO -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">①</div>
+            <div class="ap-section-title">Basic Info · मूलभूत माहिती</div>
+            <div class="ap-section-tag">REQUIRED</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+
+            <div class="admin-form-group">
+              <label class="admin-label">Product Name (English) · उत्पादनाचे नाव</label>
+              <input class="admin-input" type="text" name="name" id="pname" placeholder="e.g. Classic Oxford Shirt" required oninput="syncPreview()">
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Product Name (Marathi) · मराठी नाव</label>
+                <input class="admin-input" type="text" name="name_mr" id="pname_mr" placeholder="क्लासिक ऑक्सफर्ड शर्ट" oninput="syncPreview()">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Sanskrit Tagline · संस्कृत टॅगलाईन</label>
+                <input class="admin-input" type="text" name="tagline_sk" placeholder="।। वस्त्रं शौर्यस्य चिन्हम् ।।">
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Category · श्रेणी</label>
+                <select class="admin-select" name="category" id="pcat" onchange="syncPreview()">
+                  <option>Shirts</option><option>T-Shirts</option><option>Hoodies</option>
+                  <option>Jackets</option><option>Jeans</option><option>Trousers</option>
+                  <option>Ethnic Wear</option><option>Accessories</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Collection · संग्रह</label>
+                <select class="admin-select" name="collection" id="pcollection" onchange="syncPreview()">
+                  <option>Vasant Collection</option><option>Maratha Heritage</option>
+                  <option>Urban Pride</option><option>Monsoon Edit</option><option>Diwali Special</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Season Tag · सीझन</label>
+                <input class="admin-input" type="text" name="season" value="SS/26" placeholder="SS/26">
+              </div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">Description (English) · वर्णन</label>
+              <textarea class="admin-input admin-textarea" name="description" id="pdesc" placeholder="The Classic Oxford Shirt is Vektor's signature piece — born in Maharashtra, built for the world..." oninput="countChars(this,'descCount')"></textarea>
+              <div class="char-counter" id="descCount">0 / 500</div>
+            </div>
+
+            <div class="admin-form-group">
+              <label class="admin-label">Description (Marathi) · मराठी वर्णन</label>
+              <textarea class="admin-input admin-textarea" name="description_mr" placeholder="हे शर्ट फक्त एक कपडा नाही — हे एक विधान आहे..." oninput="countChars(this,'descMrCount')"></textarea>
+              <div class="char-counter" id="descMrCount">0 / 500</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ②  PRICING & STOCK -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">②</div>
+            <div class="ap-section-title">Pricing & Stock · किंमत आणि स्टॉक</div>
+            <div class="ap-section-tag">REQUIRED</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Original Price ₹ · मूळ किंमत</label>
+                <input class="admin-input" type="number" name="price" id="pprice" placeholder="3499" required oninput="calcPrice();syncPreview()">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Discount % · सवलत</label>
+                <input class="admin-input" type="number" name="discount" id="pdiscount" placeholder="28" min="0" max="100" oninput="calcPrice();syncPreview()">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Final Price · अंतिम किंमत</label>
+                <div class="price-preview-box" style="margin:0">
+                  <div class="price-preview-val" id="finalPrice" style="font-size:22px">₹0</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Total Stock · एकूण स्टॉक</label>
+                <input class="admin-input" type="number" name="stock" id="pstock" placeholder="100" min="0" oninput="syncPreview()">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Low Stock Alert · कमी स्टॉक अलर्ट</label>
+                <input class="admin-input" type="number" name="low_stock" placeholder="10" min="0">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">SKU · स्टॉक कोड</label>
+                <input class="admin-input" type="text" name="sku" placeholder="VK-OXF-NVY-001">
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Save Text · बचत मजकूर (shown on product page)</label>
+                <input class="admin-input" type="text" name="save_text" placeholder="SAVE ₹1,000 · बचत">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Tax Info · कर माहिती</label>
+                <input class="admin-input" type="text" name="tax_info" value="Inclusive of all taxes · सर्व कर समाविष्ट">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ③  BADGE & LABELS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">③</div>
+            <div class="ap-section-title">Badge & Labels · बॅज आणि लेबल</div>
+            <div class="ap-section-tag">GALLERY BADGE</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div class="admin-form-group">
+              <label class="admin-label">Gallery Badge Text · गॅलरी बॅज (top-left of image)</label>
+              <div class="badge-opts">
+                <input type="radio" name="badge" value="नवीन" id="b1" class="badge-opt-input" checked>
+                <label for="b1" class="badge-opt-label" onclick="syncPreview()">नवीन (New)</label>
+                <input type="radio" name="badge" value="बेस्टसेलर" id="b2" class="badge-opt-input" data-color="gr">
+                <label for="b2" class="badge-opt-label" onclick="syncPreview()">बेस्टसेलर</label>
+                <input type="radio" name="badge" value="लिमिटेड" id="b3" class="badge-opt-input" data-color="gold">
+                <label for="b3" class="badge-opt-label" onclick="syncPreview()">लिमिटेड</label>
+                <input type="radio" name="badge" value="सेल" id="b4" class="badge-opt-input">
+                <label for="b4" class="badge-opt-label" onclick="syncPreview()">सेल</label>
+                <input type="radio" name="badge" value="" id="b5" class="badge-opt-input">
+                <label for="b5" class="badge-opt-label" onclick="syncPreview()">None</label>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Rating · रेटिंग (e.g. 4.9)</label>
+                <input class="admin-input" type="number" name="rating" step="0.1" min="1" max="5" placeholder="4.9">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Review Count · पुनरावलोकन संख्या</label>
+                <input class="admin-input" type="number" name="review_count" placeholder="412">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ④  IMAGES -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">④</div>
+            <div class="ap-section-title">Images · प्रतिमा (up to 4)</div>
+            <div class="ap-section-tag">GALLERY</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div class="img-slots" id="imgSlots">
+              <div class="img-slot" onclick="setSlotFocus(0)">
+                <div class="slot-num">1</div>
+                <div class="slot-label">Front View</div>
+                <button class="slot-remove" onclick="clearSlot(event,0)">✕</button>
+              </div>
+              <div class="img-slot" onclick="setSlotFocus(1)">
+                <div class="slot-num">2</div>
+                <div class="slot-label">Back View</div>
+                <button class="slot-remove" onclick="clearSlot(event,1)">✕</button>
+              </div>
+              <div class="img-slot" onclick="setSlotFocus(2)">
+                <div class="slot-num">3</div>
+                <div class="slot-label">Detail</div>
+                <button class="slot-remove" onclick="clearSlot(event,2)">✕</button>
+              </div>
+              <div class="img-slot" onclick="setSlotFocus(3)">
+                <div class="slot-num">4</div>
+                <div class="slot-label">Worn</div>
+                <button class="slot-remove" onclick="clearSlot(event,3)">✕</button>
+              </div>
+            </div>
+            <!-- ✅ 4 SEPARATE FILE INPUTS — one per slot -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px">
+              <div class="admin-form-group" style="margin-bottom:0">
+                <label class="admin-label" style="font-size:8px">📸 Slot 1 — Front</label>
+                <input class="admin-input" type="file" name="image_1" accept="image/*"
+                       onchange="previewUpload(this, 0)" style="padding:6px;cursor:pointer;font-size:9px">
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0">
+                <label class="admin-label" style="font-size:8px">📸 Slot 2 — Back</label>
+                <input class="admin-input" type="file" name="image_2" accept="image/*"
+                       onchange="previewUpload(this, 1)" style="padding:6px;cursor:pointer;font-size:9px">
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0">
+                <label class="admin-label" style="font-size:8px">📸 Slot 3 — Detail</label>
+                <input class="admin-input" type="file" name="image_3" accept="image/*"
+                       onchange="previewUpload(this, 2)" style="padding:6px;cursor:pointer;font-size:9px">
+              </div>
+              <div class="admin-form-group" style="margin-bottom:0">
+                <label class="admin-label" style="font-size:8px">📸 Slot 4 — Worn</label>
+                <input class="admin-input" type="file" name="image_4" accept="image/*"
+                       onchange="previewUpload(this, 3)" style="padding:6px;cursor:pointer;font-size:9px">
+              </div>
+            </div>
+            <div style="margin-top:10px">
+              <div class="admin-label" style="margin-bottom:8px">View Labels · व्ह्यू लेबल (shown in gallery counter)</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px">
+                <input class="admin-input" type="text" name="img1_label" placeholder="Front View" style="font-size:10px;padding:8px 10px">
+                <input class="admin-input" type="text" name="img2_label" placeholder="Back View" style="font-size:10px;padding:8px 10px">
+                <input class="admin-input" type="text" name="img3_label" placeholder="Detail View" style="font-size:10px;padding:8px 10px">
+                <input class="admin-input" type="text" name="img4_label" placeholder="Worn Look" style="font-size:10px;padding:8px 10px">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑤  COLORS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑤</div>
+            <div class="ap-section-title">Colors · रंग</div>
+            <div class="ap-section-tag">COLOR PICKER</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:10px">Add each color variant. Hex + display name. First color = default selected.</div>
+            <div class="color-builder" id="colorBuilder">
+              <div class="color-entry">
+                <input type="color" class="color-swatch" value="#1a2e4a" oninput="updateSwatch(this);syncPreview()">
+                <input type="text" class="color-hex-input" value="#1a2e4a" name="color_hex[]" placeholder="#1a2e4a" oninput="syncHex(this)">
+                <input type="text" class="color-name-input admin-input" value="Navy Blue" name="color_name[]" placeholder="Navy Blue" style="font-size:11px;padding:6px 10px" oninput="syncPreview()">
+                <button type="button" class="color-remove" onclick="removeColorRow(this)">✕</button>
+              </div>
+              <div class="color-entry">
+                <input type="color" class="color-swatch" value="#2c2c2c" oninput="updateSwatch(this);syncPreview()">
+                <input type="text" class="color-hex-input" value="#2c2c2c" name="color_hex[]" placeholder="#2c2c2c" oninput="syncHex(this)">
+                <input type="text" class="color-name-input admin-input" value="Charcoal Black" name="color_name[]" placeholder="Color Name" style="font-size:11px;padding:6px 10px" oninput="syncPreview()">
+                <button type="button" class="color-remove" onclick="removeColorRow(this)">✕</button>
+              </div>
+            </div>
+            <button type="button" class="add-color-btn" onclick="addColorRow()" style="margin-top:8px">＋ Add Color Variant</button>
+          </div>
+        </div>
+
+        <!-- ⑥  SIZES -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑥</div>
+            <div class="ap-section-title">Available Sizes · साईझ</div>
+            <div class="ap-section-tag">SIZE SELECTOR</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:10px">Check all available sizes. Unchecked = shown as Out of Stock (crossed out).</div>
+            <div class="size-grid">
+              <div><input type="checkbox" class="size-toggle" id="sz-xs" name="sizes[]" value="XS"><label class="size-label" for="sz-xs">XS</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-s"  name="sizes[]" value="S"  checked><label class="size-label" for="sz-s">S</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-m"  name="sizes[]" value="M"  checked><label class="size-label" for="sz-m">M</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-l"  name="sizes[]" value="L"  checked><label class="size-label" for="sz-l">L</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-xl" name="sizes[]" value="XL" checked><label class="size-label" for="sz-xl">XL</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-xxl" name="sizes[]" value="XXL" checked><label class="size-label" for="sz-xxl">XXL</label></div>
+              <div><input type="checkbox" class="size-toggle" id="sz-3xl" name="sizes[]" value="3XL" checked><label class="size-label" for="sz-3xl">3XL</label></div>
+            </div>
+            <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Fit Type · फिट प्रकार</label>
+                <select class="admin-select" name="fit">
+                  <option>Regular / Slim Indian Fit</option>
+                  <option>Slim Fit</option>
+                  <option>Oversized</option>
+                  <option>Regular Fit</option>
+                </select>
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Default Selected Size</label>
+                <select class="admin-select" name="default_size">
+                  <option>M</option><option>S</option><option>L</option><option>XL</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑦  KEY FEATURES / HIGHLIGHTS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑦</div>
+            <div class="ap-section-title">Key Features · वैशिष्ट्ये</div>
+            <div class="ap-section-tag">DESCRIPTION TAB</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:10px">These appear as bullet points in the Description tab. Enter English + Marathi for each.</div>
+            <div class="highlight-list" id="highlightList">
+              <div class="highlight-entry">
+                <input type="text" name="hl_en[]" placeholder="100% Premium Oxford Weave Cotton — breathable, durable">
+                <input type="text" name="hl_mr[]" placeholder="१००% प्रीमियम ऑक्सफर्ड कापूस">
+                <button type="button" class="hl-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="highlight-entry">
+                <input type="text" name="hl_en[]" placeholder="Indian-fit cut — tailored for the Indian body type">
+                <input type="text" name="hl_mr[]" placeholder="भारतीय शरीरासाठी विशेष कट">
+                <button type="button" class="hl-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="highlight-entry">
+                <input type="text" name="hl_en[]" placeholder="Hand-stitched buttons with reinforced collar stand">
+                <input type="text" name="hl_mr[]" placeholder="हाताने शिवलेली बटणे · मजबूत कॉलर">
+                <button type="button" class="hl-remove" onclick="removeRow(this)">✕</button>
+              </div>
+            </div>
+            <button type="button" class="add-color-btn" onclick="addHighlight()" style="margin-top:8px">＋ Add Feature</button>
+          </div>
+        </div>
+
+        <!-- ⑧  PRODUCT SPECS TABLE -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑧</div>
+            <div class="ap-section-title">Product Specs · उत्पादन तपशील</div>
+            <div class="ap-section-tag">SPECS TABLE</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:10px">These appear in the specs table on the right side of the Description tab.</div>
+            <div class="spec-builder" id="specBuilder">
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Material" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="100% Oxford Cotton" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Weave" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="Oxford Weave 100s" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Fit" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="Regular / Slim Indian Fit" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Collar" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="Button-Down Point" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Buttons" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="Mother of Pearl, Sewn By Hand" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Sleeve" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="Full Sleeve + Roll-Up Tab" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="GSM" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="130 GSM — Premium Weight" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Made In" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="🇮🇳 Maharashtra, India" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="spec-entry">
+                <input type="text" name="spec_key[]" value="Warranty" placeholder="Spec Name">
+                <input type="text" name="spec_val[]" value="5 Years Fabric Guarantee" placeholder="Value">
+                <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>
+              </div>
+            </div>
+            <button type="button" class="add-color-btn" onclick="addSpec()" style="margin-top:8px">＋ Add Spec Row</button>
+          </div>
+        </div>
+
+        <!-- ⑨  CARE INSTRUCTIONS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑨</div>
+            <div class="ap-section-title">Care Instructions · काळजी सूचना</div>
+            <div class="ap-section-tag">WASH CARE</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div class="care-grid">
+              <div class="care-item">
+                <span class="care-emoji">🧺</span>
+                <input type="text" name="care[]" value="Machine Wash 30°C Cold" placeholder="Wash instruction">
+              </div>
+              <div class="care-item">
+                <span class="care-emoji">☀️</span>
+                <input type="text" name="care[]" value="Dry in Shade" placeholder="Dry instruction">
+              </div>
+              <div class="care-item">
+                <span class="care-emoji">🔥</span>
+                <input type="text" name="care[]" value="Low Heat Iron" placeholder="Iron instruction">
+              </div>
+              <div class="care-item">
+                <span class="care-emoji">🚫</span>
+                <input type="text" name="care[]" value="Do Not Bleach" placeholder="Do not...">
+              </div>
+              <div class="care-item">
+                <span class="care-emoji">🧴</span>
+                <input type="text" name="care[]" value="Mild Detergent Only" placeholder="Detergent info">
+              </div>
+              <div class="care-item">
+                <span class="care-emoji">👕</span>
+                <input type="text" name="care[]" value="Turn Inside Out" placeholder="Additional tip">
+              </div>
+            </div>
+            <div class="admin-form-group" style="margin-top:12px;margin-bottom:0">
+              <label class="admin-label">Wash Care Marathi · धुण्याची माहिती</label>
+              <input class="admin-input" type="text" name="care_mr" placeholder="मशीनमध्ये धुता येते · सुरकुत्या नाहीत">
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑩  OFFERS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑩</div>
+            <div class="ap-section-title">Available Offers · ऑफर</div>
+            <div class="ap-section-tag">OFFER BOX</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:10px">These appear in the orange offer box on the product page.</div>
+            <div class="offer-builder" id="offerBuilder">
+              <div class="offer-entry">
+                <input type="text" class="offer-emoji-inp" name="offer_icon[]" value="💳">
+                <input type="text" name="offer_title[]" placeholder="Offer title (bold)" value="10% Instant Discount">
+                <input type="text" name="offer_desc[]" placeholder="Offer description" value="on HDFC / SBI / Kotak Credit Cards">
+                <button type="button" class="offer-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="offer-entry">
+                <input type="text" class="offer-emoji-inp" name="offer_icon[]" value="🎁">
+                <input type="text" name="offer_title[]" placeholder="Offer title" value="Buy 2 Get 1 Free">
+                <input type="text" name="offer_desc[]" placeholder="Offer description" value="कोणतेही ३ शर्ट खरेदी करा">
+                <button type="button" class="offer-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="offer-entry">
+                <input type="text" class="offer-emoji-inp" name="offer_icon[]" value="🚚">
+                <input type="text" name="offer_title[]" placeholder="Offer title" value="Free Shipping">
+                <input type="text" name="offer_desc[]" placeholder="Offer description" value="on orders above ₹999 · ₹999 वर मोफत">
+                <button type="button" class="offer-remove" onclick="removeRow(this)">✕</button>
+              </div>
+              <div class="offer-entry">
+                <input type="text" class="offer-emoji-inp" name="offer_icon[]" value="🔄">
+                <input type="text" name="offer_title[]" placeholder="Offer title" value="30-Day Easy Returns">
+                <input type="text" name="offer_desc[]" placeholder="Offer description" value="No questions asked · ३० दिवस परतावा">
+                <button type="button" class="offer-remove" onclick="removeRow(this)">✕</button>
+              </div>
+            </div>
+            <button type="button" class="add-color-btn" onclick="addOffer()" style="margin-top:8px">＋ Add Offer</button>
+          </div>
+        </div>
+
+        <!-- ⑪  TRUST BADGES -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑪</div>
+            <div class="ap-section-title">Trust Badges · विश्वास बॅज</div>
+            <div class="ap-section-tag">4-GRID ICONS</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div class="care-item"><span class="care-emoji">🇮🇳</span><input type="text" name="trust_en[]" value="100% Made in India"><input type="text" name="trust_mr[]" value="भारतात बनवलेले" style="font-size:11px"></div>
+              <div class="care-item"><span class="care-emoji">🛡️</span><input type="text" name="trust_en[]" value="5-Year Warranty"><input type="text" name="trust_mr[]" value="५ वर्ष वॉरंटी" style="font-size:11px"></div>
+              <div class="care-item"><span class="care-emoji">⚡</span><input type="text" name="trust_en[]" value="Fast Dispatch 24hr"><input type="text" name="trust_mr[]" value="२४ तास डिस्पॅच" style="font-size:11px"></div>
+              <div class="care-item"><span class="care-emoji">🔒</span><input type="text" name="trust_en[]" value="Secure Payment"><input type="text" name="trust_mr[]" value="सुरक्षित पेमेंट" style="font-size:11px"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑫  DELIVERY -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑫</div>
+            <div class="ap-section-title">Delivery Info · डिलिव्हरी माहिती</div>
+            <div class="ap-section-tag">DELIVERY BOX</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div class="delivery-grid">
+              <div class="admin-form-group">
+                <label class="admin-label">Standard Delivery Price · ₹</label>
+                <input class="admin-input" type="number" name="delivery_standard" value="79">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Express Delivery Price · ₹</label>
+                <input class="admin-input" type="number" name="delivery_express" value="149">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Free Shipping Above · ₹</label>
+                <input class="admin-input" type="number" name="free_shipping_above" value="999">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Standard Delivery Days</label>
+                <input class="admin-input" type="text" name="delivery_days_standard" value="3–5 Business Days">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Express Delivery Days</label>
+                <input class="admin-input" type="text" name="delivery_days_express" value="1–2 Business Days">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">Return Window · परतावा दिवस</label>
+                <input class="admin-input" type="number" name="return_days" value="30">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Refund Days · रिफंड दिवस</label>
+                <input class="admin-input" type="text" name="refund_days" value="3–5 Business Days">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ⑬  REVIEWS -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑬</div>
+            <div class="ap-section-title">Seed Reviews · पुनरावलोकने</div>
+            <div class="ap-section-tag">REVIEWS TAB</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div style="font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:12px">Add initial reviews to display in the Reviews tab. Name · Location · Size · Stars · Body · Marathi body.</div>
+            <div class="review-builder" id="reviewBuilder">
+              <div class="review-entry">
+                <button type="button" class="review-remove" onclick="removeRow(this)">✕</button>
+                <div class="review-entry-grid">
+                  <input type="text" name="rev_name[]" placeholder="Reviewer Name" value="Rahul Kulkarni">
+                  <input type="text" name="rev_loc[]" placeholder="Location + Size" value="Pune, MH · Size M">
+                  <select name="rev_stars[]">
+                    <option>★★★★★</option><option>★★★★</option><option>★★★</option>
+                  </select>
+                </div>
+                <input type="text" name="rev_title[]" placeholder="Review Title" value="Best shirt I've owned">
+                <textarea name="rev_body[]" placeholder="English review text">The Oxford shirt fits like it was stitched specifically for me. Three strangers asked where I bought it that same evening at dinner.</textarea>
+                <textarea name="rev_body_mr[]" placeholder="Marathi review text">शर्ट अगदी माझ्यासाठीच शिवल्यासारखा वाटतो. तीन अनोळखी लोकांनी विचारलं — हे कुठून घेतलंस?</textarea>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                  <input type="text" name="rev_initials[]" placeholder="Initials (e.g. RK)" value="RK">
+                  <input type="number" name="rev_helpful[]" placeholder="Helpful count" value="24">
+                </div>
+              </div>
+            </div>
+            <button type="button" class="add-color-btn" onclick="addReview()" style="margin-top:8px">＋ Add Review</button>
+          </div>
+        </div>
+
+        <!-- ⑭  SEO & META -->
+        <div class="ap-section">
+          <div class="ap-section-hdr" onclick="toggleSection(this)">
+            <div class="ap-section-icon">⑭</div>
+            <div class="ap-section-title">SEO & Meta · एसईओ</div>
+            <div class="ap-section-tag">OPTIONAL</div>
+            <div class="ap-section-chevron">▼</div>
+          </div>
+          <div class="ap-section-body">
+            <div class="admin-form-group">
+              <label class="admin-label">Meta Title · मेटा शीर्षक</label>
+              <input class="admin-input" type="text" name="meta_title" placeholder="Classic Oxford Shirt — VEKTOR">
+            </div>
+            <div class="admin-form-group">
+              <label class="admin-label">Meta Description</label>
+              <textarea class="admin-input admin-textarea" name="meta_desc" placeholder="100% Oxford Cotton shirt made in Maharashtra. Indian fit. 5-year warranty." style="min-height:60px"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div class="admin-form-group">
+                <label class="admin-label">URL Slug</label>
+                <input class="admin-input" type="text" name="slug" placeholder="classic-oxford-shirt">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-label">Tags (comma-separated)</label>
+                <input class="admin-input" type="text" name="tags" placeholder="shirt, oxford, cotton, maharashtra">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBMIT BAR -->
+        <div class="submit-bar">
+          <div class="submit-bar-info">
+            <div class="submit-bar-dot"></div>
+            <span>Auto-saving draft · Draft तयार आहे</span>
+          </div>
+          <div class="submit-btns">
+            <button type="button" class="admin-btn admin-btn-ghost">SAVE DRAFT</button>
+            <button type="submit" class="admin-btn admin-btn-sf" style="padding:12px 32px;font-size:15px">
+              ＋ PUBLISH PRODUCT — प्रकाशित करा
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════════ RIGHT: LIVE PREVIEW ═══════════════ -->
+      <div class="preview-sticky">
+        <div class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Live Preview · लाइव्ह पूर्वावलोकन</div>
+            <div class="panel-tag">REAL-TIME</div>
+          </div>
+          <div class="panel-body" style="padding:12px">
+
+            <!-- MAIN IMAGE PREVIEW -->
+            <div class="preview-main-img" id="previewImg">
+              VEKTOR
+              <div class="preview-flag"><div class="pf sf"></div><div class="pf wh"></div><div class="pf gr"></div></div>
+              <div class="preview-badge" id="previewBadge" style="background:#FF6B00;color:#000">नवीन</div>
+              <div class="preview-save" id="previewSave"></div>
+            </div>
+
+            <!-- PRODUCT CARD INFO -->
+            <div class="preview-info">
+              <div class="preview-collection" id="previewCollection">Vasant Collection</div>
+              <div class="preview-name" id="previewName">Product Name</div>
+              <div class="preview-rating">
+                <span class="preview-stars">★★★★★</span>
+                <span style="font-family:var(--font-display);font-size:16px;color:var(--fg)">4.9</span>
+                <span style="font-size:9px;letter-spacing:.1em;color:var(--fg3)">412 REVIEWS</span>
+                <span style="font-size:9px;letter-spacing:.1em;color:var(--gr2);border:0.5px solid rgba(10,138,74,.3);padding:2px 8px">✓ VERIFIED</span>
+              </div>
+              <div class="preview-price-row">
+                <div class="preview-price" id="previewPrice">₹0</div>
+                <div class="preview-old" id="previewOld"></div>
+                <div class="preview-save-txt" id="previewSaveTxt"></div>
+              </div>
+
+              <!-- Color dots preview -->
+              <div style="font-size:8px;letter-spacing:.14em;color:var(--fg3);text-transform:uppercase;margin-bottom:6px">Color / रंग</div>
+              <div class="preview-colors" id="previewColors">
+                <div class="preview-color-dot" style="background:#1a2e4a"></div>
+                <div class="preview-color-dot" style="background:#2c2c2c"></div>
+              </div>
+
+              <!-- Size chips preview -->
+              <div style="font-size:8px;letter-spacing:.14em;color:var(--fg3);text-transform:uppercase;margin-bottom:6px">Size / साईझ</div>
+              <div class="preview-sizes" id="previewSizes">
+                <div class="preview-size-chip" style="opacity:.3;text-decoration:line-through">XS</div>
+                <div class="preview-size-chip">S</div>
+                <div class="preview-size-chip sel">M</div>
+                <div class="preview-size-chip">L</div>
+                <div class="preview-size-chip">XL</div>
+                <div class="preview-size-chip">XXL</div>
+                <div class="preview-size-chip">3XL</div>
+              </div>
+
+              <div class="preview-cta">🛒 कार्टमध्ये घाला — ADD TO CART</div>
+            </div>
+
+            <!-- SHLOKA -->
+            <div style="margin-top:10px;padding:12px 14px;border-left:2px solid var(--sf);background:rgba(255,107,0,0.04)">
+              <div style="font-family:var(--font-dev);font-size:13px;color:var(--sf);margin-bottom:3px">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
+              <div style="font-size:11px;color:var(--fg3)">"Clothing is the symbol of courage."</div>
+            </div>
+
+            <!-- STATS -->
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);margin-top:10px">
+              <div style="background:var(--card);padding:10px 12px;text-align:center">
+                <div style="font-family:var(--font-display);font-size:20px;color:var(--sf)" id="statPrice">₹0</div>
+                <div style="font-size:8px;letter-spacing:.1em;color:var(--fg3)">PRICE</div>
+              </div>
+              <div style="background:var(--card);padding:10px 12px;text-align:center">
+                <div style="font-family:var(--font-display);font-size:20px;color:var(--white)" id="statStock">0</div>
+                <div style="font-size:8px;letter-spacing:.1em;color:var(--fg3)">STOCK</div>
+              </div>
+              <div style="background:var(--card);padding:10px 12px;text-align:center">
+                <div style="font-family:var(--font-display);font-size:20px;color:var(--gr2)" id="statDiscount">0%</div>
+                <div style="font-size:8px;letter-spacing:.1em;color:var(--fg3)">SAVE</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+/* ── ACTIVE SLOT ── */
+
+let activeSlot = 0;
+let slotImages = [null, null, null, null];
+
+function setSlotFocus(i) {
+  activeSlot = i;
+
+  document.getElementById('activeSlotNum').textContent = i + 1;
+
+  // highlight active slot
+  document.querySelectorAll('.img-slot').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.img-slot')[i].classList.add('active');
+
+  document.getElementById('activeImgInput').focus();
+}
+
+function applySlotPath(val) {
+  if (activeSlot < 0 || !val.trim()) return;
+
+  slotImages[activeSlot] = val;
+
+  renderSlots();
+}
+
+function clearSlot(e, i) {
+  e.stopPropagation();
+  slotImages[i] = null;
+  renderSlots();
+}
+function clearSlotData(slot) {
+  const img = slot.querySelector('img');
+  if (img) img.remove();
+  slot.classList.remove('has-img');
+}
+
+/* ── PRICE CALC ── */
+function calcPrice() {
+  const p    = Number(document.getElementById('pprice').value)    || 0;
+  const d    = Number(document.getElementById('pdiscount').value) || 0;
+  const final = Math.round(p - (p * d / 100));
+  const fmt   = v => '₹' + v.toLocaleString('en-IN');
+  document.getElementById('finalPrice').textContent     = fmt(final);
+  document.getElementById('previewPrice').textContent   = fmt(final);
+  document.getElementById('statPrice').textContent      = fmt(final);
+  document.getElementById('previewOld').textContent     = p > 0 ? fmt(p) : '';
+  document.getElementById('previewSaveTxt').textContent = d > 0 ? 'SAVE ' + fmt(p - final) : '';
+  document.getElementById('previewSave').textContent    = d > 0 ? d + '% OFF' : '';
+  document.getElementById('statDiscount').textContent   = d + '%';
+  document.getElementById('statStock').textContent      = document.getElementById('pstock').value || '0';
+}
+
+/* ── SYNC PREVIEW ── */
+function syncPreview() {
+  const name = document.getElementById('pname').value || 'Product Name';
+  document.getElementById('previewName').textContent       = name;
+  document.getElementById('previewCollection').textContent = document.getElementById('pcollection').value;
+  calcPrice();
+  // Badge
+  const badge = document.querySelector('input[name="badge"]:checked');
+  const badgeEl = document.getElementById('previewBadge');
+  if (badge && badge.value) {
+    badgeEl.textContent = badge.value;
+    badgeEl.style.display = 'block';
+    const dc = badge.getAttribute('data-color');
+    badgeEl.style.background = dc === 'gr' ? '#046A38' : dc === 'gold' ? '#C8941A' : '#FF6B00';
+    badgeEl.style.color = dc === 'gr' ? '#fff' : '#000';
+  } else {
+    badgeEl.style.display = 'none';
+  }
+  // Colors
+  const hexInputs = document.querySelectorAll('input[name="color_hex[]"]');
+  const colorRow  = document.getElementById('previewColors');
+  colorRow.innerHTML = '';
+  hexInputs.forEach(inp => {
+    const d = document.createElement('div');
+    d.className = 'preview-color-dot';
+    d.style.background = inp.value;
+    colorRow.appendChild(d);
+  });
+}
+
+/* ── CHAR COUNTER ── */
+function countChars(el, targetId) {
+  document.getElementById(targetId).textContent = el.value.length + ' / 500';
+}
+
+/* ── COLLAPSE SECTIONS ── */
+function toggleSection(hdr) {
+  hdr.closest('.ap-section').classList.toggle('collapsed');
+}
+
+/* ── COLOR ROWS ── */
+function addColorRow() {
+  const builder = document.getElementById('colorBuilder');
+  const row = document.createElement('div');
+  row.className = 'color-entry';
+  row.innerHTML = `
+    <input type="color" class="color-swatch" value="#888888" oninput="updateSwatch(this);syncPreview()">
+    <input type="text" class="color-hex-input" value="#888888" name="color_hex[]" placeholder="#888888" oninput="syncHex(this)">
+    <input type="text" class="color-name-input admin-input" name="color_name[]" placeholder="Color Name" style="font-size:11px;padding:6px 10px" oninput="syncPreview()">
+    <button type="button" class="color-remove" onclick="removeColorRow(this)">✕</button>`;
+  builder.appendChild(row);
+}
+function updateSwatch(el) {
+  el.nextElementSibling.value = el.value;
+  syncPreview();
+}
+function syncHex(el) {
+  el.previousElementSibling.value = el.value;
+  syncPreview();
+}
+function removeColorRow(btn) {
+  btn.closest('.color-entry').remove();
+  syncPreview();
+}
+
+/* ── GENERIC ROW REMOVE ── */
+function removeRow(btn) { btn.closest('[class$="-entry"],[class="review-entry"]').remove(); }
+
+/* ── HIGHLIGHTS ── */
+function addHighlight() {
+  const list = document.getElementById('highlightList');
+  const row  = document.createElement('div');
+  row.className = 'highlight-entry';
+  row.innerHTML = `
+    <input type="text" name="hl_en[]" placeholder="Feature in English">
+    <input type="text" name="hl_mr[]" placeholder="वैशिष्ट्य मराठीत">
+    <button type="button" class="hl-remove" onclick="removeRow(this)">✕</button>`;
+  list.appendChild(row);
+}
+
+/* ── SPEC ROWS ── */
+function addSpec() {
+  const list = document.getElementById('specBuilder');
+  const row  = document.createElement('div');
+  row.className = 'spec-entry';
+  row.innerHTML = `
+    <input type="text" name="spec_key[]" placeholder="Spec Name">
+    <input type="text" name="spec_val[]" placeholder="Value">
+    <button type="button" class="spec-remove" onclick="removeRow(this)">✕</button>`;
+  list.appendChild(row);
+}
+
+/* ── OFFER ROWS ── */
+function addOffer() {
+  const list = document.getElementById('offerBuilder');
+  const row  = document.createElement('div');
+  row.className = 'offer-entry';
+  row.innerHTML = `
+    <input type="text" class="offer-emoji-inp" name="offer_icon[]" value="🎁">
+    <input type="text" name="offer_title[]" placeholder="Offer title (bold)">
+    <input type="text" name="offer_desc[]" placeholder="Offer description">
+    <button type="button" class="offer-remove" onclick="removeRow(this)">✕</button>`;
+  list.appendChild(row);
+}
+
+/* ── REVIEW ROWS ── */
+function addReview() {
+  const list = document.getElementById('reviewBuilder');
+  const row  = document.createElement('div');
+  row.className = 'review-entry';
+  row.innerHTML = `
+    <button type="button" class="review-remove" onclick="removeRow(this)">✕</button>
+    <div class="review-entry-grid">
+      <input type="text" name="rev_name[]" placeholder="Reviewer Name">
+      <input type="text" name="rev_loc[]" placeholder="Pune, MH · Size M">
+      <select name="rev_stars[]"><option>★★★★★</option><option>★★★★</option><option>★★★</option></select>
+    </div>
+    <input type="text" name="rev_title[]" placeholder="Review Title">
+    <textarea name="rev_body[]" placeholder="English review text"></textarea>
+    <textarea name="rev_body_mr[]" placeholder="Marathi review text"></textarea>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <input type="text" name="rev_initials[]" placeholder="Initials (RK)">
+      <input type="number" name="rev_helpful[]" placeholder="Helpful count" value="0">
+    </div>`;
+  list.appendChild(row);
+}
+
+/* ── INIT ── */
+calcPrice();
+syncPreview();
+
+/* ── LIVE SYNC on size checkboxes ── */
+document.querySelectorAll('.size-toggle').forEach(cb => {
+  cb.addEventListener('change', () => {
+    const sizes   = document.getElementById('previewSizes');
+    const allSizes = ['XS','S','M','L','XL','XXL','3XL'];
+    sizes.innerHTML = allSizes.map(s => {
+      const chk = document.getElementById('sz-' + s.toLowerCase());
+      const avail = chk && chk.checked;
+      return `<div class="preview-size-chip${s==='M'?' sel':''}" style="${!avail?'opacity:.3;text-decoration:line-through':''}">${s}</div>`;
+    }).join('');
+  });
+});
+/* ── PREVIEW UPLOADED IMAGE ── */
+function previewUpload(input, slotIndex) {
+  if (!input.files || !input.files[0]) return;
+  const url = URL.createObjectURL(input.files[0]);
+  slotImages[slotIndex] = url;
+  activeSlot = slotIndex;
+  renderSlots();
+}
+
+function renderSlots() {
+  const slots = document.querySelectorAll('.img-slot');
+
+  slots.forEach((slot, index) => {
+    const oldImg = slot.querySelector('img');
+    if (oldImg) oldImg.remove();
+
+    slot.classList.remove('has-img');
+
+    if (slotImages[index]) {
+      const img = document.createElement('img');
+      img.src = slotImages[index];
+      slot.appendChild(img);
+      slot.classList.add('has-img');
+    }
+  });
+
+  // ✅ Update preview card main image (slot 1 = primary)
+  const pe = document.getElementById('previewImgEl');
+  if (pe && slotImages[0]) {
+    pe.src = slotImages[0];
+    pe.style.display = 'block';
+    pe.style.width = '100%';
+    pe.style.height = '100%';
+    pe.style.objectFit = 'cover';
+    pe.style.position = 'absolute';
+    pe.style.inset = '0';
+    // Hide the "VEKTOR" placeholder text
+    const previewImg = pe.closest('.preview-main-img');
+    if (previewImg) previewImg.style.fontSize = '0';
+  }
+}
+setSlotFocus(0);
+</script>
+</body>
+</html>

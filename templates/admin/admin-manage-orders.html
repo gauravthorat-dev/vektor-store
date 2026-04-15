@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR Admin — Orders</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060606;--bg2:#0d0d0d;--bg3:#131313;--bg4:#181818;
+  --border:#1c1c1c;--border2:#252525;--border3:#2e2e2e;
+  --fg:#efefef;--fg2:#aaa;--fg3:#555;--fg4:#333;
+  --amber:#f59e0b;--amber2:#fbbf24;--amberDim:#f59e0b18;
+  --green:#4ade80;--greenDim:#4ade8014;
+  --red:#f87171;--redDim:#f8717114;
+  --blue:#60a5fa;--blueDim:#60a5fa14;
+  --purple:#a78bfa;--purpleDim:#a78bfa14;
+  --orange:#fb923c;--orangeDim:#fb923c14;
+  --mono:'Space Mono',monospace;
+  --display:'Bebas Neue',sans-serif;
+}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100vh;overflow-x:hidden}
+
+/* ── TICKER ─────────────────────────────────────── */
+.ticker{height:28px;background:var(--amber);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:300}
+.t-label{flex-shrink:0;background:#000;color:var(--amber);font-size:8px;font-weight:700;letter-spacing:.25em;padding:0 14px;height:100%;display:flex;align-items:center;text-transform:uppercase}
+.t-track{display:flex;animation:tick 24s linear infinite;white-space:nowrap}
+.t-item{display:flex;align-items:center;gap:0}
+.t-track span{font-size:8px;font-weight:700;color:#000;letter-spacing:.15em;padding:0 14px;text-transform:uppercase}
+.t-dot{width:4px;height:4px;border-radius:50%;background:#00000055;flex-shrink:0}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SHELL ──────────────────────────────────────── */
+.shell{display:flex;min-height:calc(100vh - 28px)}
+
+/* ── SIDEBAR ────────────────────────────────────── */
+.sidebar{width:52px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px;flex-shrink:0;position:sticky;top:28px;height:calc(100vh - 28px);overflow:hidden}
+.sb-logo{font-family:var(--display);font-size:11px;color:var(--amber);letter-spacing:.2em;writing-mode:vertical-rl;transform:rotate(180deg);padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:6px;width:100%;text-align:center}
+.sb-btn{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--fg3);transition:all .15s;text-decoration:none;border:1px solid transparent}
+.sb-btn:hover{color:var(--fg2);background:var(--bg3);border-color:var(--border)}
+.sb-btn.active{color:var(--amber);background:var(--amberDim);border-color:#f59e0b22}
+.sb-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sb-div{width:28px;height:1px;background:var(--border);margin:6px 0}
+.sb-spacer{flex:1}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--amberDim);border:1px solid #f59e0b33;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.05em}
+
+/* ── MAIN ───────────────────────────────────────── */
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+
+/* ── HEADER ─────────────────────────────────────── */
+.hdr{padding:20px 24px 0;border-bottom:1px solid var(--border);background:var(--bg2)}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:16px}
+.eyebrow{font-size:9px;letter-spacing:.2em;color:var(--fg3);text-transform:uppercase;margin-bottom:4px}
+.page-title{font-family:var(--display);font-size:36px;letter-spacing:.08em;line-height:1}
+.page-title span{color:var(--amber)}
+.page-sub{font-size:9px;color:var(--fg3);letter-spacing:.08em;margin-top:3px}
+
+.hdr-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:3px;padding:8px 12px;min-width:220px}
+.search-box svg{width:13px;height:13px;stroke:var(--fg3);fill:none;stroke-width:1.5;stroke-linecap:round;flex-shrink:0}
+.search-box input{background:none;border:none;outline:none;color:var(--fg);font-family:var(--mono);font-size:11px;width:100%}
+.search-box input::placeholder{color:var(--fg4)}
+
+.live-badge{display:flex;align-items:center;gap:6px;padding:7px 12px;background:var(--greenDim);border:1px solid #4ade8022;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--green)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:livepulse 1.5s ease-in-out infinite}
+@keyframes livepulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+
+/* ── STAT STRIP ─────────────────────────────────── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--border)}
+.sstat{padding:14px 20px;border-right:1px solid var(--border);position:relative;cursor:default}
+.sstat:last-child{border-right:none}
+.sstat-n{font-family:var(--display);font-size:28px;color:var(--fg);line-height:1}
+.sstat-n.amber{color:var(--amber)}
+.sstat-n.green{color:var(--green)}
+.sstat-n.red{color:var(--red)}
+.sstat-n.blue{color:var(--blue)}
+.sstat-l{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--fg3);margin-top:2px}
+.sstat::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--amber);transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.sstat:hover::after{transform:scaleX(1)}
+
+/* ── FILTERS ────────────────────────────────────── */
+.filters{display:flex;gap:6px;padding:14px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--bg2)}
+.fchip{padding:5px 14px;font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:transparent;border:1px solid var(--border2);color:var(--fg3);border-radius:2px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.fchip:hover{border-color:var(--border3);color:var(--fg2)}
+.fchip.active{border-color:#f59e0b44;color:var(--amber);background:var(--amberDim)}
+.fchip .fc-count{background:var(--amber);color:#000;font-size:8px;padding:1px 5px;border-radius:1px;margin-left:5px}
+
+/* ── TABLE AREA ─────────────────────────────────── */
+.table-wrap{flex:1;overflow:auto;padding:0 24px 24px}
+table{width:100%;border-collapse:collapse;margin-top:16px}
+thead tr{border-bottom:1px solid var(--border2)}
+th{font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:var(--fg3);padding:10px 12px;text-align:left;white-space:nowrap;font-weight:700}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;cursor:pointer}
+tbody tr:hover{background:var(--bg2)}
+td{padding:14px 12px;vertical-align:middle}
+
+/* ── ORDER ID ───────────────────────────────────── */
+.order-id{font-family:var(--display);font-size:18px;color:var(--amber);line-height:1}
+.order-sub{font-size:9px;color:var(--fg3);margin-top:2px;letter-spacing:.04em}
+
+/* ── CUSTOMER CELL ──────────────────────────────── */
+.cust-name{font-size:12px;font-weight:700;letter-spacing:.03em}
+.cust-phone{font-size:10px;color:var(--fg3);margin-top:2px}
+
+/* ── AMOUNT ─────────────────────────────────────── */
+.amt{font-family:var(--display);font-size:20px;line-height:1}
+.amt-sub{font-size:9px;margin-top:2px;letter-spacing:.05em}
+.paid{color:var(--green)}.cod{color:var(--amber)}
+
+/* ── PAYMENT PILL ───────────────────────────────── */
+.ppill{display:inline-flex;padding:3px 9px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.06em;border:1px solid}
+.pp-paid{color:var(--green);border-color:#4ade8033;background:var(--greenDim)}
+.pp-pend{color:var(--amber);border-color:#f59e0b33;background:var(--amberDim)}
+.pp-ref {color:var(--red);  border-color:#f8717133;background:var(--redDim)}
+
+/* ── DELIVERY BOY CELL ──────────────────────────── */
+.dboy{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:2px;background:var(--blueDim);border:1px solid #60a5fa22;color:var(--blue);font-size:10px;font-weight:700;letter-spacing:.04em}
+.dboy-av{width:18px;height:18px;border-radius:50%;background:#60a5fa22;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.otp-row{display:flex;align-items:center;gap:6px;margin-top:7px}
+.otp-val{font-size:14px;font-weight:700;letter-spacing:.18em;color:var(--amber)}
+.otp-verified{color:var(--green);font-size:11px;font-weight:700}
+.btn-regen{padding:3px 8px;font-size:9px;font-family:var(--mono);font-weight:700;background:var(--amberDim);border:1px solid #f59e0b33;color:var(--amber);border-radius:2px;cursor:pointer;transition:background .15s}
+.btn-regen:hover{background:#f59e0b25}
+.assign-row{display:flex;gap:6px;align-items:center;margin-top:6px}
+.assign-sel{flex:1;padding:5px 8px;font-size:10px;background:var(--bg3);border:1px solid var(--border2);color:var(--fg);font-family:var(--mono);border-radius:2px;min-width:0}
+.btn-assign{padding:5px 10px;font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:.06em;background:var(--blueDim);border:1px solid #60a5fa33;color:var(--blue);border-radius:2px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.btn-assign:hover{background:#60a5fa22}
+
+/* ── STATUS SELECT ──────────────────────────────── */
+.ssel{padding:6px 10px;font-size:10px;font-family:var(--mono);font-weight:700;background:var(--bg3);border:1px solid var(--border2);color:var(--fg);border-radius:2px;cursor:pointer;width:148px;transition:border-color .15s}
+.ssel:hover{border-color:var(--border3)}
+.ssel:focus{outline:none;border-color:#f59e0b44}
+
+/* ── PROGRESS PIPELINE ──────────────────────────── */
+.pipeline{display:flex;align-items:center;gap:0;margin-top:2px}
+.pip-step{display:flex;align-items:center;gap:0}
+.pip-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--border3);background:transparent;flex-shrink:0;transition:all .2s}
+.pip-dot.done{border-color:var(--green);background:#4ade8044}
+.pip-dot.active{border-color:var(--amber);background:#f59e0b44;box-shadow:0 0 6px #f59e0b55}
+.pip-dot.cancel{border-color:var(--red);background:#f8717133}
+.pip-line{width:12px;height:1.5px;background:var(--border3);flex-shrink:0}
+.pip-line.done{background:#4ade8055}
+.pip-tip{font-size:8px;color:var(--fg3);letter-spacing:.05em;margin-top:3px;white-space:nowrap}
+
+/* ── ACTION BTN ─────────────────────────────────── */
+.btn-view{padding:6px 12px;font-size:9px;font-family:var(--mono);font-weight:700;letter-spacing:.08em;background:transparent;border:1px solid var(--border2);color:var(--fg3);border-radius:2px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-view:hover{border-color:var(--border3);color:var(--fg)}
+
+/* ── EMPTY ──────────────────────────────────────── */
+.empty{text-align:center;padding:80px 20px;color:var(--fg3)}
+.empty-icon{font-size:48px;opacity:.2;margin-bottom:16px}
+.empty-t{font-family:var(--display);font-size:24px;color:var(--fg2);margin-bottom:6px}
+.empty-s{font-size:10px;letter-spacing:.05em}
+
+/* ═══════════════════════════════════════════════
+   DETAIL POPUP
+═══════════════════════════════════════════════ */
+.overlay{position:fixed;inset:0;background:#000000cc;backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.open{display:flex}
+.popup{background:var(--bg2);border:1px solid var(--border2);border-radius:6px;width:100%;max-width:680px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 32px 80px #000000cc}
+
+.pop-hdr{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0}
+.pop-title{font-family:var(--display);font-size:22px;letter-spacing:.1em}
+.pop-sub{font-size:10px;color:var(--fg3);margin-top:3px;font-family:var(--mono)}
+.pop-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--bg3);border:1px solid var(--border2);color:var(--fg3);border-radius:2px;cursor:pointer;font-size:12px;flex-shrink:0;transition:all .15s}
+.pop-close:hover{border-color:var(--border3);color:var(--fg)}
+
+.pop-body{overflow-y:auto;flex:1;padding:20px 22px;display:flex;flex-direction:column;gap:20px}
+
+.pop-sec-title{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--fg3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+.pop-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.pop-grid{grid-template-columns:1fr}}
+.pop-kv{display:flex;flex-direction:column;gap:3px}
+.pop-k{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg3)}
+.pop-v{font-size:12px;color:var(--fg);font-family:var(--mono);line-height:1.5}
+
+/* product row in popup */
+.prod-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.prod-row:last-child{border-bottom:none}
+.prod-name{font-size:12px}
+.prod-qty{font-size:10px;color:var(--fg3);margin-left:6px}
+.prod-price{font-family:var(--display);font-size:16px;color:var(--amber)}
+
+/* timeline in popup */
+.tl{display:flex;flex-direction:column}
+.tl-step{display:flex;gap:14px;position:relative;padding-bottom:0}
+.tl-step:not(:last-child){padding-bottom:0}
+.tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:16px}
+.tl-dot2{width:14px;height:14px;border-radius:50%;border:2px solid var(--border3);background:transparent;flex-shrink:0;z-index:1}
+.tl-dot2.done  {border-color:var(--green);background:#4ade8033}
+.tl-dot2.active{border-color:var(--amber);background:#f59e0b33;box-shadow:0 0 10px #f59e0b44}
+.tl-dot2.cancel{border-color:var(--red);background:#f8717133}
+.tl-line2{flex:1;width:1px;background:var(--border);min-height:28px;margin:2px 0}
+.tl-line2.done{background:#4ade8033}
+.tl-right{padding:0 0 24px;flex:1}
+.tl-label2{font-size:11px;font-weight:700;letter-spacing:.04em;line-height:1}
+.tl-label2.done  {color:var(--green)}
+.tl-label2.active{color:var(--amber)}
+.tl-label2.cancel{color:var(--red)}
+.tl-label2.pending{color:var(--fg3)}
+.tl-ts2{font-size:9px;color:var(--fg3);margin-top:3px;font-family:var(--mono)}
+
+/* otp box in popup */
+.otp-box{background:var(--amberDim);border:1px solid #f59e0b22;border-radius:4px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.otp-big{font-family:var(--display);font-size:32px;color:var(--amber);letter-spacing:.25em;line-height:1}
+.otp-info{font-size:9px;color:var(--fg3);margin-top:3px;letter-spacing:.06em}
+.otp-ok{display:inline-flex;align-items:center;gap:5px;color:var(--green);font-size:11px;font-weight:700}
+
+/* flash messages */
+.flashes{padding:12px 24px 0}
+.flash{padding:9px 14px;border-radius:2px;font-size:11px;font-weight:700;margin-bottom:6px;border:1px solid}
+.flash.success{color:var(--green);border-color:#4ade8033;background:var(--greenDim)}
+.flash.error  {color:var(--red);  border-color:#f8717133;background:var(--redDim)}
+.flash.info   {color:var(--blue); border-color:#60a5fa33;background:var(--blueDim)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="t-label">VEKTOR ADMIN</div>
+  <div class="t-track">
+    <div class="t-item">
+      <span>ORDERS</span><div class="t-dot"></div>
+      <span>ऑर्डर व्यवस्थापन</span><div class="t-dot"></div>
+      <span>DELIVERY TRACKING</span><div class="t-dot"></div>
+      <span>OTP VERIFICATION</span><div class="t-dot"></div>
+      <span>LIVE DISPATCH</span><div class="t-dot"></div>
+    </div>
+    <div class="t-item">
+      <span>ORDERS</span><div class="t-dot"></div>
+      <span>ऑर्डर व्यवस्थापन</span><div class="t-dot"></div>
+      <span>DELIVERY TRACKING</span><div class="t-dot"></div>
+      <span>OTP VERIFICATION</span><div class="t-dot"></div>
+      <span>LIVE DISPATCH</span><div class="t-dot"></div>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">VEKTOR</div>
+    <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    </a>
+    <a href="/admin/products" class="sb-btn" title="Products">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+    </a>
+    <a href="/admin/orders" class="sb-btn active" title="Orders">
+      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+    </a>
+    <a href="/admin/customers" class="sb-btn" title="Customers">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    </a>
+    <a href="/admin/analytics" class="sb-btn" title="Analytics">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </a>
+    <a href="/admin/settings" class="sb-btn" title="Settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06-.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </a>
+    {% if session.get('admin_level') == 'superadmin' %}
+    <a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    </a>
+    {% endif %}
+    <div class="sb-div"></div>
+    <a href="/admin/logout" class="sb-btn" title="Logout">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </a>
+    <div class="sb-spacer"></div>
+    <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- HEADER -->
+    <div class="hdr">
+      <div class="hdr-top">
+        <div>
+          <div class="eyebrow">Orders · ऑर्डर</div>
+          <div class="page-title">MANAGE <span>ORDERS</span></div>
+          <div class="page-sub">सर्व ऑर्डर · Assign Delivery Boys · OTP Verification · Live Pipeline</div>
+        </div>
+        <div class="hdr-actions">
+          <div class="live-badge">
+            <div class="live-dot"></div>
+            LIVE
+          </div>
+          <div class="search-box">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Order ID, customer, phone...">
+          </div>
+        </div>
+      </div>
+
+      <!-- STAT STRIP -->
+      <div class="stat-strip">
+        <div class="sstat">
+          <div class="sstat-n amber" id="cnt-all">{{ orders|length }}</div>
+          <div class="sstat-l">Total Orders</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-n amber" id="cnt-active">
+            {{ orders|selectattr('status','in',['Pending','Confirmed','Processing','Shipped','Out for Delivery'])|list|length }}
+          </div>
+          <div class="sstat-l">Active</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-n" style="color:var(--orange)">
+            {{ orders|selectattr('status','equalto','Out for Delivery')|list|length }}
+          </div>
+          <div class="sstat-l">Out for Delivery</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-n green">
+            {{ orders|selectattr('status','equalto','Delivered')|list|length }}
+          </div>
+          <div class="sstat-l">Delivered</div>
+        </div>
+        <div class="sstat">
+          <div class="sstat-n red">
+            {{ orders|selectattr('status','equalto','Cancelled')|list|length }}
+          </div>
+          <div class="sstat-l">Cancelled</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flashes">
+      {% for cat, msg in messages %}
+      <div class="flash {{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- FILTERS -->
+    <div class="filters">
+      <button class="fchip active" onclick="filterStatus(this,'all')">
+        All <span class="fc-count">{{ orders|length }}</span>
+      </button>
+      {% for s, col in [('Pending','amber'),('Confirmed','blue'),('Processing','purple'),('Shipped','green'),('Out for Delivery','orange'),('Delivered','green'),('Cancelled','red')] %}
+      <button class="fchip" onclick="filterStatus(this,'{{ s }}')">
+        {{ s }}
+        <span class="fc-count" style="background:var(--{{ col }});color:{% if col == 'amber' or col == 'green' %}#000{% else %}#fff{% endif %}">
+          {{ orders|selectattr('status','equalto',s)|list|length }}
+        </span>
+      </button>
+      {% endfor %}
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ORDER</th>
+            <th>CUSTOMER · ग्राहक</th>
+            <th>DATE</th>
+            <th>AMOUNT</th>
+            <th>PAYMENT</th>
+            <th>DELIVERY BOY</th>
+            <th>PIPELINE · स्थिती</th>
+            <th>STATUS</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          {% for order in orders %}
+          <tr data-status="{{ order.status }}" onclick="openOrder(this)" data-order='{{ order | tojson | e }}'>
+
+            <!-- ORDER ID -->
+            <td>
+              <div class="order-id">#VK{{ order.id }}</div>
+              <div class="order-sub">{{ order.date.strftime('%d %b') if order.date else '' }}</div>
+            </td>
+
+            <!-- CUSTOMER -->
+            <td>
+              <div class="cust-name">{{ order.customer }}</div>
+              <div class="cust-phone">{{ order.phone or '' }}</div>
+            </td>
+
+            <!-- DATE -->
+            <td style="font-size:11px;color:var(--fg2);white-space:nowrap">
+              {{ order.date.strftime('%d %b %Y') if order.date else 'N/A' }}<br>
+              <span style="font-size:10px;color:var(--fg3)">{{ order.date.strftime('%H:%M') if order.date else '' }}</span>
+            </td>
+
+            <!-- AMOUNT -->
+            <td>
+              <div class="amt">₹{{ order.total }}</div>
+              <div class="amt-sub {% if order.payment_status == 'Paid' %}paid{% else %}cod{% endif %}">
+                {{ order.payment_status }} · {{ order.payment_method }}
+              </div>
+            </td>
+
+            <!-- PAYMENT PILL -->
+            <td>
+              <span class="ppill {% if order.payment_status == 'Paid' %}pp-paid{% elif order.payment_status == 'Refunded' %}pp-ref{% else %}pp-pend{% endif %}">
+                {{ order.payment_status }}
+              </span>
+            </td>
+
+            <!-- DELIVERY BOY -->
+            <td style="min-width:170px" onclick="event.stopPropagation()">
+              {% if order.delivery_boy_name %}
+                <div class="dboy">
+                  <div class="dboy-av">{{ order.delivery_boy_name[:2].upper() }}</div>
+                  {{ order.delivery_boy_name }}
+                </div>
+                {% if order.delivery_otp %}
+                <div class="otp-row">
+                  <span style="font-size:9px;color:var(--fg3);letter-spacing:.08em">OTP</span>
+                  {% if order.otp_verified %}
+                    <span class="otp-verified">✓ VERIFIED</span>
+                  {% else %}
+                    <span class="otp-val">{{ order.delivery_otp }}</span>
+                    <form action="/admin/regenerate-otp/{{ order.id }}" method="POST" style="display:inline">
+                      <button class="btn-regen" title="Regenerate OTP">↺</button>
+                    </form>
+                  {% endif %}
+                </div>
+                {% endif %}
+              {% else %}
+                {% if order.status not in ['Delivered','Cancelled'] %}
+                <form action="/admin/assign-delivery/{{ order.id }}" method="POST" class="assign-row" onsubmit="return validateAssign(this)">
+                  <select name="delivery_boy_id" class="assign-sel">
+                    <option value="">Select boy...</option>
+                    {% for boy in delivery_boys %}
+                    <option value="{{ boy.id }}">{{ boy.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn-assign">ASSIGN</button>
+                </form>
+                {% else %}
+                <span style="font-size:10px;color:var(--fg3)">—</span>
+                {% endif %}
+              {% endif %}
+            </td>
+
+            <!-- PIPELINE VISUAL -->
+            <td style="min-width:160px">
+              {% set stages = ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered'] %}
+              {% set status_order = {'Pending':0,'Confirmed':1,'Processing':2,'Shipped':3,'Out for Delivery':4,'Delivered':5,'Cancelled':6} %}
+              {% set cur_idx = status_order.get(order.status, 0) %}
+              <div class="pipeline">
+                {% for stage in stages %}
+                {% set s_idx = loop.index0 %}
+                <div class="pip-step">
+                  <div class="pip-dot
+                    {% if order.status == 'Cancelled' and s_idx == cur_idx %}cancel
+                    {% elif s_idx < cur_idx or order.status == 'Delivered' %}done
+                    {% elif s_idx == cur_idx %}active
+                    {% endif %}
+                  "></div>
+                  {% if not loop.last %}
+                  <div class="pip-line {% if s_idx < cur_idx %}done{% endif %}"></div>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              </div>
+              <div class="pip-tip">
+                {% if order.status == 'Cancelled' %}<span style="color:var(--red)">CANCELLED</span>
+                {% elif order.status == 'Delivered' %}<span style="color:var(--green)">DELIVERED ✓</span>
+                {% elif order.status == 'Out for Delivery' %}<span style="color:var(--orange)">EN ROUTE</span>
+                {% elif order.status == 'Shipped' %}<span style="color:var(--green)">SHIPPED</span>
+                {% elif order.status == 'Processing' %}<span style="color:var(--purple)">PROCESSING</span>
+                {% elif order.status == 'Confirmed' %}<span style="color:var(--blue)">CONFIRMED</span>
+                {% else %}<span style="color:var(--amber)">PENDING</span>{% endif %}
+              </div>
+            </td>
+
+            <!-- STATUS DROPDOWN -->
+            <td onclick="event.stopPropagation()">
+              <select class="ssel" onchange="updateStatus({{ order.id }}, this.value)">
+                {% for s in ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered','Cancelled'] %}
+                <option {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </td>
+
+            <!-- ACTION -->
+            <td onclick="event.stopPropagation()">
+              <button class="btn-view" onclick="openOrderById({{ order.id }})">VIEW</button>
+            </td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      {% if not orders %}
+      <div class="empty">
+        <div class="empty-icon">📦</div>
+        <div class="empty-t">NO ORDERS YET</div>
+        <div class="empty-s">Orders will appear here once customers start placing them.</div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+
+<!-- ═══════════════════════════════════════════════
+     ORDER DETAIL POPUP
+═══════════════════════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="closePopup(event)">
+  <div class="popup" onclick="event.stopPropagation()">
+
+    <div class="pop-hdr">
+      <div>
+        <div class="pop-title">ORDER <span id="popId" style="color:var(--amber)"></span></div>
+        <div class="pop-sub" id="popSub"></div>
+      </div>
+      <button class="pop-close" onclick="closePopup()">✕</button>
+    </div>
+
+    <div class="pop-body">
+
+      <!-- PIPELINE FULL -->
+      <div>
+        <div class="pop-sec-title">DELIVERY PIPELINE · लाइव स्टेटस</div>
+        <div class="tl" id="popTl"></div>
+      </div>
+
+      <!-- OTP -->
+      <div id="popOtpWrap" style="display:none">
+        <div class="pop-sec-title">OTP VERIFICATION</div>
+        <div class="otp-box">
+          <div>
+            <div style="font-size:9px;color:var(--fg3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px">Customer Delivery OTP</div>
+            <div class="otp-big" id="popOtpVal">—</div>
+            <div class="otp-info">Share with customer · Delivery boy enters on arrival</div>
+          </div>
+          <div id="popOtpStatus"></div>
+        </div>
+        <div style="font-size:10px;color:var(--fg3);margin-top:8px" id="popBoyName"></div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div>
+        <div class="pop-sec-title">PRODUCTS · उत्पादने</div>
+        <div id="popProds"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);margin-top:4px">
+          <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg3)">Total · एकूण</span>
+          <span style="font-family:var(--display);font-size:26px;color:var(--amber)" id="popTotal"></span>
+        </div>
+      </div>
+
+      <!-- CUSTOMER & SHIPPING -->
+      <div>
+        <div class="pop-sec-title">CUSTOMER & SHIPPING · ग्राहक माहिती</div>
+        <div class="pop-grid">
+          <div class="pop-kv"><span class="pop-k">Name</span><span class="pop-v" id="pName"></span></div>
+          <div class="pop-kv"><span class="pop-k">Phone</span><span class="pop-v" id="pPhone"></span></div>
+          <div class="pop-kv"><span class="pop-k">Email</span><span class="pop-v" id="pEmail" style="font-size:10px"></span></div>
+          <div class="pop-kv"><span class="pop-k">Payment</span><span class="pop-v" id="pPay"></span></div>
+        </div>
+        <div style="margin-top:12px">
+          <div class="pop-k" style="margin-bottom:5px">Shipping Address · पत्ता</div>
+          <div class="pop-v" id="pAddr" style="font-size:11px;line-height:1.7;color:var(--fg2)"></div>
+        </div>
+      </div>
+
+    </div><!-- /pop-body -->
+  </div>
+</div>
+
+
+<script>
+/* ── ALL ORDERS DATA ─────────────────────────────────── */
+const ALL_ORDERS = {{ orders | tojson }};
+const orderMap   = {};
+ALL_ORDERS.forEach(o => orderMap[o.id] = o);
+
+/* ── SEARCH ──────────────────────────────────────────── */
+document.getElementById('searchInput').addEventListener('input', function(){
+  const v = this.value.toLowerCase();
+  document.querySelectorAll('#tbody tr').forEach(r => {
+    r.style.display = r.innerText.toLowerCase().includes(v) ? '' : 'none';
+  });
+});
+
+/* ── FILTER ──────────────────────────────────────────── */
+function filterStatus(btn, status){
+  document.querySelectorAll('.fchip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#tbody tr').forEach(r => {
+    r.style.display = (status === 'all' || r.dataset.status === status) ? '' : 'none';
+  });
+}
+
+/* ── STATUS UPDATE ───────────────────────────────────── */
+function updateStatus(id, status){
+  if(!confirm(`Change order #VK${id} to "${status}"?`)) {
+    // revert select
+    document.querySelectorAll('#tbody tr').forEach(r => {
+      const d = JSON.parse(r.dataset.order || '{}');
+      if(d.id == id){
+        r.querySelector('.ssel').value = d.status;
+      }
+    });
+    return;
+  }
+  window.location.href = `/admin/update-order/${id}/${encodeURIComponent(status)}`;
+}
+
+/* ── VALIDATE ASSIGN ─────────────────────────────────── */
+function validateAssign(form){
+  const sel = form.querySelector('select[name="delivery_boy_id"]');
+  if(!sel || !sel.value){ alert('Select a delivery boy first.'); return false; }
+  return true;
+}
+
+/* ── OPEN POPUP ──────────────────────────────────────── */
+function openOrder(row){
+  try {
+    const order = JSON.parse(row.dataset.order);
+    renderPopup(order);
+  } catch(e) {}
+}
+function openOrderById(id){
+  const order = orderMap[id];
+  if(order) renderPopup(order);
+}
+
+function renderPopup(order){
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  document.getElementById('popId').textContent = `#VK${order.id}`;
+  document.getElementById('popSub').textContent =
+    `${order.date ? new Date(order.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : ''} · ${order.status}`;
+
+  /* ── TIMELINE ── */
+  const stages = [
+    { label:'Pending',          key:'date' },
+    { label:'Confirmed',        key:'confirmed_at' },
+    { label:'Processing',       key:'processing_at' },
+    { label:'Shipped',          key:'shipped_at' },
+    { label:'Out for Delivery', key:'out_for_delivery_at' },
+    { label:'Delivered',        key:'delivered_at' },
+  ];
+  if(order.status === 'Cancelled') stages.push({ label:'Cancelled', key:'cancelled_at' });
+
+  const statusOrd = ['Pending','Confirmed','Processing','Shipped','Out for Delivery','Delivered'];
+  const curIdx    = statusOrd.indexOf(order.status);
+
+  const tl = document.getElementById('popTl');
+  tl.innerHTML = '';
+  stages.forEach((s, i) => {
+    const isDone   = order[s.key] != null;
+    const isActive = s.label === order.status;
+    const isCancel = s.label === 'Cancelled';
+    const isPast   = i < curIdx;
+    const dotCls   = isCancel ? 'cancel' : (isActive ? 'active' : (isDone || isPast ? 'done' : ''));
+    const lblCls   = isCancel ? 'cancel' : (isActive ? 'active' : (isDone || isPast ? 'done' : 'pending'));
+    const ts       = order[s.key] ? new Date(order[s.key]).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : null;
+    const isLast   = i === stages.length - 1;
+
+    tl.innerHTML += `
+      <div class="tl-step">
+        <div class="tl-left">
+          <div class="tl-dot2 ${dotCls}"></div>
+          ${!isLast ? `<div class="tl-line2 ${isDone||isPast?'done':''}"></div>` : ''}
+        </div>
+        <div class="tl-right">
+          <div class="tl-label2 ${lblCls}">${s.label}</div>
+          <div class="tl-ts2">${ts || (isActive ? '⬅ CURRENT' : 'Not reached yet')}</div>
+        </div>
+      </div>`;
+  });
+
+  /* ── OTP ── */
+  const otpWrap = document.getElementById('popOtpWrap');
+  if(order.delivery_otp){
+    otpWrap.style.display = '';
+    document.getElementById('popOtpVal').textContent   = order.otp_verified ? '✓ VERIFIED' : order.delivery_otp;
+    document.getElementById('popOtpVal').style.color   = order.otp_verified ? 'var(--green)' : 'var(--amber)';
+    document.getElementById('popOtpStatus').innerHTML  = order.otp_verified
+      ? '<span class="otp-ok">✓ Customer confirmed delivery</span>'
+      : '<span style="font-size:10px;color:var(--amber)">Awaiting OTP entry</span>';
+    document.getElementById('popBoyName').textContent  = (order.delivery_boy_name || order.delivery_boy)
+      ? `Assigned to: ${order.delivery_boy_name || order.delivery_boy}`
+      : 'No delivery boy assigned';
+  } else {
+    otpWrap.style.display = 'none';
+  }
+
+  /* ── PRODUCTS ── */
+  const prodsEl = document.getElementById('popProds');
+  prodsEl.innerHTML = '';
+  if(order.products && order.products.length){
+    order.products.forEach(p => {
+      prodsEl.innerHTML += `
+        <div class="prod-row">
+          <span class="prod-name">${p.name}<span class="prod-qty">× ${p.qty}</span></span>
+          <span class="prod-price">₹${p.price}</span>
+        </div>`;
+    });
+  } else {
+    prodsEl.innerHTML = '<div style="color:var(--fg3);font-size:12px;padding:8px 0">No item details available</div>';
+  }
+  document.getElementById('popTotal').textContent = '₹' + order.total;
+
+  /* ── CUSTOMER ── */
+  document.getElementById('pName').textContent  = order.customer || order.shipping_name || '—';
+  document.getElementById('pPhone').textContent = order.phone    || order.shipping_phone || '—';
+  document.getElementById('pEmail').textContent = order.email    || '—';
+  document.getElementById('pPay').textContent   = `${order.payment_method || 'COD'} · ${order.payment_status || 'Pending'}`;
+  const addr = [order.shipping_address, order.shipping_city, order.shipping_pincode, order.shipping_state]
+    .filter(Boolean).join(', ');
+  document.getElementById('pAddr').textContent  = addr || '—';
+}
+
+function closePopup(e){
+  if(e && e.target !== document.getElementById('overlay')) return;
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if(e.key === 'Escape') { document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }});
+</script>
+</body>
+</html>

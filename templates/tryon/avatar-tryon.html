@@ -1,0 +1,709 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.studio {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #0b0b0c, #151515);
+    font-family: 'DM Sans', sans-serif;
+    color: #e6e6e6;
+    padding: 40px 20px 60px;
+}
+
+/* ── PAGE TITLE ── */
+.studio-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.studio-title span {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #d4af37;
+    border: 1px solid rgba(212,175,55,0.3);
+    padding: 5px 16px;
+    border-radius: 2px;
+    margin-bottom: 14px;
+}
+.studio-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 4vw, 52px);
+    color: #f0ece4;
+    font-weight: 900;
+}
+
+/* ── STEP 1: BMI FORM ── */
+.step-box {
+    max-width: 560px;
+    margin: 0 auto 50px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.18);
+    border-radius: 8px;
+    padding: 36px 32px;
+}
+.step-box h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: #d4af37;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 12px 16px;
+    color: #e6e6e6;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.3s;
+}
+.form-group input:focus, .form-group select:focus {
+    border-color: rgba(212,175,55,0.5);
+}
+.form-group select option { background: #1a1a1a; }
+
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: #444;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+}
+
+/* Manual avatar selector */
+.avatar-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.avatar-option {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 16px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.avatar-option:hover, .avatar-option.active {
+    border-color: #d4af37;
+    background: rgba(212,175,55,0.06);
+}
+.avatar-option .av-icon { font-size: 28px; margin-bottom: 6px; }
+.avatar-option .av-label { font-size: 12px; color: #888; letter-spacing: 1px; text-transform: uppercase; }
+
+.btn-gold {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(145deg, #d4af37, #b8902a);
+    border: none;
+    border-radius: 4px;
+    color: #111;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+}
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(212,175,55,0.25);
+}
+
+/* BMI result badge */
+.bmi-result {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 20px;
+    background: rgba(212,175,55,0.08);
+    border: 1px solid rgba(212,175,55,0.25);
+    border-radius: 4px;
+    font-size: 14px;
+    color: #d4af37;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* ── STEP 2: TRY-ON STUDIO ── */
+.tryon-studio {
+    display: none;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 30px;
+    grid-template-columns: 260px 1fr 260px;
+}
+.tryon-studio.visible {
+    display: grid;
+}
+
+/* Side panels */
+.panel {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(212,175,55,0.15);
+    border-radius: 8px;
+    padding: 24px;
+}
+.panel h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    color: #d4af37;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(212,175,55,0.15);
+}
+
+/* Cloth items */
+.cloth-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.cloth-item:hover, .cloth-item.selected {
+    border-color: rgba(212,175,55,0.4);
+    background: rgba(212,175,55,0.05);
+}
+.cloth-item img {
+    width: 54px;
+    height: 54px;
+    object-fit: contain;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    padding: 4px;
+}
+.cloth-item .cloth-info b {
+    display: block;
+    font-size: 13px;
+    color: #ddd;
+    margin-bottom: 2px;
+}
+.cloth-item .cloth-info span {
+    font-size: 11px;
+    color: #555;
+}
+
+/* Color buttons */
+.color-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+.color-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.color-dot:hover, .color-dot.active {
+    border-color: #d4af37;
+    transform: scale(1.15);
+}
+
+/* Size buttons */
+.size-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
+.size-btn {
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    color: #888;
+    font-size: 12px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+}
+.size-btn:hover, .size-btn.active {
+    border-color: #d4af37;
+    color: #d4af37;
+    background: rgba(212,175,55,0.08);
+}
+
+/* ── CENTER STAGE ── */
+.stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 560px;
+}
+
+.platform {
+    position: absolute;
+    bottom: 50px;
+    width: 300px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center,
+        rgba(212,175,55,0.15) 0%,
+        rgba(0,0,0,0.85) 65%);
+}
+
+.avatar-wrap {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 2;
+}
+
+#avatarImg {
+    height: 460px;
+    filter: drop-shadow(0 40px 50px rgba(0,0,0,0.9));
+    animation: float 4s ease-in-out infinite;
+    transition: all 0.6s ease;
+}
+
+#shirtLayer {
+    position: absolute;
+    height: 460px;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    opacity: 0;
+}
+#shirtLayer.visible { opacity: 1; }
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Avatar label badge */
+.avatar-badge {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(212,175,55,0.12);
+    border: 1px solid rgba(212,175,55,0.3);
+    color: #d4af37;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 2px;
+    white-space: nowrap;
+}
+
+/* Stage buttons */
+.stage-btns {
+    position: absolute;
+    bottom: 16px;
+    display: flex;
+    gap: 12px;
+}
+.stage-btn {
+    padding: 10px 22px;
+    border-radius: 30px;
+    border: 1px solid rgba(212,175,55,0.3);
+    background: rgba(212,175,55,0.08);
+    color: #d4af37;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'DM Sans', sans-serif;
+}
+.stage-btn:hover {
+    background: linear-gradient(145deg, #d4af37, #b8902a);
+    color: #111;
+    border-color: transparent;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+    .tryon-studio.visible {
+        grid-template-columns: 1fr;
+    }
+    .stage { min-height: 420px; order: -1; }
+    #avatarImg, #shirtLayer { height: 360px; }
+}
+</style>
+
+<div class="studio">
+
+    <!-- TITLE -->
+    <div class="studio-title">
+        <span>FashionHub Studio</span>
+        <h1>Avatar Try‑On</h1>
+    </div>
+
+    <!-- ── STEP 1: BMI FORM ── -->
+    <div class="step-box" id="stepForm">
+        <h2>📐 Step 1 — Find Your Avatar</h2>
+
+        <!-- Height & Weight -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Height (cm)</label>
+                <input type="number" id="heightInput" placeholder="e.g. 175" min="100" max="250">
+            </div>
+            <div class="form-group">
+                <label>Weight (kg)</label>
+                <input type="number" id="weightInput" placeholder="e.g. 70" min="30" max="200">
+            </div>
+        </div>
+
+        <button class="btn-gold" onclick="calculateBMI()">Calculate & Pick Avatar</button>
+
+        <div class="bmi-result" id="bmiResult"></div>
+
+        <div class="divider">or choose manually</div>
+
+        <!-- Manual avatar picker -->
+        <div class="avatar-selector">
+            <div class="avatar-option" onclick="setAvatar('skinny','Slim','S')" id="opt-skinny">
+                <div class="av-icon">🧍</div>
+                <div class="av-label">Slim</div>
+            </div>
+            <div class="avatar-option" onclick="setAvatar('normal','Regular','M')" id="opt-normal">
+                <div class="av-icon">🧑</div>
+                <div class="av-label">Regular</div>
+            </div>
+            <div class="avatar-option" onclick="setAvatar('fatt','Plus','XL')" id="opt-fatt">
+                <div class="av-icon">👤</div>
+                <div class="av-label">Plus</div>
+            </div>
+        </div>
+
+        <button class="btn-gold" onclick="openStudio()" id="openStudioBtn" style="display:none;">
+            Open Try‑On Studio →
+        </button>
+    </div>
+
+    <!-- ── STEP 2: TRY-ON STUDIO ── -->
+    <div class="tryon-studio" id="tryonStudio">
+
+        <!-- LEFT: Clothes -->
+        <div class="panel">
+            <h3>👕 Select Shirt</h3>
+
+            <div class="cloth-item" onclick="selectCloth(this,'tshirt','Classic T-Shirt')">
+                <img src="/static/images/shirts/tshirt-red.png" alt="T-Shirt">
+                <div class="cloth-info">
+                    <b>Classic T-Shirt</b>
+                    <span>Casual Wear</span>
+                </div>
+            </div>
+
+            <div class="cloth-item" onclick="selectCloth(this,'skinny-S','Slim Fit Shirt')">
+                <img src="/static/images/shirts/skinny-S-red.png" alt="Slim Shirt">
+                <div class="cloth-info">
+                    <b>Slim Fit Shirt</b>
+                    <span>Formal Wear</span>
+                </div>
+            </div>
+
+            <div class="cloth-item" onclick="selectCloth(this,'normal-L','Regular Fit')">
+                <img src="/static/images/shirts/normal-L-red.png" alt="Regular Shirt">
+                <div class="cloth-info">
+                    <b>Regular Fit</b>
+                    <span>Smart Casual</span>
+                </div>
+            </div>
+
+            <div class="cloth-item" onclick="selectCloth(this,'fat-XL','Plus Size Shirt')">
+                <img src="/static/images/shirts/fat-XL-red.png" alt="Plus Shirt">
+                <div class="cloth-info">
+                    <b>Plus Size Shirt</b>
+                    <span>Comfort Wear</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER: Stage -->
+        <div class="panel stage">
+
+            <div class="avatar-badge" id="avatarBadge">Select Avatar</div>
+
+            <div class="platform"></div>
+
+            <div class="avatar-wrap">
+                <img id="avatarImg" src="/static/images/avatars/normal.png" alt="Avatar">
+                <img id="shirtLayer" src="" alt="Shirt">
+            </div>
+
+            <div class="stage-btns">
+                <button class="stage-btn" onclick="removeShirt()">✕ Remove</button>
+                <button class="stage-btn" onclick="saveScreenshot()">⬇ Save Look</button>
+                <button class="stage-btn" onclick="resetAll()">↩ Reset</button>
+            </div>
+
+        </div>
+
+        <!-- RIGHT: Options -->
+        <div class="panel">
+            <h3>🎨 Colour & Size</h3>
+
+            <p style="font-size:13px;color:#555;margin-bottom:16px;">Select a shirt first</p>
+
+            <div id="colorSection" style="display:none;">
+                <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#555;margin-bottom:10px;">Colour</p>
+                <div class="color-row" id="colorRow">
+                    <div class="color-dot active" style="background:#c0392b;" onclick="applyColor('red',this)" title="Red"></div>
+                    <div class="color-dot" style="background:#2980b9;" onclick="applyColor('blue',this)" title="Blue"></div>
+                    <div class="color-dot" style="background:#27ae60;" onclick="applyColor('green',this)" title="Green"></div>
+                    <div class="color-dot" style="background:#1a1a1a;border:1px solid #444;" onclick="applyColor('black',this)" title="Black"></div>
+                    <div class="color-dot" style="background:#d4af37;" onclick="applyColor('original',this)" title="Original"></div>
+                </div>
+
+                <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#555;margin:20px 0 10px;">Size</p>
+                <div class="size-row" id="sizeRow">
+                    <button class="size-btn" onclick="selectSize(this,'XS')">XS</button>
+                    <button class="size-btn active" onclick="selectSize(this,'S')">S</button>
+                    <button class="size-btn" onclick="selectSize(this,'M')">M</button>
+                    <button class="size-btn" onclick="selectSize(this,'L')">L</button>
+                    <button class="size-btn" onclick="selectSize(this,'XL')">XL</button>
+                </div>
+
+                <div style="margin-top:24px;padding:14px;background:rgba(212,175,55,0.06);border-radius:4px;border:1px solid rgba(212,175,55,0.15);">
+                    <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#666;margin-bottom:6px;">Your Recommended Size</p>
+                    <p id="recSize" style="font-size:22px;font-weight:700;color:#d4af37;">—</p>
+                </div>
+
+                <button class="btn-gold" style="margin-top:20px;" onclick="addToCart()">Add to Cart</button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- html2canvas for screenshot -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+// ── State ──
+let currentAvatar  = 'normal';
+let currentLabel   = 'Regular';
+let currentSize    = 'M';
+let currentCloth   = '';
+let currentColor   = 'red';
+let isBack         = false;
+
+// ── BMI Calculator ──
+function calculateBMI(){
+    const h = parseFloat(document.getElementById('heightInput').value);
+    const w = parseFloat(document.getElementById('weightInput').value);
+
+    if(!h || !w || h <= 0 || w <= 0){
+        showBmiResult('⚠ Please enter valid height and weight.', '#e74c3c');
+        return;
+    }
+
+    const hm  = h / 100;
+    const bmi = w / (hm * hm);
+
+    let avatar, size, label;
+
+    if(bmi < 18.5){
+        avatar = 'skinny'; size = 'S'; label = 'Slim';
+    } else if(bmi < 25){
+        avatar = 'normal'; size = 'M'; label = 'Regular';
+    } else {
+        avatar = 'fatt'; size = 'XL'; label = 'Plus Size';
+    }
+
+    showBmiResult(`BMI: ${bmi.toFixed(1)} — Your avatar is ${label} (Recommended size: ${size})`, '#d4af37');
+    setAvatar(avatar, label, size);
+}
+
+function showBmiResult(msg, color){
+    const el = document.getElementById('bmiResult');
+    el.style.display = 'block';
+    el.style.color   = color;
+    el.textContent   = msg;
+}
+
+// ── Set Avatar ──
+function setAvatar(avatar, label, size){
+    currentAvatar = avatar;
+    currentLabel  = label;
+    currentSize   = size;
+
+    // highlight manual option
+    document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('active'));
+    const opt = document.getElementById('opt-' + avatar);
+    if(opt) opt.classList.add('active');
+
+    document.getElementById('openStudioBtn').style.display = 'block';
+    document.getElementById('recSize').textContent = size;
+}
+
+// ── Open Studio ──
+function openStudio(){
+    document.getElementById('stepForm').style.display = 'none';
+
+    const studio = document.getElementById('tryonStudio');
+    studio.classList.add('visible');
+
+    // Update avatar image & badge
+    document.getElementById('avatarImg').src = `/static/images/avatars/${currentAvatar}.png`;
+    document.getElementById('avatarBadge').textContent = currentLabel + ' — Size ' + currentSize;
+    document.getElementById('recSize').textContent = currentSize;
+
+    // Pre-select correct size button
+    document.querySelectorAll('.size-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === currentSize);
+    });
+}
+
+// ── Select Cloth ──
+function selectCloth(el, clothType, name){
+    currentCloth = clothType;
+
+    document.querySelectorAll('.cloth-item').forEach(i => i.classList.remove('selected'));
+    el.classList.add('selected');
+
+    // Show shirt on avatar
+    applyShirt();
+
+    // Show color/size panel
+    document.getElementById('colorSection').style.display = 'block';
+    document.querySelector('#colorSection').previousElementSibling.style.display = 'none';
+}
+
+// ── Apply Shirt ──
+function applyShirt(){
+    if(!currentCloth) return;
+
+    const layer = document.getElementById('shirtLayer');
+
+    // Try color-specific image first, fallback to base
+    const colorMap = { red:'red', blue:'blue', green:'green', black:'black', original:'' };
+    const colorSuffix = currentColor !== 'original' ? '-' + currentColor : '-red';
+
+    // Use avatar-specific shirt if available
+    const avatarShirtMap = {
+        skinny: `skinny-S${colorSuffix}`,
+        normal: `normal-L${colorSuffix}`,
+        fatt:   `fat-XL${colorSuffix}`
+    };
+
+    const shirtFile = avatarShirtMap[currentAvatar] || `tshirt${colorSuffix}`;
+    layer.src = `/static/images/shirts/${shirtFile}.png`;
+    layer.classList.add('visible');
+
+    // CSS color filter fallback
+    const filters = {
+        red:      'none',
+        blue:     'sepia(1) saturate(5) hue-rotate(180deg)',
+        green:    'sepia(1) saturate(5) hue-rotate(90deg)',
+        black:    'grayscale(1) brightness(0.25)',
+        original: 'none'
+    };
+    layer.style.filter = filters[currentColor] || 'none';
+}
+
+// ── Apply Color ──
+function applyColor(color, el){
+    currentColor = color;
+    document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+    el.classList.add('active');
+    applyShirt();
+}
+
+// ── Select Size ──
+function selectSize(el, size){
+    currentSize = size;
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+}
+
+// ── Remove Shirt ──
+function removeShirt(){
+    const layer = document.getElementById('shirtLayer');
+    layer.classList.remove('visible');
+    layer.src = '';
+    currentCloth = '';
+    document.querySelectorAll('.cloth-item').forEach(i => i.classList.remove('selected'));
+}
+
+// ── Reset All ──
+function resetAll(){
+    removeShirt();
+    document.getElementById('tryonStudio').classList.remove('visible');
+    document.getElementById('stepForm').style.display = 'block';
+    document.getElementById('bmiResult').style.display = 'none';
+    document.getElementById('colorSection').style.display = 'none';
+    document.getElementById('openStudioBtn').style.display = 'none';
+    document.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('active'));
+    document.getElementById('heightInput').value = '';
+    document.getElementById('weightInput').value = '';
+}
+
+// ── Save Screenshot ──
+function saveScreenshot(){
+    const stage = document.querySelector('.stage');
+    html2canvas(stage, { backgroundColor: '#111' }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'my-fashionhub-look.png';
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
+
+// ── Add to Cart (placeholder) ──
+function addToCart(){
+    alert(`Added to cart!\nShirt: ${currentCloth}\nSize: ${currentSize}\nColor: ${currentColor}`);
+}
+</script>
+
+{% endblock %}

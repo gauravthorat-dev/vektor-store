@@ -1,0 +1,365 @@
+/* ===================================== */
+/* ✅ RESPONSIVE DESIGN — FASHIONHUB     */
+/* ===================================== */
+
+
+/* ================= TABLETS ================= */
+@media (max-width:992px){
+
+    .navbar{
+        padding:15px 30px;
+    }
+
+    .nav-links{
+        gap:20px;
+        font-size:14px;
+    }
+
+    .hero h1{
+        font-size:42px;
+    }
+
+    .cards{
+        flex-wrap:wrap;
+        gap:25px;
+        justify-content:center;
+    }
+
+    .card{
+        width:45%;
+    }
+}
+
+
+
+/* ================= MOBILE ================= */
+@media (max-width:768px){
+
+    body{
+        overflow-x:hidden;
+        background:#0b0b0b;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar{
+        flex-direction:column;
+        gap:12px;
+        padding:12px;
+        text-align:center;
+    }
+
+    .nav-links{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:12px;
+        font-size:13px;
+    }
+
+    .nav-right{
+        width:100%;
+        display:flex;
+        justify-content:center;
+    }
+
+    /* ===== HERO ===== */
+    .hero{
+        height:auto !important;
+        padding:60px 20px;
+        text-align:center;
+    }
+
+    .hero h1{ font-size:26px; }
+    .hero p{ font-size:14px; }
+
+    /* ===== SECTIONS ===== */
+    .featured{
+        padding:40px 16px;
+    }
+
+    .featured h2{
+        text-align:center;
+        font-size:20px;
+        margin-bottom:18px;
+    }
+
+    /* ===== CARDS ===== */
+    .cards{
+        flex-direction:column;
+        align-items:center;
+        gap:18px;
+    }
+
+    .card{
+        width:92%;
+    }
+
+    .product-card img{
+        width:100%;
+        height:200px;
+        object-fit:cover;
+        border-radius:10px;
+    }
+
+    /* ===== CART ===== */
+    .cart-layout{
+        flex-direction:column;
+        gap:18px;
+    }
+
+    .cart-items{ width:100%; }
+
+    .cart-item{
+        flex-direction:column;
+        gap:12px;
+        padding:14px;
+    }
+
+    .cart-item img{
+        width:100%;
+        height:180px;
+        object-fit:cover;
+        border-radius:10px;
+    }
+
+    .item-price{
+        font-size:16px;
+        font-weight:bold;
+        color:gold;
+    }
+
+    .cart-summary-box{
+        width:100%;
+    }
+
+    /* ===== CHECKOUT ===== */
+    .checkout-grid{
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .checkout-card{
+        width:100%;
+    }
+
+    /* ===== PAYMENT ===== */
+    .payment-card{
+        width:100%;
+    }
+
+    /* ===== ORDER DETAILS ===== */
+    .details{
+        padding:18px 12px;
+    }
+
+    .card{
+        width:100%;
+    }
+
+    /* ===== SUCCESS ===== */
+    .success-card{
+        width:100%;
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn,
+    .premium-btn,
+    .checkout-btn{
+        width:100%;
+    }
+
+}
+
+/* ================================= */
+/* 📱 HOMEPAGE RESPONSIVE DESIGN     */
+/* ================================= */
+
+@media (max-width:768px){
+
+    body{
+        overflow-x:hidden;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar{
+        flex-direction:column;
+        gap:12px;
+        padding:12px;
+        text-align:center;
+    }
+
+    .logo{
+        font-size:22px;
+    }
+
+    .nav-links{
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:12px;
+        font-size:13px;
+    }
+
+    .nav-right{
+        width:100%;
+        display:flex;
+        justify-content:center;
+    }
+
+    /* ===== HERO ===== */
+    .hero{
+        height:auto !important;
+        padding:70px 18px;
+        text-align:center;
+    }
+
+    .hero-text h1{
+        font-size:26px;
+        margin-bottom:12px;
+    }
+
+    .hero-text p{
+        font-size:14px;
+        margin-bottom:18px;
+    }
+
+    .hero-text button{
+        padding:10px 18px;
+        font-size:14px;
+    }
+
+    /* ===== SECTION SPACING ===== */
+    .featured{
+        padding:40px 16px;
+    }
+
+    .featured h2{
+        text-align:center;
+        font-size:20px;
+        margin-bottom:18px;
+    }
+
+    /* ===== CARDS LAYOUT ===== */
+    .cards{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:18px;
+    }
+
+    .card{
+        width:92%;
+        padding:16px;
+        border-radius:12px;
+        text-align:center;
+    }
+
+    .card h3{
+        font-size:16px;
+        margin-bottom:8px;
+    }
+
+    .card p{
+        font-size:13px;
+        margin-bottom:10px;
+    }
+
+    .card button{
+        padding:8px 14px;
+        font-size:13px;
+    }
+
+    /* ===== PRODUCT CARDS ===== */
+    .product-card img{
+        width:100%;
+        height:200px;
+        object-fit:cover;
+        border-radius:10px;
+        margin-bottom:12px;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer{
+        padding:30px 16px;
+        text-align:center;
+    }
+
+    .footer h3{
+        font-size:18px;
+    }
+
+    .footer p{
+        font-size:12px;
+    }
+
+}
+
+/* ================================= */
+/* 📱 PREMIUM MOBILE NAVBAR FIX      */
+/* ================================= */
+
+@media (max-width:768px){
+
+    .navbar{
+        flex-direction:column;
+        padding:14px 16px;
+        gap:10px;
+        background:#111;
+        border-bottom:1px solid #222;
+    }
+
+    .logo{
+        font-size:20px;
+        letter-spacing:2px;
+        font-weight:bold;
+        color:gold;
+    }
+
+    /* NAV LINKS CONTAINER */
+    .nav-links{
+        display:flex;
+        justify-content:center;
+        flex-wrap:wrap;
+        gap:14px;
+        padding:8px 0;
+    }
+
+    /* EACH LINK */
+    .nav-links li{
+        list-style:none;
+    }
+
+    .nav-links a{
+        text-decoration:none;
+        font-size:13px;
+        font-weight:500;
+        color:#ddd;
+        padding:6px 10px;
+        border-radius:20px;
+        transition:all .25s ease;
+    }
+
+    /* HOVER EFFECT */
+    .nav-links a:hover{
+        background:rgba(255,215,0,0.15);
+        color:gold;
+    }
+
+    /* CART HIGHLIGHT */
+    .nav-links a[href="cart.html"]{
+        background:rgba(255,215,0,0.12);
+        color:gold;
+        font-weight:bold;
+    }
+
+    /* LOGIN BUTTON CENTER */
+    .nav-right{
+        display:flex;
+        justify-content:center;
+        width:100%;
+    }
+
+    .login-btn{
+        padding:6px 14px;
+        font-size:13px;
+        border-radius:20px;
+    }
+}

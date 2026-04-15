@@ -1,0 +1,702 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}Sign Up — VEKTOR{% endblock %}
+
+{% block content %}
+<div class="al-scene">
+
+  <!-- LEFT: anime art panel -->
+  <div class="al-art">
+    <div class="al-art-bg">
+      <svg width="100%" height="100%" viewBox="0 0 280 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <rect width="280" height="700" fill="#060610"/>
+        <circle cx="140" cy="240" r="180" fill="none" stroke="rgba(255,107,0,0.04)" stroke-width="60"/>
+        <circle cx="140" cy="240" r="120" fill="none" stroke="rgba(255,107,0,0.06)" stroke-width="1"/>
+        <circle cx="140" cy="240" r="90"  fill="none" stroke="rgba(255,107,0,0.08)" stroke-width="0.5"/>
+        <circle cx="140" cy="240" r="60"  fill="none" stroke="rgba(255,107,0,0.1)"  stroke-width="0.5"/>
+        <circle cx="140" cy="240" r="30"  fill="none" stroke="rgba(255,107,0,0.15)" stroke-width="0.5"/>
+        <circle cx="140" cy="240" r="8"   fill="rgba(255,107,0,0.4)"/>
+        <g class="spin-slow">
+          <line x1="140" y1="60"  x2="140" y2="420" stroke="rgba(255,107,0,0.07)" stroke-width="0.5"/>
+          <line x1="-20" y1="240" x2="300" y2="240" stroke="rgba(255,107,0,0.07)" stroke-width="0.5"/>
+          <line x1="18"  y1="118" x2="262" y2="362" stroke="rgba(255,107,0,0.07)" stroke-width="0.5"/>
+          <line x1="262" y1="118" x2="18"  y2="362" stroke="rgba(255,107,0,0.07)" stroke-width="0.5"/>
+          <line x1="18"  y1="180" x2="262" y2="300" stroke="rgba(255,107,0,0.05)" stroke-width="0.5"/>
+          <line x1="262" y1="180" x2="18"  y2="300" stroke="rgba(255,107,0,0.05)" stroke-width="0.5"/>
+          <line x1="80"  y1="60"  x2="200" y2="420" stroke="rgba(255,107,0,0.05)" stroke-width="0.5"/>
+          <line x1="200" y1="60"  x2="80"  y2="420" stroke="rgba(255,107,0,0.05)" stroke-width="0.5"/>
+        </g>
+        <g class="spin-rev">
+          <circle cx="140" cy="240" r="100" fill="none" stroke="rgba(255,107,0,0.12)" stroke-width="0.5" stroke-dasharray="6 8"/>
+          <circle cx="140" cy="240" r="70"  fill="none" stroke="rgba(4,106,56,0.15)"  stroke-width="0.5" stroke-dasharray="4 10"/>
+        </g>
+        <g opacity="0.5">
+          <line x1="20" y1="500" x2="240" y2="50"  stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+          <ellipse cx="112" cy="300" rx="14" ry="5" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1" transform="rotate(-65 112 300)"/>
+          <line x1="20" y1="500" x2="75"  y2="390" stroke="rgba(200,148,26,0.2)" stroke-width="4"/>
+        </g>
+        <line class="slash-line" x1="30" y1="340" x2="200" y2="180" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+        <!-- Indian tricolor stripe -->
+        <rect x="0" y="0" width="280" height="4" fill="#FF6B00"/>
+        <rect x="0" y="4" width="280" height="4" fill="rgba(255,255,255,0.1)"/>
+        <rect x="0" y="8" width="280" height="4" fill="#046A38"/>
+        <!-- city skyline -->
+        <rect x="0"   y="580" width="280" height="120" fill="#030308"/>
+        <rect x="10"  y="555" width="18"  height="145" fill="#030308"/>
+        <rect x="35"  y="570" width="25"  height="130" fill="#030308"/>
+        <rect x="65"  y="545" width="15"  height="155" fill="#030308"/>
+        <rect x="85"  y="565" width="30"  height="135" fill="#030308"/>
+        <rect x="120" y="535" width="20"  height="165" fill="#030308"/>
+        <rect x="145" y="560" width="22"  height="140" fill="#030308"/>
+        <rect x="172" y="550" width="18"  height="150" fill="#030308"/>
+        <rect x="195" y="570" width="28"  height="130" fill="#030308"/>
+        <rect x="228" y="553" width="16"  height="147" fill="#030308"/>
+        <rect x="248" y="565" width="32"  height="135" fill="#030308"/>
+        <!-- window lights -->
+        <rect x="15"  y="563" width="4" height="3" fill="rgba(255,107,0,0.4)"/>
+        <rect x="70"  y="557" width="4" height="3" fill="rgba(255,200,0,0.3)"/>
+        <rect x="90"  y="575" width="4" height="3" fill="rgba(255,107,0,0.35)"/>
+        <rect x="125" y="545" width="4" height="3" fill="rgba(200,148,26,0.5)"/>
+        <rect x="150" y="568" width="4" height="3" fill="rgba(255,107,0,0.3)"/>
+        <rect x="200" y="578" width="4" height="3" fill="rgba(255,107,0,0.3)"/>
+        <rect x="235" y="560" width="4" height="3" fill="rgba(255,200,0,0.25)"/>
+        <!-- moon -->
+        <circle cx="220" cy="60"  r="22" fill="#0E0E1A"/>
+        <circle cx="212" cy="55"  r="22" fill="#1A1A2E"/>
+        <!-- stars -->
+        <circle cx="60"  cy="50"  r="1"   fill="rgba(255,255,255,0.5)"/>
+        <circle cx="180" cy="30"  r="1.5" fill="rgba(255,255,255,0.4)"/>
+        <circle cx="30"  cy="80"  r="1"   fill="rgba(255,255,255,0.3)"/>
+        <circle cx="250" cy="90"  r="1"   fill="rgba(255,255,255,0.35)"/>
+        <circle cx="100" cy="25"  r="1"   fill="rgba(255,255,255,0.4)"/>
+        <!-- figure 1 (male) -->
+        <ellipse cx="148" cy="200" rx="16" ry="18" fill="#0A0A18"/>
+        <polygon points="132,193 128,173 140,187" fill="#0A0A18"/>
+        <polygon points="136,185 134,163 146,183" fill="#0A0A18"/>
+        <polygon points="148,183 148,160 155,183" fill="#0A0A18"/>
+        <polygon points="158,185 164,165 162,187" fill="#0A0A18"/>
+        <ellipse cx="143" cy="200" rx="3" ry="2" fill="rgba(255,107,0,0.6)"/>
+        <ellipse cx="154" cy="200" rx="3" ry="2" fill="rgba(255,107,0,0.6)"/>
+        <path d="M130,218 L120,285 L176,285 L166,218 Z" fill="#0A0A18"/>
+        <path d="M140,218 L148,235 L156,218" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+        <line x1="124" y1="235" x2="128" y2="275" stroke="rgba(255,107,0,0.15)" stroke-width="0.5"/>
+        <line x1="170" y1="235" x2="168" y2="275" stroke="rgba(255,107,0,0.15)" stroke-width="0.5"/>
+        <path d="M130,225 L105,265 L118,267 L135,233" fill="#0A0A18"/>
+        <path d="M166,225 L190,260 L178,263 L162,233" fill="#0A0A18"/>
+        <rect x="132" y="283" width="12" height="32" fill="#080814"/>
+        <rect x="153" y="283" width="12" height="32" fill="#080814"/>
+        <!-- figure 2 (second silhouette) -->
+        <ellipse cx="95" cy="210" rx="12" ry="14" fill="#0A0A18"/>
+        <polygon points="83,206 81,188 92,202" fill="#0A0A18"/>
+        <path d="M83,222 L72,278 L118,278 L107,222 Z" fill="#0A0A18"/>
+        <rect x="85"  y="276" width="10" height="28" fill="#080814"/>
+        <rect x="103" y="276" width="10" height="28" fill="#080814"/>
+        <!-- Devanagari watermark -->
+        <text x="24" y="510" font-family="serif" font-size="11" fill="rgba(255,107,0,0.2)" letter-spacing="3">वेक्टर</text>
+      </svg>
+    </div>
+    <div class="al-scanlines"></div>
+    <div class="al-art-content">
+      <div class="al-brand">VEKTOR</div>
+      <div class="al-brand-sub">महाराष्ट्रीय पुरुष वस्त्र</div>
+      <div class="al-quote">।। नवीन सुरुवात ।।<br><span style="font-size:10px;opacity:0.5">"A new beginning awaits"</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: form -->
+  <div class="al-form-side">
+    <div class="al-corner al-corner-tl"></div>
+    <div class="al-corner al-corner-br"></div>
+
+    <div class="al-form-inner">
+      <div class="al-form-title">JOIN US</div>
+      <div class="al-form-sub">खाते तयार करा · नवीन सदस्य व्हा</div>
+
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="al-flash {{ category }}">
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <div class="al-tabs">
+        <a class="al-tab" href="{{ url_for('user.login') }}">Sign In</a>
+        <a class="al-tab active" href="{{ url_for('user.signup') }}">New Account</a>
+      </div>
+
+      <form method="POST" action="{{ url_for('user.signup') }}" autocomplete="off" id="signupForm">
+
+        <!-- Name Row -->
+        <div class="al-row">
+          <div class="al-field">
+            <label class="al-field-label">First Name / नाव</label>
+            <input class="al-input" type="text" name="first_name" placeholder="Arjun" required autocomplete="off"/>
+          </div>
+          <div class="al-field">
+            <label class="al-field-label">Last Name / आडनाव</label>
+            <input class="al-input" type="text" name="last_name" placeholder="Patil" required autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="al-field">
+          <label class="al-field-label">Email / ईमेल</label>
+          <input class="al-input" type="email" name="email" placeholder="you@example.com" required autocomplete="off"/>
+        </div>
+
+        <div class="al-field">
+          <label class="al-field-label">Phone / फोन नंबर</label>
+          <input class="al-input" type="tel" name="phone" placeholder="+91 98765 43210" maxlength="15" autocomplete="off"/>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="al-field password-field">
+          <label class="al-field-label">Password / पासवर्ड</label>
+          <input class="al-input" type="password" name="password" id="passwordField"
+                 placeholder="••••••••" required autocomplete="new-password"
+                 style="padding-right:40px" oninput="checkStrength(this.value)"/>
+          <button type="button" class="al-eye" onclick="togglePwd('passwordField','eye1')" title="Show/Hide">
+            <svg id="eye1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <div class="strength-bar" id="strengthBar">
+            <div class="strength-seg" id="s1"></div>
+            <div class="strength-seg" id="s2"></div>
+            <div class="strength-seg" id="s3"></div>
+            <div class="strength-seg" id="s4"></div>
+          </div>
+          <span class="strength-label" id="strengthLabel"></span>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="al-field confirm-field">
+          <label class="al-field-label">Confirm Password / पुष्टी करा</label>
+          <input class="al-input" type="password" name="confirm_password" id="confirmField"
+                 placeholder="••••••••" required autocomplete="new-password" style="padding-right:40px"/>
+          <button type="button" class="al-eye" onclick="togglePwd('confirmField','eye2')" title="Show/Hide">
+            <svg id="eye2" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <div class="al-err-msg" id="confirmErr">Passwords do not match / पासवर्ड जुळत नाही</div>
+        </div>
+
+        <div class="al-terms">
+          <input type="checkbox" id="termsCheck" name="terms" required/>
+          <label for="termsCheck">
+            I agree to VEKTOR's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.<br>
+            मी वेक्टरच्या अटींशी सहमत आहे.
+          </label>
+        </div>
+
+        <button class="al-submit" type="submit">⚡ CREATE ACCOUNT — सदस्य व्हा</button>
+
+        <div class="al-divider"><span>OR / किंवा</span></div>
+
+        <button class="al-wa" type="button" onclick="signupWithWhatsApp()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          Sign Up with WhatsApp
+        </button>
+
+      </form>
+
+      <div class="al-note">
+        Already have an account? <a href="{{ url_for('user.login') }}">Sign In</a><br>
+        आधीच खाते आहे का? <a href="{{ url_for('user.login') }}">साइन इन करा</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+
+{% block extra_css %}
+<style>
+  .al-scene {
+    min-height: calc(100vh - 120px);
+    background: #050508;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── ART PANEL ── */
+  .al-art {
+    width: 42%;
+    position: relative;
+    background: #090912;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .al-art-bg { position: absolute; inset: 0; }
+
+  .al-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.18) 2px, rgba(0,0,0,0.18) 4px);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .al-art-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px 28px;
+    z-index: 4;
+  }
+
+  .al-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 10px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .al-brand-sub {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 12px;
+    color: #FF6B00;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+  .al-quote {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.7;
+    border-left: 2px solid #FF6B00;
+    padding-left: 12px;
+  }
+
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+  @keyframes spin-rev  { to { transform: rotate(-360deg); } }
+  .spin-slow { animation: spin-slow 18s linear infinite; transform-origin: 140px 240px; }
+  .spin-rev  { animation: spin-rev 12s linear infinite;  transform-origin: 140px 240px; }
+  @keyframes slash { 0%,100%{opacity:0;transform:scaleX(0)} 50%{opacity:1;transform:scaleX(1)} }
+  .slash-line { animation: slash 3s ease-in-out infinite; transform-origin: left center; }
+
+  /* ── FORM SIDE ── */
+  .al-form-side {
+    flex: 1;
+    background: #07070F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .al-corner {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-color: rgba(255,107,0,0.2);
+    border-style: solid;
+  }
+  .al-corner-tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
+  .al-corner-br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
+
+  .al-form-inner { width: 100%; max-width: 320px; }
+
+  .al-form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 6px;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .al-form-sub {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 11px;
+    color: rgba(255,107,0,0.7);
+    margin-bottom: 22px;
+    letter-spacing: 1px;
+  }
+
+  .al-flash {
+    background: rgba(255,107,0,0.08);
+    border-left: 2px solid #FF6B00;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    color: #FF6B00;
+    letter-spacing: 1px;
+  }
+
+  .al-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 20px;
+  }
+  .al-tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.25);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    text-transform: uppercase;
+    text-decoration: none;
+    display: block;
+    transition: all 0.2s;
+  }
+  .al-tab.active { color: #FF6B00; border-bottom-color: #FF6B00; }
+  .al-tab:hover  { color: rgba(255,107,0,0.7); }
+
+  /* Name side-by-side row */
+  .al-row { display: flex; gap: 10px; }
+  .al-row .al-field { flex: 1; min-width: 0; }
+
+  .al-field { position: relative; margin-bottom: 12px; }
+  .al-field-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.28);
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+  }
+  .al-input {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #F7F3EC;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 11px 14px;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s;
+    letter-spacing: 1px;
+    box-sizing: border-box;
+  }
+  .al-input:focus {
+    border-color: #FF6B00;
+    background: rgba(255,107,0,0.04);
+  }
+  .al-input::placeholder { color: rgba(255,255,255,0.1); }
+  .al-input.error { border-color: rgba(255,60,60,0.5); }
+
+/* Base eye style */
+.al-eye{
+  position:absolute;
+  right:12px;
+  transform:translateY(-50%);
+  color:rgba(255,255,255,0.25);
+  cursor:pointer;
+  background:none;
+  border:none;
+  padding:0;
+  line-height:1;
+  transition:all 0.25s ease;
+}
+
+.al-eye:hover{
+  color:#FF6B00;
+  transform:translateY(-50%) scale(1.1);
+}
+
+/* 🔥 Password field (with strength bar) */
+.password-field .al-eye{
+  top:46%;   /* adjusted visually */
+}
+
+
+
+.confirm-field .al-eye{
+  top:65%;   /* 👈 little down */
+  transform:translateY(-50%);
+}
+
+  /* Password strength */
+  .strength-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+    height: 2px;
+  }
+  .strength-seg {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    transition: background 0.3s;
+  }
+  .strength-label {
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* FIXED HEIGHT WRAPPER */
+.strength-wrapper{
+  height:20px;
+  margin-top:6px;
+}
+
+/* BAR */
+.strength-bar{
+  display:flex;
+  gap:4px;
+  height:2px;
+}
+
+/* LABEL */
+.strength-label{
+  font-size:8px;
+  letter-spacing:2px;
+  color:rgba(255,255,255,0.3);
+  display:block;
+  height:10px;
+  margin-top:4px;
+}
+
+  /* Error message */
+  .al-err-msg {
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: rgba(255,80,80,0.7);
+    margin-top: 4px;
+    display: none;
+  }
+  .al-err-msg.show { display: block; }
+
+  /* Terms checkbox */
+  .al-terms {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .al-terms input[type="checkbox"] {
+    accent-color: #FF6B00;
+    width: 13px;
+    height: 13px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .al-terms label {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.2);
+    line-height: 1.8;
+    cursor: pointer;
+  }
+  .al-terms label a {
+    color: #FF6B00;
+    text-decoration: none;
+  }
+  .al-terms label a:hover { text-decoration: underline; }
+
+  .al-submit {
+    width: 100%;
+    padding: 14px;
+    background: #FF6B00;
+    color: #050508;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .al-submit:hover { background: #FF8C35; }
+  .al-submit::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+  @keyframes shimmer { to { left: 160%; } }
+
+  .al-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .al-divider::before, .al-divider::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: rgba(255,255,255,0.07);
+  }
+  .al-divider span {
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.15);
+    text-transform: uppercase;
+  }
+
+  .al-wa {
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid rgba(4,106,56,0.4);
+    color: #0A8A4A;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s;
+    box-sizing: border-box;
+  }
+  .al-wa:hover { background: rgba(4,106,56,0.08); border-color: #0A8A4A; }
+
+  .al-note {
+    margin-top: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.12);
+    text-align: center;
+    line-height: 1.8;
+  }
+  .al-note a {
+    color: rgba(255,107,0,0.5);
+    text-decoration: none;
+  }
+  .al-note a:hover { color: #FF6B00; }
+
+  @media (max-width: 700px) {
+    .al-art { display: none; }
+    .al-form-side { padding: 28px 20px; }
+  }
+</style>
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+  function togglePwd(fieldId, iconId) {
+    const f = document.getElementById(fieldId);
+    const i = document.getElementById(iconId);
+    if (f.type === 'password') {
+      f.type = 'text';
+      i.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+    } else {
+      f.type = 'password';
+      i.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+    }
+  }
+
+  function checkStrength(val) {
+    const segs  = ['s1', 's2', 's3', 's4'];
+    const label = document.getElementById('strengthLabel');
+    let score = 0;
+    if (val.length >= 8)          score++;
+    if (/[A-Z]/.test(val))        score++;
+    if (/[0-9]/.test(val))        score++;
+    if (/[^A-Za-z0-9]/.test(val)) score++;
+    const colors = [
+      'rgba(255,60,60,0.7)',
+      'rgba(255,165,0,0.7)',
+      'rgba(255,200,0,0.7)',
+      'rgba(4,138,74,0.8)'
+    ];
+    const labels = [
+      'WEAK · कमकुवत',
+      'FAIR · ठीक',
+      'GOOD · चांगला',
+      'STRONG · मजबूत'
+    ];
+    segs.forEach((id, i) => {
+      document.getElementById(id).style.background =
+        i < score ? colors[score - 1] : 'rgba(255,255,255,0.06)';
+    });
+    label.textContent = val.length ? labels[Math.max(0, score - 1)] : '';
+  }
+
+  document.getElementById('signupForm').addEventListener('submit', function(e) {
+    const pwd  = document.getElementById('passwordField').value;
+    const conf = document.getElementById('confirmField').value;
+    const err  = document.getElementById('confirmErr');
+    const cfld = document.getElementById('confirmField');
+
+    if (pwd !== conf) {
+      e.preventDefault();
+      err.classList.add('show');
+      cfld.classList.add('error');
+      cfld.focus();
+    } else {
+      err.classList.remove('show');
+      cfld.classList.remove('error');
+    }
+  });
+
+  document.getElementById('confirmField').addEventListener('blur', function() {
+  const pwd  = document.getElementById('passwordField').value;
+  const err  = document.getElementById('confirmErr');
+  const cfld = document.getElementById('confirmField');
+
+  if (this.value && this.value !== pwd) {
+    err.classList.add('show');
+    cfld.classList.add('error');
+  } else {
+    err.classList.remove('show');
+    cfld.classList.remove('error');
+  }
+});
+
+document.getElementById('confirmField').addEventListener('input', function() {
+  const pwd  = document.getElementById('passwordField').value;
+  const err  = document.getElementById('confirmErr');
+  const cfld = document.getElementById('confirmField');
+
+  if (this.value === pwd) {
+    err.classList.remove('show');
+    cfld.classList.remove('error');
+  }
+});
+
+  function signupWithWhatsApp() {
+    alert("WhatsApp signup coming soon! / लवकरच येत आहे!");
+  }
+
+  window.onload = function() {
+    const form = document.getElementById('signupForm');
+    if (form) form.reset();
+  };
+  setTimeout(() => {
+    document.querySelectorAll('.al-flash').forEach(el => {
+        el.style.display = 'none';
+    });
+}, 5000);
+
+</script>
+{% endblock %}

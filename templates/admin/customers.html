@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR Admin — Customers</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+</head>
+<body>
+<div class="admin-shell">
+
+  <div class="admin-ticker">
+    <div class="ticker-label">VEKTOR ADMIN</div>
+    <div class="ticker-track">
+      <div class="ticker-item"><span>CUSTOMERS</span><div class="ticker-dot"></div><span>ग्राहक</span><div class="ticker-dot"></div><span>12,048 REGISTERED</span><div class="ticker-dot"></div><span>MAHARASHTRA'S OWN</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>CUSTOMERS</span><div class="ticker-dot"></div><span>ग्राहक</span><div class="ticker-dot"></div><span>12,048 REGISTERED</span><div class="ticker-dot"></div><span>MAHARASHTRA'S OWN</span><div class="ticker-dot"></div></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+<div class="admin-sidebar">
+  <div class="sb-logo">VEKTOR</div>
+  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+  </a>
+  <a href="/admin/products" class="sb-btn active" title="Products">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  </a>
+  <a href="/admin/orders" class="sb-btn" title="Orders">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </a>
+  <a href="/admin/customers" class="sb-btn" title="Customers">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+  </a>
+  <a href="/admin/analytics" class="sb-btn" title="Analytics">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </a>
+  <a href="/admin/settings" class="sb-btn" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  </a>
+  {% if session.get('admin_level') == 'superadmin' %}
+<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
+  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+</a>
+{% endif %}
+  <div class="sb-divider"></div>
+  <a href="/admin/switch" class="sb-btn" title="Switch Account">
+    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+  </a>
+  <a href="/admin/logout" class="sb-btn" title="Logout">
+    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+  </a>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">VK</div>
+</div>
+
+
+  <div class="admin-main">
+
+    <div class="admin-hdr">
+      <div>
+        <div class="admin-eyebrow">Customers · ग्राहक</div>
+        <div class="admin-title">CUSTOMER <span>MANAGEMENT</span></div>
+        <div class="admin-sub">ग्राहक व्यवस्थापन · View, Block & Manage All Customers</div>
+      </div>
+      <div class="admin-search">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search name, email..." autofocus>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>NAME · नाव</th>
+            <th>EMAIL · ईमेल</th>
+            <th>PHONE · फोन</th>
+            <th>ORDERS · ऑर्डर</th>
+            <th>TOTAL SPENT · खर्च</th>
+            <th>LAST ORDER</th>
+            <th>STATUS · स्थिती</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          {% for c in customers %}
+          <tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;background:rgba(255,107,0,0.15);color:var(--sf);font-family:var(--font-display);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  {{ c.name[0] if c.name else 'U' }}
+                </div>
+                <div style="font-size:12px;font-family:var(--font-display);letter-spacing:.03em">{{ c.name }}</div>
+              </div>
+            </td>
+            <td style="font-size:11px;color:var(--fg3)">{{ c.email }}</td>
+            <td style="font-size:11px;color:var(--fg3)">{{ c.phone if c.phone else 'N/A' }}</td>
+            <td style="font-family:var(--font-display);font-size:14px;color:var(--gold)">{{ c.orders }}</td>
+            <td style="font-family:var(--font-display);font-size:14px;color:var(--sf)">₹{{ c.spent }}</td>
+            <td style="font-size:11px;color:var(--fg3)">
+              {{ c.last_order.strftime('%d %b %Y') if c.last_order else 'N/A' }}
+            </td>
+            <td>
+              <span class="badge {{ 'badge-active' if c.status=='Active' else 'badge-blocked' }}">
+                {{ c.status }}
+              </span>
+            </td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button class="admin-btn admin-btn-ghost admin-btn-sm"
+                  onclick='openCustomer({{ c.name|tojson }},{{ c.email|tojson }},{{ c.phone|tojson }},{{ c.address|tojson }})'>
+                  VIEW
+                </button>
+                {% if c.status == "Active" %}
+                  <button class="admin-btn admin-btn-danger admin-btn-sm" onclick="updateStatus(event,{{ c.id }},'Blocked')">BLOCK</button>
+                {% else %}
+                  <button class="admin-btn admin-btn-sf admin-btn-sm" onclick="updateStatus(event,{{ c.id }},'Active')">UNBLOCK</button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+
+          {% if customers|length == 0 %}
+          <tr>
+            <td colspan="8" style="text-align:center;padding:48px;color:var(--fg3)">
+              <div style="font-family:var(--font-dev);font-size:18px;margin-bottom:6px">ग्राहक सापडले नाहीत</div>
+              <div style="font-size:12px;letter-spacing:.08em">No customers found</div>
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- CUSTOMER DETAIL POPUP -->
+<div class="admin-popup" id="custPopup">
+  <div class="admin-popup-box">
+    <div class="popup-hdr">
+      <div class="popup-title">CUSTOMER DETAILS · ग्राहक तपशील</div>
+      <button class="popup-close" onclick="closeCustomer()">✕</button>
+    </div>
+    <div class="popup-body">
+
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:16px;background:var(--bg2);border:1px solid var(--border)">
+        <div id="popupAvatar" style="width:52px;height:52px;background:rgba(255,107,0,0.15);color:var(--sf);font-family:var(--font-display);font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0"></div>
+        <div>
+          <div id="cname" style="font-family:var(--font-display);font-size:20px;letter-spacing:.04em;margin-bottom:2px"></div>
+          <div id="cemail" style="font-size:11px;color:var(--fg3)"></div>
+        </div>
+      </div>
+
+      <div class="popup-section">
+        <div class="popup-section-title">CONTACT DETAILS · संपर्क</div>
+        <div class="popup-row"><span>Phone</span><span id="cphone"></span></div>
+        <div class="popup-row" style="border-bottom:none"><span>Email</span><span id="cemail2"></span></div>
+      </div>
+
+      <div class="popup-section">
+        <div class="popup-section-title">ADDRESS · पत्ता</div>
+        <div style="font-size:12px;color:var(--fg2);line-height:1.7" id="caddress"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('input',function(){
+  const v=this.value.toLowerCase();
+  document.querySelectorAll('#tableBody tr').forEach(r=>{
+    r.style.display=r.innerText.toLowerCase().includes(v)?'':'none';
+  });
+});
+
+function openCustomer(name,email,phone,address){
+  document.getElementById('cname').innerText=name;
+  document.getElementById('cemail').innerText=email;
+  document.getElementById('cemail2').innerText=email;
+  document.getElementById('cphone').innerText=phone?'+91 '+phone:'N/A';
+  document.getElementById('caddress').innerText=address||'No address on file';
+  document.getElementById('popupAvatar').innerText=name?name[0].toUpperCase():'U';
+  document.getElementById('custPopup').classList.add('open');
+}
+
+function closeCustomer(){
+  document.getElementById('custPopup').classList.remove('open');
+}
+
+window.onclick=e=>{ if(e.target===document.getElementById('custPopup')) closeCustomer(); };
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCustomer(); });
+
+function updateStatus(event,id,status){
+  const btn=event.target;
+  const orig=btn.innerText;
+  btn.innerText='...';
+  btn.disabled=true;
+  fetch(`/admin/update_status/${id}/${status}`)
+    .then(r=>r.json())
+    .then(d=>{ if(d.success) location.reload(); })
+    .catch(()=>{ btn.innerText=orig; btn.disabled=false; });
+}
+</script>
+</body>
+</html>

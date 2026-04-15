@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% set active_page = "lookbook" %}
+{% block title %}Lookbook SS/26 — VEKTOR{% endblock %}
+
+{% block content %}
+<div class="page active" id="page-lookbook">
+  <div class="lb-hero">
+    <div>
+      <div class="sec-tag">लुकबुक · Lookbook</div>
+      <div class="sec-head" style="font-size:clamp(44px,6vw,80px)">SS/26 LOOKBOOK<span class="sec-mr">वसंत संग्रह — लुकबुक</span></div>
+    </div>
+    <p style="font-size:16px;color:rgba(247,243,236,.35);margin-top:12px;max-width:480px;line-height:1.7">Every look tells a story. हर Look एक कहानी सुनाता है.</p>
+    <div class="lb-season-tabs" style="margin-top:20px">
+      <button class="lb-tab active" onclick="lbTab(this,'ss26')">SS/26 — वसंत</button>
+      <button class="lb-tab" onclick="lbTab(this,'aw25')">AW/25 — शरद</button>
+      <button class="lb-tab" onclick="lbTab(this,'heritage')">Heritage — वारसा</button>
+      <button class="lb-tab" onclick="lbTab(this,'urban')">Urban — शहरी</button>
+    </div>
+  </div>
+
+  <div class="lb-grid">
+
+    <!-- CARD 1 -->
+    <div class="prod-card">
+      <div class="prod-img h240">
+        <div class="prod-img-txt">VK</div>
+      </div>
+      <div class="prod-details">
+        <div class="prod-name-en">Oxford Shirt</div>
+        <div class="prod-name-mr">ऑक्सफर्ड शर्ट</div>
+        <div class="prod-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-txt">4.8 (234)</span>
+        </div>
+        <div class="prod-bot">
+          <div>
+            <div class="prod-price">₹2,499</div>
+          </div>
+          <div class="action-buttons">
+            <button class="prod-add-mini view-btn" onclick="viewProduct('Oxford Shirt','ऑक्सफर्ड शर्ट',2499)">View</button>
+            <button class="prod-add-mini" onclick="addToCart('Oxford Shirt','ऑक्सफर्ड शर्ट',2499)">+ Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="lb-card" style="grid-row:span 2">
+      <div class="lb-img h543" onclick="viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">
+        <div class="lb-img-txt">VK</div>
+        <div class="lb-overlay">
+          <div class="lb-overlay-title">BIKER LOOK 02</div>
+          <div class="lb-overlay-mr">बाइकर लुक — हिरो लुक</div>
+          <div class="lb-overlay-price">₹6,999</div>
+          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">View Product</button>
+          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Biker Jacket','बाइकर जॅकेट',6999)">कार्टमध्ये घाला</button>
+        </div>
+        <div class="lb-flag-bar">
+          <div class="pfb sf"></div>
+          <div class="pfb wh"></div>
+          <div class="pfb gr"></div>
+        </div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-info-title">Biker Jacket — Hero</div>
+        <div class="lb-info-mr">बाइकर जॅकेट · हिरो लुक</div>
+        <div class="lb-info-bot">
+          <div class="lb-price">₹6,999</div>
+          <button class="btn-view" onclick="viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">View</button>
+          <button class="prod-add-mini" onclick="addToCart('Biker Jacket','बाइकर जॅकेट',6999)">+ Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="lb-card">
+      <div class="lb-img h260" onclick="viewProduct('Linen Shirt','लिनन शर्ट',1999)">
+        <div class="lb-img-txt">VK</div>
+        <div class="lb-overlay">
+          <div class="lb-overlay-title">LINEN LOOK 03</div>
+          <div class="lb-overlay-mr">लिनन लुक</div>
+          <div class="lb-overlay-price">₹1,999</div>
+          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Linen Shirt','लिनन शर्ट',1999)">View Product</button>
+          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Linen Shirt','लिनन शर्ट',1999)">कार्टमध्ये घाला</button>
+        </div>
+        <div class="lb-flag-bar">
+          <div class="pfb sf"></div>
+          <div class="pfb wh"></div>
+          <div class="pfb gr"></div>
+        </div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-info-title">Linen Shirt — Summer</div>
+        <div class="lb-info-mr">लिनन शर्ट · उन्हाळा</div>
+        <div class="lb-info-bot">
+          <div class="lb-price">₹1,999</div>
+          <button class="btn-view" onclick="viewProduct('Linen Shirt','लिनन शर्ट',1999)">View</button>
+          <button class="prod-add-mini" onclick="addToCart('Linen Shirt','लिनन शर्ट',1999)">+ Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="lb-card">
+      <div class="lb-img h320" onclick="viewProduct('Slim Jeans','स्लिम जीन्स',3299)">
+        <div class="lb-img-txt">VK</div>
+        <div class="lb-overlay">
+          <div class="lb-overlay-title">SLIM LOOK 04</div>
+          <div class="lb-overlay-mr">स्लिम जीन्स लुक</div>
+          <div class="lb-overlay-price">₹3,299</div>
+          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Slim Jeans','स्लिम जीन्स',3299)">View Product</button>
+          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Slim Jeans','स्लिम जीन्स',3299)">कार्टमध्ये घाला</button>
+        </div>
+        <div class="lb-flag-bar">
+          <div class="pfb sf"></div>
+          <div class="pfb wh"></div>
+          <div class="pfb gr"></div>
+        </div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-info-title">Slim Fit Jeans — Sharp</div>
+        <div class="lb-info-mr">स्लिम फिट जीन्स</div>
+        <div class="lb-info-bot">
+          <div class="lb-price">₹3,299</div>
+          <button class="btn-view" onclick="viewProduct('Slim Jeans','स्लिम जीन्स',3299)">View</button>
+          <button class="prod-add-mini" onclick="addToCart('Slim Jeans','स्लिम जीन्स',3299)">+ Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="lb-card">
+      <div class="lb-img h260" onclick="viewProduct('Polo Tee','पोलो टी',999)">
+        <div class="lb-img-txt">VK</div>
+        <div class="lb-overlay">
+          <div class="lb-overlay-title">POLO LOOK 05</div>
+          <div class="lb-overlay-mr">पोलो लुक</div>
+          <div class="lb-overlay-price">₹999</div>
+          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Polo Tee','पोलो टी',999)">View Product</button>
+          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Polo Tee','पोलो टी',999)">कार्टमध्ये घाला</button>
+        </div>
+        <div class="lb-flag-bar">
+          <div class="pfb sf"></div>
+          <div class="pfb wh"></div>
+          <div class="pfb gr"></div>
+        </div>
+      </div>
+      <div class="lb-info">
+        <div class="lb-info-title">Polo Tee — Weekend</div>
+        <div class="lb-info-mr">पोलो टी-शर्ट · आठवडा शेवट</div>
+        <div class="lb-info-bot">
+          <div class="lb-price">₹999</div>
+          <button class="btn-view" onclick="viewProduct('Polo Tee','पोलो टी',999)">View</button>
+          <button class="prod-add-mini" onclick="addToCart('Polo Tee','पोलो टी',999)">+ Cart</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="lb-editorial">
+    <div class="lb-ed-left">
+      <div class="lb-ed-sk">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
+      <div class="lb-ed-title">THE DRESSED<br>TO DISRUPT<br>EDIT</div>
+      <p class="lb-ed-body">This season Vektor pushes the envelope on what Maharashtrian men's wear can look like — rooted in our heritage, built for today's streets.</p>
+      <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">पूर्ण संग्रह पाहा — Shop All</a>
+    </div>
+    <div class="lb-ed-right">
+      <div class="lb-ed-row"><div class="lb-ed-num">01</div><div><div class="lb-ed-en">Indian-fit cuts for the Indian body</div><div class="lb-ed-mr">भारतीय शरीरासाठी भारतीय कट · भारतीय कद के लिए</div></div></div>
+      <div class="lb-ed-row"><div class="lb-ed-num">02</div><div><div class="lb-ed-en">Handcrafted — every single garment</div><div class="lb-ed-mr">हाताने बनवलेले — प्रत्येक कपडा · हस्तनिर्मित</div></div></div>
+      <div class="lb-ed-row"><div class="lb-ed-num">03</div><div><div class="lb-ed-en">Fabric tested for 5 years, guaranteed</div><div class="lb-ed-mr">५ वर्षांची गॅरंटी · ५ साल की गारंटी</div></div></div>
+    </div>
+  </div>
+  <div style="height:36px"></div>
+</div>
+{% endblock %}

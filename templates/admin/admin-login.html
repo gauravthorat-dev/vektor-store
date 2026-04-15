@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — Admin Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:     #060606;
+  --bg2:    #0e0e0e;
+  --bg3:    #141414;
+  --border: rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --fg:     #f0ece4;
+  --fg2:    #a09890;
+  --fg3:    #484848;
+  --sf:     #FF6B00;
+  --sf2:    #ff8c38;
+  --gr:     #0db85f;
+  --red:    #e03030;
+  --gold:   #e0aa30;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+  --font-body:    'DM Sans', sans-serif;
+  --font-dev:     'Tiro Devanagari Sanskrit', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: var(--font-body); font-size: 13px; overflow: hidden; }
+
+/* ── BACKGROUND ── */
+body {
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Geometric grid lines */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 20s linear infinite;
+}
+@keyframes gridShift {
+  from { background-position: 0 0; }
+  to   { background-position: 60px 60px; }
+}
+
+/* Radial glow behind form */
+body::after {
+  content: '';
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(255,107,0,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Noise overlay */
+.noise {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.5;
+}
+
+/* ── CORNER DECORATIONS ── */
+.corner {
+  position: fixed;
+  width: 80px; height: 80px;
+  pointer-events: none; z-index: 1;
+}
+.corner--tl { top: 20px; left: 20px; border-top: 1px solid rgba(255,107,0,0.25); border-left: 1px solid rgba(255,107,0,0.25); }
+.corner--tr { top: 20px; right: 20px; border-top: 1px solid rgba(255,107,0,0.25); border-right: 1px solid rgba(255,107,0,0.25); }
+.corner--bl { bottom: 20px; left: 20px; border-bottom: 1px solid rgba(255,107,0,0.25); border-left: 1px solid rgba(255,107,0,0.25); }
+.corner--br { bottom: 20px; right: 20px; border-bottom: 1px solid rgba(255,107,0,0.25); border-right: 1px solid rgba(255,107,0,0.25); }
+
+/* ── SIDE LABELS ── */
+.side-label {
+  position: fixed;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .2em;
+  color: var(--fg3);
+  pointer-events: none; z-index: 1;
+}
+.side-label--left  { left: 24px; top: 50%; transform: translateY(-50%) rotate(-90deg); }
+.side-label--right { right: 24px; top: 50%; transform: translateY(-50%) rotate(90deg); }
+
+/* ── WRAP ── */
+.login-wrap {
+  position: relative; z-index: 2;
+  width: 100%; max-width: 420px;
+  animation: wrapIn .7s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes wrapIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── BRAND ── */
+.login-brand {
+  text-align: center;
+  margin-bottom: 28px;
+  animation: fadeUp .5s .1s ease-out both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.brand-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .25em;
+  color: var(--fg3); margin-bottom: 10px;
+}
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 72px; letter-spacing: .12em; line-height: 1;
+  color: var(--fg);
+  text-shadow: 0 0 80px rgba(255,107,0,0.15);
+}
+.brand-name span { color: var(--sf); }
+.brand-mr {
+  font-family: var(--font-dev);
+  font-size: 13px; color: var(--fg2);
+  margin-top: 6px; letter-spacing: .04em;
+}
+.brand-sk {
+  font-family: var(--font-dev);
+  font-size: 11px; color: var(--sf);
+  margin-top: 5px; letter-spacing: .06em;
+  opacity: .8;
+}
+
+/* Tricolour line */
+.paithani {
+  height: 2px;
+  background: linear-gradient(90deg, var(--sf) 33.33%, #f0ece4 33.33%, #f0ece4 66.66%, var(--gr) 66.66%);
+  margin-bottom: 28px;
+  animation: lineIn .6s .05s ease-out both;
+}
+@keyframes lineIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+
+/* ── BOX ── */
+.login-box {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,107,0,0.05),
+    0 40px 100px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  animation: fadeUp .6s .2s ease-out both;
+}
+
+/* Top accent bar */
+.login-box-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--sf) 0%, var(--sf2) 50%, transparent 100%);
+}
+
+.login-body { padding: 36px; }
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 28px; letter-spacing: .1em;
+  margin-bottom: 3px;
+}
+.login-sub {
+  font-family: var(--font-dev);
+  font-size: 11px; color: var(--fg3);
+  margin-bottom: 30px;
+}
+
+/* ── FORM ── */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .18em;
+  color: var(--fg3); margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.form-label-hint { font-size: 8px; color: var(--fg3); opacity: .6; letter-spacing: .1em; }
+
+.input-wrap { position: relative; }
+.input-icon {
+  position: absolute; left: 13px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--fg3);
+  pointer-events: none;
+  transition: color .2s;
+}
+.input-icon svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.form-input {
+  width: 100%;
+  padding: 13px 42px 13px 40px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 12px; letter-spacing: .04em;
+  outline: none;
+  transition: border-color .25s, background .25s, box-shadow .25s;
+  border-radius: 0;
+  -webkit-appearance: none;
+}
+.form-input:focus {
+  border-color: rgba(255,107,0,0.5);
+  background: var(--bg2);
+  box-shadow: 0 0 0 3px rgba(255,107,0,0.08), inset 0 0 0 1px rgba(255,107,0,0.15);
+}
+.form-input:focus + .input-focus-line { transform: scaleX(1); }
+.form-input::placeholder { color: var(--fg3); }
+.form-input:focus ~ .input-icon-wrap .input-icon,
+.input-wrap:focus-within .input-icon { color: var(--sf); }
+
+/* animated bottom line on focus */
+.input-focus-line {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+  background: var(--sf);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s ease;
+  pointer-events: none;
+}
+
+.pw-toggle {
+  position: absolute; right: 12px; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: var(--fg3); cursor: pointer;
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
+  transition: color .2s; padding: 4px 2px;
+}
+.pw-toggle:hover { color: var(--sf); }
+
+/* ── CTA ── */
+.login-btn {
+  width: 100%;
+  padding: 15px;
+  background: var(--sf);
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 17px; letter-spacing: .12em;
+  border: none; cursor: pointer;
+  margin-top: 10px;
+  position: relative; overflow: hidden;
+  transition: background .2s, transform .15s, box-shadow .2s;
+}
+.login-btn::before {
+  content: '';
+  position: absolute; top: 0; left: -100%; bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left .5s;
+}
+.login-btn:hover { background: var(--sf2); transform: translateY(-1px); box-shadow: 0 8px 30px rgba(255,107,0,0.35); }
+.login-btn:hover::before { left: 100%; }
+.login-btn:active { transform: translateY(0); }
+
+/* ── FOOTER ── */
+.login-footer {
+  padding: 14px 36px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--fg3); letter-spacing: .08em;
+}
+.footer-dot {
+  display: inline-block; width: 5px; height: 5px;
+  background: var(--gr); border-radius: 50%;
+  margin-right: 6px; vertical-align: middle;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,.5)}
+  50%{box-shadow:0 0 0 5px rgba(13,184,95,0)}
+}
+
+/* ── ERROR ── */
+.error-msg {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(224,48,48,0.07);
+  border: 1px solid rgba(224,48,48,0.2);
+  border-left: 2px solid var(--red);
+  padding: 10px 14px;
+  font-size: 11px; color: #ff7070;
+  margin-bottom: 20px; letter-spacing: .04em;
+  animation: shakeIn .4s ease;
+}
+@keyframes shakeIn {
+  0%{transform:translateX(0)}
+  20%{transform:translateX(-6px)}
+  40%{transform:translateX(5px)}
+  60%{transform:translateX(-3px)}
+  80%{transform:translateX(2px)}
+  100%{transform:translateX(0)}
+}
+.error-icon { flex-shrink: 0; margin-top: 1px; }
+.error-icon svg { width: 13px; height: 13px; stroke: var(--red); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+/* ── SECURITY BADGE ── */
+.security-row {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 14px;
+  font-family: var(--font-mono); font-size: 9px;
+  color: var(--fg3); letter-spacing: .1em;
+}
+.security-row svg { width: 11px; height: 11px; stroke: var(--fg3); fill: none; stroke-width: 2; stroke-linecap: round; }
+
+/* ── LOADING STATE ── */
+.login-btn.loading {
+  pointer-events: none; background: #cc5600;
+}
+.login-btn.loading .btn-text { opacity: 0; }
+.login-btn .btn-spinner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.login-btn.loading .btn-spinner { opacity: 1; }
+.spinner-ring {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(0,0,0,0.3);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--sf); }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="corner corner--tl"></div>
+<div class="corner corner--tr"></div>
+<div class="corner corner--bl"></div>
+<div class="corner corner--br"></div>
+<div class="side-label side-label--left">VEKTOR · ADMIN · SS/26</div>
+<div class="side-label side-label--right">AUTHORIZED ACCESS ONLY</div>
+
+<div class="login-wrap">
+
+  <!-- TRICOLOUR LINE -->
+  <div class="paithani"></div>
+
+  <!-- BRAND -->
+  <div class="login-brand">
+    <div class="brand-eyebrow">COMMAND CENTER</div>
+    <div class="brand-name">VEK<span>T</span>OR</div>
+    <div class="brand-mr">महाराष्ट्रीय पुरुष वस्त्र</div>
+    <div class="brand-sk">।। क्षत्रिय धर्मो युद्धम् ।।</div>
+  </div>
+
+  <!-- LOGIN BOX -->
+  <div class="login-box">
+    <div class="login-box-bar"></div>
+
+    <div class="login-body">
+
+      <div class="login-title">ADMIN LOGIN</div>
+      <div class="login-sub">प्रशासक प्रवेश · Authorized Access Only</div>
+
+      <!-- ✅ FIXED: Uncommented Jinja flash block (was wrapped in HTML comment before) -->
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="error-msg">
+          <span class="error-icon">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </span>
+          {{ messages[0] }}
+        </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="/admin/login" id="loginForm" onsubmit="handleSubmit(event)">
+
+        <!-- EMAIL -->
+        <div class="form-group">
+          <label class="form-label">
+            Admin Email · ईमेल
+          </label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input class="form-input" type="email" name="email" placeholder="admin@vektor.in" required autocomplete="email">
+            <div class="input-focus-line"></div>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label class="form-label">
+            Password · पासवर्ड
+            <span class="form-label-hint">ENCRYPTED</span>
+          </label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input class="form-input" type="password" name="password" id="pwField" placeholder="••••••••" required autocomplete="current-password">
+            <button class="pw-toggle" type="button" onclick="togglePw(this)" tabindex="-1">SHOW</button>
+            <div class="input-focus-line"></div>
+          </div>
+        </div>
+
+        <!-- SUBMIT -->
+        <button class="login-btn" type="submit" id="loginBtn">
+          <span class="btn-text">SIGN IN — प्रवेश करा</span>
+          <span class="btn-spinner"><span class="spinner-ring"></span></span>
+        </button>
+
+        <!-- SECURITY NOTE -->
+        <div class="security-row">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          256-BIT ENCRYPTED · SESSION EXPIRES IN 8H
+        </div>
+
+      </form>
+    </div>
+
+    <div class="login-footer">
+      <span><span class="footer-dot"></span>SYSTEM ONLINE</span>
+      <span>VEKTOR ADMIN · © 2026</span>
+    </div>
+  </div>
+
+</div><!-- /login-wrap -->
+
+<script>
+function togglePw(btn) {
+  const f = document.getElementById('pwField');
+  f.type = f.type === 'password' ? 'text' : 'password';
+  btn.textContent = f.type === 'password' ? 'SHOW' : 'HIDE';
+}
+
+// ✅ FIXED: No longer calling e.preventDefault() — form now actually POSTs to Flask
+function handleSubmit(e) {
+  const btn = document.getElementById('loginBtn');
+  btn.classList.add('loading');
+  // Form submits naturally — spinner shows briefly during page transition
+}
+</script>
+</body>
+</html>

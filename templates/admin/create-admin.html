@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEKTOR — Create Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<style>
+:root {
+  --bg:     #060606;
+  --bg2:    #0e0e0e;
+  --bg3:    #141414;
+  --bg4:    #1a1a1a;
+  --border: rgba(255,255,255,0.06);
+  --border2:rgba(255,255,255,0.10);
+  --fg:     #f0ece4;
+  --fg2:    #a09890;
+  --fg3:    #484848;
+  --sf:     #FF6B00;
+  --sf2:    #ff8c38;
+  --gr:     #0db85f;
+  --red:    #e03030;
+  --gold:   #e0aa30;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-mono:    'Space Mono', monospace;
+  --font-body:    'DM Sans', sans-serif;
+  --font-dev:     'Tiro Devanagari Sanskrit', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; }
+body {
+  min-height: 100%;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: var(--bg);
+  color: var(--fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,107,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,107,0,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 20s linear infinite;
+  z-index: 0;
+}
+@keyframes gridShift { from{background-position:0 0} to{background-position:60px 60px} }
+
+body::after {
+  content: '';
+  position: fixed; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width:800px; height:800px;
+  background: radial-gradient(circle, rgba(255,107,0,0.05) 0%, transparent 65%);
+  pointer-events:none; z-index:0;
+}
+
+.noise {
+  position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+.corner { position:fixed; width:80px; height:80px; pointer-events:none; z-index:1; }
+.corner--tl { top:20px; left:20px; border-top:1px solid rgba(255,107,0,0.25); border-left:1px solid rgba(255,107,0,0.25); }
+.corner--tr { top:20px; right:20px; border-top:1px solid rgba(255,107,0,0.25); border-right:1px solid rgba(255,107,0,0.25); }
+.corner--bl { bottom:20px; left:20px; border-bottom:1px solid rgba(255,107,0,0.25); border-left:1px solid rgba(255,107,0,0.25); }
+.corner--br { bottom:20px; right:20px; border-bottom:1px solid rgba(255,107,0,0.25); border-right:1px solid rgba(255,107,0,0.25); }
+
+.side-label { position:fixed; font-family:var(--font-mono); font-size:9px; letter-spacing:.2em; color:var(--fg3); pointer-events:none; z-index:1; }
+.side-label--left  { left:24px; top:50%; transform:translateY(-50%) rotate(-90deg); }
+.side-label--right { right:24px; top:50%; transform:translateY(-50%) rotate(90deg); }
+
+.wrap {
+  position:relative; z-index:2;
+  width:100%; max-width:460px;
+  animation:wrapIn .7s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes wrapIn { from{opacity:0;transform:translateY(28px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+.paithani {
+  height:2px;
+  background:linear-gradient(90deg, var(--sf) 33.33%, #f0ece4 33.33%, #f0ece4 66.66%, var(--gr) 66.66%);
+  margin-bottom:28px;
+  animation:lineIn .6s .05s ease-out both; transform-origin:left;
+}
+@keyframes lineIn { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+
+.brand { text-align:center; margin-bottom:28px; animation:fadeUp .5s .1s ease-out both; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+.brand-eyebrow { font-family:var(--font-mono); font-size:9px; letter-spacing:.25em; color:var(--fg3); margin-bottom:10px; }
+.brand-name { font-family:var(--font-display); font-size:60px; letter-spacing:.12em; line-height:1; color:var(--fg); text-shadow:0 0 80px rgba(255,107,0,0.12); }
+.brand-name span { color:var(--sf); }
+.brand-mr { font-family:var(--font-dev); font-size:13px; color:var(--fg2); margin-top:6px; }
+.brand-sk { font-family:var(--font-dev); font-size:11px; color:var(--sf); margin-top:5px; opacity:.8; }
+
+.box {
+  background:var(--bg2); border:1px solid var(--border2); overflow:hidden;
+  box-shadow:0 0 0 1px rgba(255,107,0,0.04), 0 40px 100px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.04);
+  animation:fadeUp .6s .2s ease-out both;
+}
+.box-bar { height:3px; background:linear-gradient(90deg, var(--sf) 33.33%, #f0ece4 33.33%, #f0ece4 66.66%, var(--gr) 66.66%); }
+
+.box-header { padding:28px 36px 0; display:flex; align-items:flex-start; justify-content:space-between; }
+.box-title { font-family:var(--font-display); font-size:30px; letter-spacing:.1em; line-height:1; }
+.box-sub { font-family:var(--font-dev); font-size:11px; color:var(--fg3); margin-top:5px; }
+.security-badge {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:8px; letter-spacing:.12em; color:var(--fg3);
+  border:1px solid var(--border2); padding:5px 9px; white-space:nowrap; margin-top:4px;
+}
+.security-badge svg { width:9px; height:9px; stroke:var(--sf); fill:none; stroke-width:2; stroke-linecap:round; }
+
+.section-divider {
+  display:flex; align-items:center; gap:12px; margin:20px 36px 0;
+  font-family:var(--font-mono); font-size:8px; letter-spacing:.2em; color:var(--fg3);
+}
+.section-divider::before,.section-divider::after { content:''; flex:1; height:1px; background:var(--border2); }
+
+.box-body { padding:20px 36px 32px; }
+
+/* ── FLASH ── */
+.flash {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:13px 14px; font-size:11px; margin-bottom:22px;
+}
+.flash--error   { background:rgba(224,48,48,0.07); border:1px solid rgba(224,48,48,0.2); border-left:2px solid var(--red); color:#ff7070; animation:shakeIn .4s ease; }
+.flash--success { background:rgba(13,184,95,0.08); border:1px solid rgba(13,184,95,0.25); border-left:2px solid var(--gr); color:#3dffa0; animation:slideDown .4s ease; }
+@keyframes shakeIn { 0%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(4px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(2px)} 100%{transform:translateX(0)} }
+@keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.flash-icon { flex-shrink:0; margin-top:2px; }
+.flash-icon svg { width:14px; height:14px; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.flash--error   .flash-icon svg { stroke:var(--red); }
+.flash--success .flash-icon svg { stroke:var(--gr); }
+.flash-title { font-family:var(--font-mono); font-size:9px; letter-spacing:.15em; font-weight:700; margin-bottom:3px; }
+.flash-text  { font-size:11px; line-height:1.5; letter-spacing:.02em; }
+
+/* ── FORM ── */
+.form-group { margin-bottom:16px; }
+
+.form-label {
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.18em;
+  color:var(--fg3); margin-bottom:7px; text-transform:uppercase;
+}
+.form-label-tag { font-size:7.5px; letter-spacing:.1em; color:var(--sf); opacity:.8; border:1px solid rgba(255,107,0,0.2); padding:1px 5px; }
+
+.input-wrap { position:relative; }
+.input-icon {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  color:var(--fg3); pointer-events:none; transition:color .2s;
+}
+.input-icon svg { width:13px; height:13px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.input-wrap:focus-within .input-icon { color:var(--sf); }
+
+.form-input {
+  width:100%; padding:12px 38px 12px 38px;
+  background:var(--bg3); border:1px solid var(--border2);
+  color:var(--fg); font-family:var(--font-mono); font-size:11.5px; letter-spacing:.03em;
+  outline:none; border-radius:0; -webkit-appearance:none;
+  transition:border-color .25s, background .25s, box-shadow .25s;
+}
+.form-input:focus { border-color:rgba(255,107,0,0.45); background:var(--bg2); box-shadow:0 0 0 3px rgba(255,107,0,0.07), inset 0 0 0 1px rgba(255,107,0,0.12); }
+.form-input::placeholder { color:var(--fg3); }
+.form-input.is-invalid { border-color:rgba(224,48,48,0.55) !important; box-shadow:0 0 0 3px rgba(224,48,48,0.07) !important; }
+.form-input.is-valid   { border-color:rgba(13,184,95,0.45) !important; }
+
+.focus-line {
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:var(--sf); transform:scaleX(0); transform-origin:left;
+  transition:transform .3s ease; pointer-events:none;
+}
+.form-input:focus ~ .focus-line { transform:scaleX(1); }
+
+/* valid tick */
+.valid-tick { position:absolute; right:11px; top:50%; transform:translateY(-50%); opacity:0; transition:opacity .2s; pointer-events:none; }
+.valid-tick svg { width:13px; height:13px; stroke:var(--gr); fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+.form-input.is-valid ~ .valid-tick { opacity:1; }
+
+/* pw toggle — must stay on top of valid-tick */
+.pw-toggle {
+  position:absolute; right:11px; top:50%; transform:translateY(-50%);
+  background:none; border:none; color:var(--fg3); cursor:pointer;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.1em;
+  padding:4px 2px; transition:color .2s; z-index:1;
+}
+.pw-toggle:hover { color:var(--sf); }
+
+/* inline error */
+.field-error {
+  display:none; align-items:center; gap:5px;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.07em;
+  color:#ff6060; margin-top:6px;
+}
+.field-error.show { display:flex; animation:fadeUp .2s ease; }
+.field-error svg { width:10px; height:10px; stroke:#ff6060; fill:none; stroke-width:2; stroke-linecap:round; flex-shrink:0; }
+
+/* strength bar */
+.strength-row { display:flex; gap:3px; margin-top:7px; }
+.strength-seg { flex:1; height:2px; background:var(--border2); border-radius:1px; transition:background .3s; }
+.strength-seg.s-weak   { background:var(--red); }
+.strength-seg.s-fair   { background:var(--gold); }
+.strength-seg.s-good   { background:var(--sf); }
+.strength-seg.s-strong { background:var(--gr); }
+.strength-label { font-family:var(--font-mono); font-size:8px; letter-spacing:.1em; margin-top:4px; text-align:right; min-height:13px; transition:color .3s; color:var(--fg3); }
+
+/* role */
+.role-divider { display:flex; align-items:center; gap:12px; margin:6px 0 14px; font-family:var(--font-mono); font-size:8px; letter-spacing:.2em; color:var(--fg3); }
+.role-divider::before,.role-divider::after { content:''; flex:1; height:1px; background:var(--border2); }
+
+.role-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.role-card {
+  position:relative; border:1px solid var(--border2); background:var(--bg3);
+  padding:14px 14px 12px; cursor:pointer;
+  transition:border-color .2s, background .2s; user-select:none;
+}
+.role-card input[type="radio"] { position:absolute; opacity:0; pointer-events:none; }
+.role-card:hover { border-color:rgba(255,107,0,0.3); background:var(--bg4); }
+.role-card.active { border-color:rgba(255,107,0,0.55); background:rgba(255,107,0,0.05); }
+.role-card.active::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--sf); }
+.role-card-icon { font-size:18px; margin-bottom:6px; }
+.role-card-name { font-family:var(--font-display); font-size:15px; letter-spacing:.1em; color:var(--fg); }
+.role-card-desc { font-size:10px; color:var(--fg3); margin-top:3px; line-height:1.4; }
+.role-check { position:absolute; top:8px; right:8px; width:14px; height:14px; border:1px solid var(--border2); background:var(--bg2); display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.role-card.active .role-check { background:var(--sf); border-color:var(--sf); }
+.role-check svg { width:8px; height:8px; stroke:#000; fill:none; stroke-width:3; stroke-linecap:round; stroke-linejoin:round; opacity:0; transition:opacity .2s; }
+.role-card.active .role-check svg { opacity:1; }
+
+.warning-row {
+  display:flex; align-items:center; gap:8px; margin-top:14px;
+  font-family:var(--font-mono); font-size:8.5px; letter-spacing:.1em; color:var(--fg3);
+  padding:9px 12px; border:1px solid rgba(224,170,48,0.15); background:rgba(224,170,48,0.04);
+}
+.warning-row svg { width:11px; height:11px; stroke:#e0aa30; fill:none; stroke-width:2; stroke-linecap:round; flex-shrink:0; }
+
+.submit-wrap { margin-top:24px; }
+.submit-btn {
+  width:100%; padding:15px; background:var(--sf); color:#000;
+  font-family:var(--font-display); font-size:18px; letter-spacing:.12em;
+  border:none; cursor:pointer; position:relative; overflow:hidden;
+  transition:background .2s, transform .15s, box-shadow .2s;
+}
+.submit-btn::before { content:''; position:absolute; top:0; left:-100%; bottom:0; width:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent); transition:left .5s; }
+.submit-btn:hover { background:var(--sf2); transform:translateY(-1px); box-shadow:0 8px 30px rgba(255,107,0,0.32); }
+.submit-btn:hover::before { left:100%; }
+.submit-btn:active { transform:translateY(0); }
+.submit-btn.loading { pointer-events:none; background:#cc5600; }
+.submit-btn.loading .btn-text { opacity:0; }
+.submit-btn .btn-spinner { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity .2s; }
+.submit-btn.loading .btn-spinner { opacity:1; }
+.spinner-ring { width:18px; height:18px; border:2px solid rgba(0,0,0,0.3); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.back-link { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:14px; font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; color:var(--fg3); text-decoration:none; transition:color .2s; }
+.back-link:hover { color:var(--sf); }
+.back-link svg { width:10px; height:10px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+.box-footer { padding:13px 36px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-family:var(--font-mono); font-size:9px; color:var(--fg3); letter-spacing:.08em; }
+.footer-dot { display:inline-block; width:5px; height:5px; background:var(--gr); border-radius:50%; margin-right:6px; vertical-align:middle; animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,.5)} 50%{box-shadow:0 0 0 5px rgba(13,184,95,0)} }
+
+::-webkit-scrollbar { width:3px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--sf); }
+option { background:var(--bg3); color:var(--fg); }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="corner corner--tl"></div>
+<div class="corner corner--tr"></div>
+<div class="corner corner--bl"></div>
+<div class="corner corner--br"></div>
+<div class="side-label side-label--left">VEKTOR · SUPERADMIN · SS/26</div>
+<div class="side-label side-label--right">HIGH SECURITY OPERATION</div>
+
+<div class="wrap">
+
+  <div class="paithani"></div>
+
+  <div class="brand">
+    <div class="brand-eyebrow">COMMAND CENTER</div>
+    <div class="brand-name">VEK<span>T</span>OR</div>
+    <div class="brand-mr">महाराष्ट्रीय पुरुष वस्त्र</div>
+    <div class="brand-sk">।। क्षत्रिय धर्मो युद्धम् ।।</div>
+  </div>
+
+  <div class="box">
+    <div class="box-bar"></div>
+
+    <div class="box-header">
+      <div>
+        <div class="box-title">CREATE ADMIN</div>
+        <div class="box-sub">नवीन प्रशासक तयार करा · Secure Access</div>
+      </div>
+      <div class="security-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        SUPERADMIN ONLY
+      </div>
+    </div>
+
+    <div class="section-divider">ADMIN CREDENTIALS</div>
+
+    <div class="box-body">
+
+      <!-- ════════════════════════════════════
+           FLASK FLASH — stays on this page
+           ════════════════════════════════════ -->
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'success' or 'successfully' in message %}
+            <div class="flash flash--success" id="flashBanner">
+              <span class="flash-icon">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <div>
+                <div class="flash-title">SUCCESS · यशस्वी</div>
+                <div class="flash-text">{{ message }}</div>
+              </div>
+            </div>
+            {% else %}
+            <div class="flash flash--error" id="flashBanner">
+              <span class="flash-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </span>
+              <div>
+                <div class="flash-title">ERROR · त्रुटी</div>
+                <div class="flash-text">{{ message }}</div>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <!-- ════════════════════════════════════
+           FORM
+           ════════════════════════════════════ -->
+      <form method="POST" id="createForm" autocomplete="off" novalidate>
+
+        <!-- Autofill decoys -->
+        <input type="text"     name="fakeuser" style="display:none" tabindex="-1" aria-hidden="true">
+        <input type="password" name="fakepass" style="display:none" tabindex="-1" aria-hidden="true">
+
+        <!-- NAME -->
+        <div class="form-group">
+          <label class="form-label" for="nameField">Admin Name · नाव</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <input class="form-input" type="text" id="nameField" name="name"
+                   placeholder="Full Name"
+                   value="{{ request.form.get('name', '') }}"
+                   oninput="liveValidate('name')" onblur="liveValidate('name', true)">
+            <div class="focus-line"></div>
+            <span class="valid-tick"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+          <div class="field-error" id="nameError">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="nameErrorText"></span>
+          </div>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="form-group">
+          <label class="form-label" for="emailField">
+            Admin Email · ईमेल
+            <span class="form-label-tag">UNIQUE</span>
+          </label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+            <input class="form-input" type="email" id="emailField" name="email"
+                   placeholder="admin@vektor.in"
+                   value="{{ request.form.get('email', '') }}"
+                   oninput="liveValidate('email')" onblur="liveValidate('email', true)">
+            <div class="focus-line"></div>
+            <span class="valid-tick"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>
+          </div>
+          <div class="field-error" id="emailError">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="emailErrorText"></span>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="form-group">
+          <label class="form-label" for="pwField">
+            Password · पासवर्ड
+            <span class="form-label-tag">MIN 8 CHARS</span>
+          </label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input class="form-input" type="password" id="pwField" name="password"
+                   placeholder="Uppercase · Number · Symbol required"
+                   autocomplete="new-password"
+                   oninput="checkStrength(); liveValidate('pw')" onblur="liveValidate('pw', true)">
+            <button class="pw-toggle" type="button" onclick="togglePw(this)" tabindex="-1">SHOW</button>
+            <div class="focus-line"></div>
+          </div>
+          <!-- strength -->
+          <div class="strength-row">
+            <div class="strength-seg" id="ss1"></div>
+            <div class="strength-seg" id="ss2"></div>
+            <div class="strength-seg" id="ss3"></div>
+            <div class="strength-seg" id="ss4"></div>
+          </div>
+          <div class="strength-label" id="strengthLabel"></div>
+          <div class="field-error" id="pwError">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="pwErrorText"></span>
+          </div>
+        </div>
+
+        <!-- ROLE -->
+        <div class="role-divider">ACCESS LEVEL</div>
+        <div class="role-cards">
+          <label class="role-card active" onclick="pickRole(this)">
+            <input type="radio" name="level" value="manager" checked>
+            <div class="role-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="role-card-icon">⚙️</div>
+            <div class="role-card-name">MANAGER</div>
+            <div class="role-card-desc">Products, orders & customers</div>
+          </label>
+          <label class="role-card" onclick="pickRole(this)">
+            <input type="radio" name="level" value="viewer">
+            <div class="role-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div class="role-card-icon">👁️</div>
+            <div class="role-card-name">VIEWER</div>
+            <div class="role-card-desc">Read-only analytics only</div>
+          </label>
+        </div>
+
+        <div class="warning-row">
+          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          IRREVERSIBLE ACTION · ONLY SUPERADMIN CAN REMOVE ADMINS
+        </div>
+
+        <div class="submit-wrap">
+          <button class="submit-btn" type="submit" id="submitBtn">
+            <span class="btn-text">CREATE ADMIN — तयार करा</span>
+            <span class="btn-spinner"><span class="spinner-ring"></span></span>
+          </button>
+          <a href="/admin/dashboard" class="back-link">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            BACK TO DASHBOARD
+          </a>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="box-footer">
+      <span><span class="footer-dot"></span>SYSTEM ONLINE</span>
+      <span>VEKTOR ADMIN · © 2026</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   VALIDATION ENGINE
+═══════════════════════════════════════════ */
+const EMAIL_RE = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
+const rules = {
+  name: {
+    field: () => document.getElementById('nameField'),
+    error: () => document.getElementById('nameError'),
+    errTxt:() => document.getElementById('nameErrorText'),
+    check(v, blur) {
+      if (!v && !blur) return null;
+      if (!v)          return 'Name is required';
+      if (v.length < 2) return 'Minimum 2 characters required';
+      if (v.length > 60) return 'Too long (max 60 characters)';
+      if (!/^[a-zA-Z\s.\'\-]+$/.test(v)) return 'Only letters, spaces and hyphens allowed';
+      return '';
+    }
+  },
+  email: {
+    field: () => document.getElementById('emailField'),
+    error: () => document.getElementById('emailError'),
+    errTxt:() => document.getElementById('emailErrorText'),
+    check(v, blur) {
+      if (!v && !blur) return null;
+      if (!v)          return 'Email is required';
+      if (!EMAIL_RE.test(v)) return 'Enter a valid email — e.g. admin@vektor.in';
+      if (v.length > 120)    return 'Email too long';
+      return '';
+    }
+  },
+  pw: {
+    field: () => document.getElementById('pwField'),
+    error: () => document.getElementById('pwError'),
+    errTxt:() => document.getElementById('pwErrorText'),
+    check(v, blur) {
+      if (!v && !blur) return null;
+      if (!v)               return 'Password is required';
+      if (v.length < 8)     return 'Minimum 8 characters required';
+      if (!/[A-Z]/.test(v)) return 'Add at least one uppercase letter (A–Z)';
+      if (!/[0-9]/.test(v)) return 'Add at least one number (0–9)';
+      if (!/[^A-Za-z0-9]/.test(v)) return 'Add at least one symbol  (! @ # $ % ...)';
+      return '';
+    }
+  }
+};
+
+function liveValidate(key, blur = false) {
+  const r   = rules[key];
+  const inp = r.field();
+  const err = r.error();
+  const txt = r.errTxt();
+  const v   = inp.value.trim();
+  const msg = r.check(v, blur);
+
+  if (msg === null) {
+    // not yet touched — leave neutral
+    inp.classList.remove('is-invalid','is-valid');
+    err.classList.remove('show');
+    return true;
+  }
+  if (msg === '') {
+    inp.classList.remove('is-invalid'); inp.classList.add('is-valid');
+    err.classList.remove('show');
+    return true;
+  }
+  // error
+  inp.classList.add('is-invalid'); inp.classList.remove('is-valid');
+  txt.textContent = msg;
+  err.classList.add('show');
+  return false;
+}
+
+/* Force-validate all fields, show all errors, return overall valid */
+function validateAll() {
+  // Temporarily force blur mode
+  const nOk = rules.name.check(document.getElementById('nameField').value.trim(), true) === '';
+  const eOk = rules.email.check(document.getElementById('emailField').value.trim(), true) === '';
+  const pOk = rules.pw.check(document.getElementById('pwField').value, true) === '';
+
+  // Apply visual states
+  liveValidate('name', true);
+  liveValidate('email', true);
+  liveValidate('pw', true);
+
+  return nOk && eOk && pOk;
+}
+
+/* ═══════════════════════════════════════════
+   PASSWORD STRENGTH BAR
+═══════════════════════════════════════════ */
+function checkStrength() {
+  const v    = document.getElementById('pwField').value;
+  const segs = ['ss1','ss2','ss3','ss4'].map(id => document.getElementById(id));
+  const lbl  = document.getElementById('strengthLabel');
+  segs.forEach(s => s.className = 'strength-seg');
+  if (!v) { lbl.textContent = ''; lbl.style.color = ''; return; }
+
+  let score = 0;
+  if (v.length >= 8)           score++;
+  if (/[A-Z]/.test(v))         score++;
+  if (/[0-9]/.test(v))         score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+
+  const map = [
+    {cls:'s-weak',   text:'WEAK',   color:'#e03030'},
+    {cls:'s-fair',   text:'FAIR',   color:'#e0aa30'},
+    {cls:'s-good',   text:'GOOD',   color:'#FF6B00'},
+    {cls:'s-strong', text:'STRONG', color:'#0db85f'},
+  ];
+  if (!score) return;
+  const lvl = map[score - 1];
+  for (let i = 0; i < score; i++) segs[i].classList.add(lvl.cls);
+  lbl.textContent = lvl.text;
+  lbl.style.color = lvl.color;
+}
+
+/* ═══════════════════════════════════════════
+   ROLE CARDS
+═══════════════════════════════════════════ */
+function pickRole(card) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  card.querySelector('input[type="radio"]').checked = true;
+}
+
+/* ═══════════════════════════════════════════
+   PASSWORD TOGGLE
+═══════════════════════════════════════════ */
+function togglePw(btn) {
+  const f = document.getElementById('pwField');
+  f.type = f.type === 'password' ? 'text' : 'password';
+  btn.textContent = f.type === 'password' ? 'SHOW' : 'HIDE';
+}
+
+/* ═══════════════════════════════════════════
+   FORM SUBMIT — client-side gate
+═══════════════════════════════════════════ */
+document.getElementById('createForm').addEventListener('submit', function(e) {
+  const ok = validateAll();
+  if (!ok) {
+    e.preventDefault();
+    // Scroll first invalid field into view
+    const bad = document.querySelector('.form-input.is-invalid');
+    if (bad) bad.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  // All valid — show loading spinner, let POST through naturally
+  document.getElementById('submitBtn').classList.add('loading');
+});
+
+/* ═══════════════════════════════════════════
+   AUTO-RESET FORM after success flash
+═══════════════════════════════════════════ */
+{% with messages = get_flashed_messages(with_categories=True) %}
+  {% for category, message in messages %}
+    {% if category == 'success' or 'successfully' in message %}
+    (function resetAfterSuccess() {
+      const form = document.getElementById('createForm');
+      form.reset();
+      // Clear all validation states
+      Object.keys({ name:1, email:1, pw:1 }).forEach(k => {});
+      ['nameField','emailField','pwField'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('is-valid','is-invalid');
+      });
+      ['nameError','emailError','pwError'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('show');
+      });
+      document.querySelectorAll('.strength-seg').forEach(s => s.className = 'strength-seg');
+      const lbl = document.getElementById('strengthLabel');
+      if (lbl) { lbl.textContent = ''; lbl.style.color = ''; }
+      // Reset role to first card
+      document.querySelectorAll('.role-card').forEach((c, i) => {
+        c.classList.toggle('active', i === 0);
+        c.querySelector('input[type="radio"]').checked = (i === 0);
+      });
+      // Scroll banner into view
+      const banner = document.getElementById('flashBanner');
+      if (banner) banner.scrollIntoView({behavior:'smooth', block:'start'});
+    })();
+    {% endif %}
+  {% endfor %}
+{% endwith %}
+
+
+</script>
+
+</body>
+</html>

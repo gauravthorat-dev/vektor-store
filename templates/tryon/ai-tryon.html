@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+body{
+background:#0b0b0c;
+color:white;
+font-family:'Segoe UI',sans-serif;
+}
+
+/* PAGE */
+.wrapper{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px;
+}
+
+/* CARD */
+.card{
+width:420px;
+background:#111;
+border-radius:14px;
+padding:30px;
+box-shadow:0 20px 60px rgba(0,0,0,0.7);
+border:1px solid #222;
+}
+
+/* HEADER */
+.card h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+/* INPUT GROUP */
+.group{
+margin-bottom:18px;
+}
+
+.group label{
+font-size:12px;
+color:#aaa;
+}
+
+.group input{
+width:100%;
+margin-top:6px;
+padding:10px;
+background:#1a1a1a;
+border:1px solid #333;
+color:white;
+border-radius:8px;
+}
+
+/* PRODUCT */
+.product{
+margin-top:10px;
+width:100px;
+border-radius:6px;
+}
+
+/* BUTTON */
+.btn{
+width:100%;
+padding:12px;
+background:#d4af37;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+margin-top:10px;
+}
+
+/* RESULT */
+.result{
+margin-top:20px;
+text-align:center;
+}
+
+.result img{
+max-width:100%;
+border-radius:10px;
+}
+
+/* LOADER */
+.loader{
+margin:20px auto;
+width:40px;
+height:40px;
+border:4px solid #333;
+border-top:4px solid #d4af37;
+border-radius:50%;
+animation:spin 1s linear infinite;
+display:none;
+}
+@keyframes spin{
+100%{transform:rotate(360deg)}
+}
+</style>
+
+<div class="wrapper">
+
+<div class="card">
+
+<h2>AI Try-On</h2>
+
+<!-- PHOTO -->
+<div class="group">
+<label>Upload Your Photo</label>
+<input type="file" id="person">
+</div>
+
+<!-- CLOTH -->
+<div class="group">
+{% if cloth %}
+<label>Selected Product</label><br>
+<img src="{{ cloth }}" class="product">
+{% else %}
+<label>Upload Cloth</label>
+<input type="file" id="cloth">
+{% endif %}
+</div>
+
+<button class="btn" onclick="upload()">Try Now</button>
+
+<div class="loader" id="loader"></div>
+
+<div class="result">
+<img id="result">
+</div>
+
+</div>
+
+</div>
+
+<script>
+function upload(){
+
+let person = document.getElementById("person").files[0];
+if(!person){alert("Upload photo");return;}
+
+let formData = new FormData();
+formData.append("person", person);
+
+document.getElementById("loader").style.display="block";
+
+{% if cloth %}
+fetch("{{ cloth }}")
+.then(r=>r.blob())
+.then(blob=>{
+formData.append("cloth", blob,"cloth.png");
+send(formData);
+});
+{% else %}
+let cloth = document.getElementById("cloth").files[0];
+if(!cloth){alert("Upload cloth");return;}
+formData.append("cloth", cloth);
+send(formData);
+{% endif %}
+}
+
+function send(formData){
+fetch("/process-tryon",{
+method:"POST",
+body:formData
+})
+.then(r=>r.json())
+.then(data=>{
+document.getElementById("loader").style.display="none";
+
+if(data.error){
+alert(data.error);
+}else{
+document.getElementById("result").src=data.result;
+}
+});
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>OTP Verification — FashionHub</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+
+body{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:
+linear-gradient(rgba(0,0,0,0.75),rgba(0,0,0,0.75)),
+url('https://images.unsplash.com/photo-1520975916090-3105956dac38');
+background-size:cover;
+background-position:center;
+}
+
+/* CARD */
+.auth-card{
+width:360px;
+padding:40px;
+border-radius:20px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,0.15);
+box-shadow:0 0 40px rgba(0,0,0,0.6);
+color:white;
+text-align:center;
+animation:fadeUp 1s ease forwards;
+opacity:0;
+}
+@keyframes fadeUp{
+to{transform:translateY(0);opacity:1}
+from{transform:translateY(40px);opacity:0}
+}
+
+.auth-card h2{color:gold;margin-bottom:10px}
+.auth-card p{color:#ccc;margin-bottom:25px;font-size:14px}
+
+/* OTP INPUTS */
+.otp-box{
+display:flex;
+justify-content:space-between;
+margin:20px 0;
+}
+.otp-box input{
+width:50px;height:55px;
+text-align:center;
+font-size:20px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.2);
+background:rgba(255,255,255,0.08);
+color:white;
+outline:none;
+}
+.otp-box input:focus{
+border-color:gold;
+box-shadow:0 0 12px rgba(255,215,0,0.6);
+}
+
+.auth-card button{
+width:100%;padding:12px;margin-top:20px;border:none;
+border-radius:25px;font-weight:bold;cursor:pointer;
+background:linear-gradient(45deg,gold,orange);color:black;
+}
+.auth-card button:hover{transform:translateY(-3px)}
+
+.resend{margin-top:18px;font-size:13px;color:#aaa}
+.resend a{color:gold;text-decoration:none}
+</style>
+</head>
+
+<body>
+
+<div class="auth-card">
+<h2>OTP Verification</h2>
+<p>Enter the 4-digit OTP sent to your email</p>
+
+<form method="POST">
+
+<div class="otp-box">
+    <input type="text" name="d1" maxlength="1" required>
+    <input type="text" name="d2" maxlength="1" required>
+    <input type="text" name="d3" maxlength="1" required>
+    <input type="text" name="d4" maxlength="1" required>
+</div>
+
+<button type="submit">Verify OTP</button>
+
+</form>
+
+<!-- FLASH -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <p style="color:red;">
+      {% for msg in messages %}
+        {{ msg }}
+      {% endfor %}
+    </p>
+  {% endif %}
+{% endwith %}
+
+<p class="resend">
+<a href="{{ url_for('user.forgot_password') }}">Resend</a>
+</p>
+
+<button>Verify OTP</button>
+
+<p class="resend">Didn't receive code? <a href="#">Resend</a></p>
+</div>
+
+</body>
+</html>

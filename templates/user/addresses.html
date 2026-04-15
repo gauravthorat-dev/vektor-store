@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}Saved Addresses — VEKTOR{% endblock %}
+
+{% block content %}
+<div style="min-height:80vh;padding:60px 5%;background:var(--ink)">
+
+  <!-- HEADER -->
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:16px">
+    <div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Saved Addresses · पत्ते</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,60px);letter-spacing:2px;color:var(--white);line-height:.9">MY ADDRESSES</div>
+    </div>
+    <button onclick="openAddressForm()" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:12px 24px;background:var(--sf);color:var(--ink);border:none;cursor:pointer;font-weight:700;transition:background .2s" onmouseover="this.style.background='#FF8C35'" onmouseout="this.style.background='#FF6B00'">
+      + ADD NEW ADDRESS
+    </button>
+  </div>
+
+  <!-- ADDRESS GRID -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:3px;margin-bottom:40px">
+
+    {% if addresses %}
+      {% for addr in addresses %}
+      <div style="background:var(--card);border:0.5px solid {% if addr.is_default %}rgba(255,107,0,.4){% else %}var(--border){% endif %};position:relative;overflow:hidden;transition:border-color .3s" onmouseover="this.style.borderColor='rgba(255,107,0,.3)'" onmouseout="this.style.borderColor='{% if addr.is_default %}rgba(255,107,0,.4){% else %}rgba(247,243,236,.07){% endif %}'">
+
+        {% if addr.is_default %}
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--sf)"></div>
+        {% endif %}
+
+        <div style="padding:20px 20px 16px">
+          <!-- NAME + DEFAULT BADGE -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:16px;color:var(--white);font-weight:300">{{ addr.full_name }}</div>
+            {% if addr.is_default %}
+            <div style="font-family:'Space Mono',monospace;font-size:7px;letter-spacing:2px;padding:3px 9px;background:rgba(255,107,0,.15);border:0.5px solid rgba(255,107,0,.4);color:var(--sf)">DEFAULT</div>
+            {% endif %}
+          </div>
+
+          <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(247,243,236,.35);margin-bottom:10px">📞 {{ addr.phone }}</div>
+
+          <div style="font-size:13px;color:rgba(247,243,236,.45);line-height:1.8;border-left:2px solid var(--border);padding-left:12px">
+            {{ addr.line1 }}{% if addr.line2 %}, {{ addr.line2 }}{% endif %}<br>
+            {{ addr.city }}, {{ addr.state }} – {{ addr.pincode }}<br>
+            {{ addr.country }}
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div style="display:flex;border-top:0.5px solid var(--border)">
+          {% if not addr.is_default %}
+          <form method="POST" action="/set-default-address/{{ addr.id }}" style="flex:1">
+            <button type="submit" style="width:100%;padding:11px;background:transparent;border:none;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);cursor:pointer;text-transform:uppercase;transition:all .2s;border-right:0.5px solid var(--border)" onmouseover="this.style.color='var(--sf)';this.style.background='rgba(255,107,0,.04)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">
+              SET DEFAULT
+            </button>
+          </form>
+          {% else %}
+          <div style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--sf);border-right:0.5px solid var(--border)">✓ DEFAULT</div>
+          {% endif %}
+          <a href="/edit-address/{{ addr.id }}" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);text-decoration:none;transition:all .2s;border-right:0.5px solid var(--border);display:block" onmouseover="this.style.color='var(--white)';this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">EDIT</a>
+          <a href="/delete-address/{{ addr.id }}" onclick="return confirm('Delete this address?')" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(224,48,48,.5);text-decoration:none;transition:all .2s;display:block" onmouseover="this.style.color='#ff7070';this.style.background='rgba(224,48,48,.05)'" onmouseout="this.style.color='rgba(224,48,48,.5)';this.style.background='transparent'">DELETE</a>
+        </div>
+
+      </div>
+      {% endfor %}
+
+    {% else %}
+    <!-- EMPTY -->
+    <div style="grid-column:1/-1;text-align:center;padding:60px 20px">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,107,0,.08);letter-spacing:4px;margin-bottom:16px">EMPTY</div>
+      <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:18px;color:rgba(247,243,236,.3);margin-bottom:8px">अजून कोणताही पत्ता नाही</div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(247,243,236,.2);margin-bottom:28px">No saved addresses — add one below</div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ADD ADDRESS FORM (inline, toggled) -->
+  <div id="addressForm" style="display:none;background:var(--card);border:0.5px solid var(--border);max-width:680px">
+    <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;align-items:center;justify-content:space-between">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white)">ADD NEW ADDRESS · नवीन पत्ता</div>
+      <button onclick="closeAddressForm()" style="background:none;border:0.5px solid var(--border);color:rgba(247,243,236,.4);width:30px;height:30px;cursor:pointer;font-size:14px;transition:all .2s" onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'" onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.4)'">✕</button>
+    </div>
+    <form method="POST" action="/add-address" style="padding:24px;display:flex;flex-direction:column;gap:14px">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        {% macro addr_input(label, name, placeholder, full=false) %}
+        <div {% if full %}style="grid-column:1/-1"{% endif %}>
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;margin-bottom:7px">{{ label }}</div>
+          <input type="text" name="{{ name }}" placeholder="{{ placeholder }}" required
+                 style="width:100%;background:var(--smoke);border:1px solid var(--border);color:var(--white);font-family:'Space Mono',monospace;font-size:11px;padding:11px 14px;outline:none;transition:border-color .25s;letter-spacing:.04em"
+                 onfocus="this.style.borderColor='rgba(255,107,0,.4)'" onblur="this.style.borderColor='rgba(247,243,236,.07)'">
+        </div>
+        {% endmacro %}
+
+        {{ addr_input('Full Name · नाव','full_name','Arjun Mane') }}
+        {{ addr_input('Phone · फोन','phone','+91 98765 43210') }}
+        {{ addr_input('Address Line 1 · पत्ता','line1','House / Flat / Building', full=true) }}
+        {{ addr_input('Address Line 2 (optional)','line2','Street / Area / Landmark', full=true) }}
+        {{ addr_input('City · शहर','city','Nashik') }}
+        {{ addr_input('Pincode · पिनकोड','pincode','422001') }}
+        {{ addr_input('State · राज्य','state','Maharashtra') }}
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px">
+        <input type="checkbox" name="is_default" id="isDefault" style="accent-color:var(--sf);width:16px;height:16px">
+        <label for="isDefault" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(247,243,236,.4);cursor:pointer">Set as default address</label>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button type="button" onclick="closeAddressForm()" style="flex:1;padding:12px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.35);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s">CANCEL</button>
+        <button type="submit" style="flex:2;padding:12px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#FF8C35'" onmouseout="this.style.background='#FF6B00'">
+          + SAVE ADDRESS — पत्ता जतन करा
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function openAddressForm(){
+  const f = document.getElementById('addressForm');
+  f.style.display = 'block';
+  f.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+function closeAddressForm(){
+  document.getElementById('addressForm').style.display = 'none';
+}
+</script>
+{% endblock %}
