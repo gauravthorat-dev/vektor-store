@@ -6,164 +6,118 @@
 <div class="page active" id="page-home">
 
   <!-- ══ HERO ══ -->
+<!-- ══ HERO v2 ══ -->
   <section class="hero">
-    <div class="hero-l" id="heroLeft">
-      <div class="hero-chakra">
-        <svg width="480" height="480" viewBox="0 0 480 480" fill="none">
-          <circle cx="240" cy="240" r="192" stroke="white" stroke-width="2.5"/>
-          <circle cx="240" cy="240" r="20" fill="white"/>
-          <circle cx="240" cy="240" r="76" stroke="white" stroke-width="1.5" stroke-dasharray="6 4"/>
-          <g stroke="white" stroke-width="1.5">
-            <line x1="240" y1="48"  x2="240" y2="432"/>
-            <line x1="48"  y1="240" x2="432" y2="240"/>
-            <line x1="104" y1="104" x2="376" y2="376"/>
-            <line x1="376" y1="104" x2="104" y2="376"/>
-            <line x1="48"  y1="168" x2="432" y2="312"/>
-            <line x1="48"  y1="312" x2="432" y2="168"/>
-            <line x1="168" y1="48"  x2="312" y2="432"/>
-            <line x1="312" y1="48"  x2="168" y2="432"/>
-            <line x1="72"  y1="128" x2="408" y2="352"/>
-            <line x1="72"  y1="352" x2="408" y2="128"/>
-            <line x1="128" y1="72"  x2="352" y2="408"/>
-            <line x1="352" y1="72"  x2="128" y2="408"/>
-          </g>
-        </svg>
-      </div>
+ 
+    <!-- Background image -->
+    <div class="hero-image">
+      <img src="{{ url_for('static', filename='images/hero.png') }}"
+           alt="Vektor — महाराष्ट्रीय पुरुष वस्त्र">
+    </div>
+ 
+    <!-- Overlay + diagonal line -->
+    <div class="hero-overlay"></div>
+ 
+    <!-- Main content — bottom left -->
+    <div class="hero-content">
+ 
+      <!-- Big brand name -->
+      <h1 class="hero-title">
+        <span class="white">VEK</span><span class="accent">TOR</span>
+      </h1>
+ 
+      <!-- Marathi identity line -->
+      <div class="hero-marathi">Crafted in India · Since 2019</div>
+ 
+      <!-- New tagline — replaces "Crafted for Modern Presence" -->
+      <p class="hero-tagline">
+        Worn by men who don't explain themselves.<br>
+        Made in India. Built to last.
+      </p>
+ 
+      <!-- CTA buttons — new labels -->
+      <div class="hero-buttons">
+  <a href="{{ url_for('shop.shop_page') }}" class="btn-common">
+    संग्रह पाहा →
+  </a>
 
-      <div class="hero-glitch">।। पराक्रम ।।</div>
-      <div class="hero-sk reveal">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
-      <h1 class="hero-title reveal">महाराष्ट्रीय<br><span class="sf">पुरुष</span><br><span class="gr">VEKTOR</span></h1>
-      <div class="hero-sub-langs reveal">
-        <div class="hero-sub-mr">खोलीत नाही — खोली बदलून या.</div>
-        <div class="hero-sub-hi">कमरे में नहीं — कमरे को बदल के आओ।</div>
+  <a href="{{ url_for('shop.lookbook') }}" class="btn-common">
+    Lookbook
+  </a>
+</div>
+ 
+    </div>
+ 
+    <!-- Stats strip — bottom right -->
+    <div class="hero-stats-strip">
+      <div class="hss-item">
+        <div class="hss-num">12<span>K+</span></div>
+        <div class="hss-label">Happy Customers</div>
       </div>
-      <div class="hero-cta reveal">
-        <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">संग्रह पाहा — Shop Now</a>
-        <a href="{{ url_for('shop.lookbook') }}" class="btn-gr">Lookbook</a>
+      <div class="hss-item">
+        <div class="hss-num">4<span>.9</span></div>
+        <div class="hss-label">Avg Rating</div>
       </div>
-      <div class="hero-trust reveal">
-        <div class="trust-item">
-          <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <span class="trust-text">Secure Checkout</span>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
-          <span class="trust-text">Fast Dispatch</span>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-          <span class="trust-text">Made in India</span>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></div>
-          <span class="trust-text">Easy Returns</span>
-        </div>
+      <div class="hss-item">
+        <div class="hss-num">5<span>yr</span></div>
+        <div class="hss-label">Fabric Warranty</div>
       </div>
     </div>
-
-    <div class="hero-r">
-      <div class="india-made-card">
-        <div class="flag-vert">
-          <div class="fv sf"></div>
-          <div class="fv wh"><div class="fv-ch"></div></div>
-          <div class="fv gr"></div>
-        </div>
-        <div>
-          <div class="imh-big">MADE IN INDIA</div>
-          <div class="imh-mr">भारतात बनवलेले · हर धागा, हर सिलाई</div>
-          <div class="imh-en">Every stitch. Every thread. 100% desi.</div>
-        </div>
-      </div>
-      <div class="hero-stats">
-        <div class="hs">
-          <div class="hs-num">{{ stats.customers }}<span class="sf">K+</span></div>
-          <div class="hs-mr">खूश ग्राहक</div>
-          <div class="hs-en">Happy Customers</div>
-        </div>
-        <div class="hs">
-          <div class="hs-num">4<span class="gr">.9</span></div>
-          <div class="hs-mr">मूल्यांकन</div>
-          <div class="hs-en">Avg Rating</div>
-        </div>
-        <div class="hs">
-          <div class="hs-num">{{ stats.products }}<span class="sf">+</span></div>
-          <div class="hs-mr">शैली</div>
-          <div class="hs-en">Styles</div>
-        </div>
-        <div class="hs">
-          <div class="hs-num">5<span class="gr">yr</span></div>
-          <div class="hs-mr">वॉरंटी</div>
-          <div class="hs-en">Fabric Warranty</div>
-        </div>
-      </div>
+ 
+    <!-- Scroll cue -->
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      <span class="hero-scroll-text">Scroll</span>
     </div>
+ 
   </section>
 
-  <!-- ══ FLASH SALE ══ -->
-  <div class="flash reveal">
-    <div class="flash-badge">
-      <div class="flash-badge-en">FLASH SALE</div>
-      <div class="flash-badge-mr">फ्लॅश सेल</div>
-    </div>
-    <div class="flash-text">
-      <div class="flash-big">UP TO <span>40% OFF</span> — Today Only</div>
-      <div class="flash-mr">आजच खरेदी करा · आज ही खरीदें — सिर्फ आज</div>
-    </div>
-    <div class="flash-timer">
-      <div class="ft-box"><div class="ft-num" id="fh">02</div><div class="ft-lbl">HRS</div></div>
-      <div class="ft-sep">:</div>
-      <div class="ft-box"><div class="ft-num" id="fm">47</div><div class="ft-lbl">MIN</div></div>
-      <div class="ft-sep">:</div>
-      <div class="ft-box"><div class="ft-num" id="fs">33</div><div class="ft-lbl">SEC</div></div>
-    </div>
-    <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">सेलमध्ये जा</a>
-  </div>
 
-  <!-- ══ MARATHA CODE ══ -->
+  <!-- ══ STYLE CODE ══ -->
   <div class="mc-grid">
     <div class="mc-card reveal">
       <div class="mc-icon" style="border-color:rgba(255,107,0,.3)">
         <svg viewBox="0 0 24 24" fill="none" stroke="#FF6B00" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
       </div>
-      <div class="mc-word">शौर्य</div>
-      <div class="mc-en">COURAGE</div>
-      <div class="mc-desc">The courage to dress with intention. To own the room before you speak.</div>
-      <div class="mc-sk">।। शूरस्य भूषणं शौर्यम् ।।</div>
+      <div class="mc-word">फिट</div>
+      <div class="mc-en">TAILORED FIT</div>
+      <div class="mc-desc">Sharp silhouettes, clean proportions, and comfort that works through the day.</div>
+      <div class="mc-sk">Everyday staples, refined for Indian men.</div>
     </div>
     <div class="mc-card reveal">
       <div class="mc-icon" style="border-color:rgba(200,148,26,.3)">
         <svg viewBox="0 0 24 24" fill="none" stroke="#C8941A" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </div>
-      <div class="mc-word">निष्ठा</div>
-      <div class="mc-en">LOYALTY</div>
-      <div class="mc-desc">Loyal to craft. Loyal to India. Loyal to the men who wear our name.</div>
-      <div class="mc-sk">।। निष्ठा परमो धर्मः ।।</div>
+      <div class="mc-word">कापड</div>
+      <div class="mc-en">PREMIUM FABRIC</div>
+      <div class="mc-desc">Breathable textures, reliable stitching, and pieces that keep their shape.</div>
+      <div class="mc-sk">Made to feel good after more than one wear.</div>
     </div>
     <div class="mc-card reveal">
       <div class="mc-icon" style="border-color:rgba(4,106,56,.5)">
         <svg viewBox="0 0 24 24" fill="none" stroke="#0A8A4A" stroke-width="1.5"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
       </div>
-      <div class="mc-word">अभिमान</div>
-      <div class="mc-en">PRIDE</div>
-      <div class="mc-desc">Wear Maharashtra's pride on your back. Not with words — with every stitch.</div>
-      <div class="mc-sk">।। अभिमानेन जीवनम् ।।</div>
+      <div class="mc-word">शैली</div>
+      <div class="mc-en">MODERN STYLE</div>
+      <div class="mc-desc">Minimal, versatile clothing that moves from work to weekend without trying too hard.</div>
+      <div class="mc-sk">Quiet details. Strong finish.</div>
     </div>
   </div>
 
   <!-- ══ PROVERB STRIP ══ -->
   <div class="proverb-strip">
     <div class="proverb-track">
-      <span>मराठी माणसाने बनवलेले. मराठी माणसासाठी.</span>
+      <span>Modern essentials. Premium Indian fit.</span>
       <span class="proverb-sep"> ✦ </span>
-      <span>।। वीरभोग्या वसुन्धरा ।।</span>
+      <span>Clean silhouettes. Better everyday wear.</span>
       <span class="proverb-sep"> ✦ </span>
-      <span>Marathi man ne banvalelé. Marathi mansasathi.</span>
+      <span>Designed in India for modern men.</span>
       <span class="proverb-sep"> ✦ </span>
-      <span>मराठी माणसाने बनवलेले. मराठी माणसासाठी.</span>
+      <span>Modern essentials. Premium Indian fit.</span>
       <span class="proverb-sep"> ✦ </span>
-      <span>।। वीरभोग्या वसुन्धरा ।।</span>
+      <span>Clean silhouettes. Better everyday wear.</span>
       <span class="proverb-sep"> ✦ </span>
-      <span>Marathi man ne banvalelé. Marathi mansasathi.</span>
+      <span>Designed in India for modern men.</span>
       <span class="proverb-sep"> ✦ </span>
     </div>
   </div>
@@ -440,7 +394,16 @@
 
       {% endif %}
     </div>
+      {% if new_arrivals|length < 6 %}
+<div class="prod-fill">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+{% endif %}
   </section>
+
+
 
   <!-- WHY US -->
 <div class="why-grid">
@@ -481,17 +444,17 @@
 
   <!-- LEFT -->
   <div class="pride-l reveal">
-    <div class="pride-sk">।। वीरभोग्या वसुन्धरा ।।</div>
-    <div class="pride-sk-tr">"The earth belongs to the brave." — Sanskrit</div>
+    <div class="pride-sk">NEW EVERYDAY STANDARD</div>
+    <div class="pride-sk-tr">Premium essentials for the way men dress now.</div>
 
     <h2 class="pride-title">
-      DRESSED<br>TO<br>DISRUPT
+      BUILT<br>FOR<br>DAILY WEAR
     </h2>
 
     <p class="pride-body">
-      Vektor is built for the Maharashtrian man — confident, grounded, and impossible to ignore.
+      Vektor is built for men who want better basics: clean fits, refined fabrics, and clothes that look current without shouting.
       <br><br>
-      मराठी माणसासाठी. मराठी माणसाने.
+      Made in India. Designed for everyday movement.
     </p>
 
     <!-- ✅ LINK BUTTON -->
@@ -530,8 +493,8 @@
     <div class="pride-row">
       <div class="pr-icon">🔄</div>
       <div>
-        <div class="pr-en">Wear your identity</div>
-        <div class="pr-langs">तुमची ओळख परिधान करा · अपनी पहचान पहनें</div>
+        <div class="pr-en">Easy to style</div>
+        <div class="pr-langs">रोजच्या स्टाइलसाठी · easy everyday outfits</div>
       </div>
     </div>
 
@@ -653,3 +616,4 @@
 
 </div>
 {% endblock %}
+

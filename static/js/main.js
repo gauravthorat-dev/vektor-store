@@ -49,24 +49,9 @@ setTimeout(() => {
 /* ─────────────────────────────────────
    CUSTOM CURSOR
 ───────────────────────────────────── */
-const cur  = document.getElementById('cursor');
-const ring = document.getElementById('cursorRing');
-const lbl  = document.getElementById('cursorLabel');
-let mx = 0, my = 0, rx = 0, ry = 0;
-
-document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-
-(function cursorLoop() {
-  if (cur)  { cur.style.left  = mx + 'px'; cur.style.top   = my + 'px'; }
-  if (ring) {
-    rx += (mx - rx) * .1;
-    ry += (my - ry) * .1;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-  }
-  if (lbl)  { lbl.style.left  = rx + 'px'; lbl.style.top   = ry + 'px'; }
-  requestAnimationFrame(cursorLoop);
-})();
+const cur = null;
+const ring = null;
+const lbl = null;
 
 /* Hover effects — product cards show "ADD TO CART" label */
 document.querySelectorAll('.prod-card, .prod-qa, .prod-add-mini, .lb-card, .lb-overlay-btn').forEach(el => {
@@ -470,4 +455,26 @@ document.querySelectorAll('a[href]').forEach(link => {
 ───────────────────────────────────── */
 document.getElementById('editProductForm')?.addEventListener('submit', function () {
   window.onbeforeunload = null;
+});
+
+
+
+window.addEventListener("scroll", () => {
+  document.querySelectorAll(".reveal").forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if (top < window.innerHeight - 50) {
+      el.classList.add("active");
+    }
+  });
+});
+
+const reveals = document.querySelectorAll('.reveal');
+
+window.addEventListener('scroll', () => {
+  reveals.forEach(el => {
+    const top = el.getBoundingClientRect().top;
+    if (top < window.innerHeight - 100) {
+      el.classList.add('active');
+    }
+  });
 });

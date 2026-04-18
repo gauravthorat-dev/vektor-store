@@ -18,7 +18,65 @@
     </div>
   </div>
 
-  <div class="lb-grid">
+  <div class="lb-live-grid" id="lookbookGrid">
+    {% if products %}
+      {% for product in products %}
+        {% set season_text = ((product.season or 'SS/26') ~ ' ' ~ (product.collection or '') ~ ' ' ~ (product.category or ''))|lower %}
+        {% set img_h = 'h543' if loop.index == 2 else ('h320' if loop.index is even else 'h260') %}
+        <article class="lb-card lb-live-card"
+                 data-season="{{ season_text|replace('/','') }}"
+                 data-category="{{ (product.category or '')|lower }}">
+          <a class="lb-img {{ img_h }}" href="{{ url_for('shop.product') }}?id={{ product.id }}" aria-label="View {{ product.name }}">
+            {% if product.image %}
+              <img src="{{ url_for('static', filename='uploads/' + product.image) }}"
+                   alt="{{ product.name }}" loading="lazy">
+            {% else %}
+              <div class="lb-img-txt">VK</div>
+            {% endif %}
+            <div class="lb-overlay">
+              <div class="lb-overlay-title">{{ product.name }}</div>
+              <div class="lb-overlay-mr">{{ product.name_mr or product.category or 'Vektor Look' }}</div>
+              <div class="lb-overlay-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+              <span class="lb-view-btn">View Product</span>
+            </div>
+            <div class="lb-flag-bar">
+              <div class="pfb sf"></div>
+              <div class="pfb wh"></div>
+              <div class="pfb gr"></div>
+            </div>
+          </a>
+
+          <div class="lb-info">
+            <div>
+              <div class="lb-info-title">{{ product.name }}</div>
+              <div class="lb-info-mr">{{ product.name_mr or product.collection or 'Modern everyday fit' }}</div>
+            </div>
+            <div class="lb-info-bot">
+              <div class="lb-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+              <div class="lb-actions">
+                <a class="btn-view" href="{{ url_for('shop.product') }}?id={{ product.id }}">View</a>
+                <a class="prod-add-mini" href="{{ url_for('shop.add_to_cart', product_id=product.id) }}">+ Cart</a>
+              </div>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    {% else %}
+      <div class="lb-empty">
+        <div class="lb-empty-title">LOOKBOOK IS READY FOR PRODUCTS</div>
+        <div class="lb-empty-text">Add active products from admin and they will appear here automatically.</div>
+        <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">Go to Shop</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="lb-empty" id="lbFilterEmpty" style="display:none">
+    <div class="lb-empty-title">NO LOOKS IN THIS FILTER YET</div>
+    <div class="lb-empty-text">Try SS/26 or add products with matching season, collection, or category data.</div>
+    <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">Browse Shop</a>
+  </div>
+
+  <div class="lb-grid lb-legacy-hidden" aria-hidden="true">
 
     <!-- CARD 1 -->
     <div class="prod-card">
@@ -158,11 +216,11 @@
 
   </div>
 
-  <div class="lb-editorial">
+  <div class="lb-editorial lb-legacy-hidden" aria-hidden="true">
     <div class="lb-ed-left">
-      <div class="lb-ed-sk">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
-      <div class="lb-ed-title">THE DRESSED<br>TO DISRUPT<br>EDIT</div>
-      <p class="lb-ed-body">This season Vektor pushes the envelope on what Maharashtrian men's wear can look like — rooted in our heritage, built for today's streets.</p>
+      <div class="lb-ed-sk">SS/26 STYLE NOTES</div>
+      <div class="lb-ed-title">THE MODERN<br>EVERYDAY<br>EDIT</div>
+      <p class="lb-ed-body">This season Vektor focuses on clean fits, breathable fabrics, and modern essentials built for workdays, weekends, and everything between.</p>
       <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">पूर्ण संग्रह पाहा — Shop All</a>
     </div>
     <div class="lb-ed-right">
@@ -173,4 +231,24 @@
   </div>
   <div style="height:36px"></div>
 </div>
+
+<script>
+function lbTab(btn, season) {
+  document.querySelectorAll('.lb-tab').forEach(function(tab){
+    tab.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  var visible = 0;
+  document.querySelectorAll('.lb-live-card').forEach(function(card){
+    var haystack = ((card.dataset.season || '') + ' ' + (card.dataset.category || '')).toLowerCase();
+    var show = season === 'ss26' || haystack.indexOf(season) !== -1;
+    card.style.display = show ? '' : 'none';
+    if (show) visible += 1;
+  });
+
+  var empty = document.getElementById('lbFilterEmpty');
+  if (empty) empty.style.display = visible ? 'none' : 'flex';
+}
+</script>
 {% endblock %}

@@ -6,15 +6,17 @@
   <title>{% block title %}VEKTOR — महाराष्ट्रीय पुरुष वस्त्र{% endblock %}</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
 
   <!-- CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/home-extra.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium.css') }}">
- 
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium..css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/vektor-typography-fix.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/vektor-premium.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/hero-v2.css') }}">
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -24,21 +26,11 @@
        UI OVERLAYS & FIXED ELEMENTS
   ══════════════════════════════════════ -->
 
-  <!-- Custom Cursor -->
-  <div class="cursor"      id="cursor"></div>
-  <div class="cursor-ring" id="cursorRing"></div>
-  <div class="cursor-label" id="cursorLabel">ADD TO CART</div>
-
   <!-- Scroll Progress Bar -->
   <div class="scroll-prog" id="scrollProg"></div>
 
-  <!-- Page Loader -->
-  <div id="loader">
-    <div class="loader-shloka">।। क्षत्रिय धर्मो युद्धम् ।।</div>
-    <div class="loader-brand">VEKTOR</div>
-    <div class="loader-line"></div>
-    <div class="loader-sub">महाराष्ट्रीय पुरुष वस्त्र</div>
-  </div>
+  <!-- Top Progress Bar — replaces full-screen loader -->
+  <div id="vk-prog-track"><div id="vk-prog-bar"></div></div>
 
   <!-- Search Overlay -->
   <div class="search-overlay" id="searchOverlay">
@@ -100,35 +92,11 @@
   <!-- Paithani Stripe -->
   <div class="paithani"></div>
 
-  <!-- Urgency Bar -->
-  <div class="urg">
-    <span class="dev">मर्यादित वेळेची ऑफर</span>
-    <span>SALE ENDS IN</span>
-    <div class="urg-timer" id="urgTimer">02:47:33</div>
-    <span>·</span>
-    <span>UP TO 40% OFF THIS WEEK</span>
-    <span class="dev">आजच खरेदी करा</span>
-  </div>
+ 
 
   <!-- Navigation -->
   {% include "components/navbar.html" %}
 
-  <!-- Marquee -->
-  <div class="mq">
-    <div class="mq-track">
-      <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
-      <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
-      <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
-      <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
-      <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
-      <!-- Duplicated for seamless loop -->
-      <div class="mq-item"><span>Free Shipping ₹3000+</span><div class="mq-dot"></div><span class="dev">मोफत डिलिव्हरी</span></div>
-      <div class="mq-item"><span>100% Made in India</span><div class="mq-dot"></div><span class="dev">भारतात बनवलेले</span></div>
-      <div class="mq-item"><span>30-Day Returns</span><div class="mq-dot"></div><span class="dev">३० दिवस परतावा</span></div>
-      <div class="mq-item"><span>SS/26 Collection Live</span><div class="mq-dot"></div><span class="dev">नवीन संग्रह आला</span></div>
-      <div class="mq-item"><span>5-Year Fabric Warranty</span><div class="mq-dot"></div><span class="dev">५ वर्षांची गॅरंटी</span></div>
-    </div>
-  </div>
 
 
   <!-- ══════════════════════════════════════
@@ -149,12 +117,159 @@
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   {% block extra_js %}{% endblock %}
 
+  <script>
+  (function(){
 
-  <div class="cursor"></div>
-<div class="cursor-follower"></div>
+    /* ── 1. TOP PROGRESS BAR ── */
+    var bar = document.getElementById('vk-prog-bar');
+    var w = 0;
+    var iv = setInterval(function(){
+      w += (100 - w) * 0.12;
+      bar.style.width = Math.min(w, 90) + '%';
+    }, 80);
+    window.addEventListener('load', function(){
+      clearInterval(iv);
+      bar.style.width = '100%';
+      bar.style.transition = 'width 0.2s ease, opacity 0.5s ease';
+      setTimeout(function(){
+        bar.style.opacity = '0';
+        setTimeout(function(){ document.getElementById('vk-prog-track').style.display = 'none'; }, 500);
+      }, 300);
+    });
 
-<div class="page-transition"></div>
-<div class="scroll-bar"></div>
+    /* ── 2. BLUR-IN ON PAGE READY ── */
+    document.body.classList.add('vk-loading');
+    window.addEventListener('load', function(){
+      document.body.classList.remove('vk-loading');
+    });
+
+    /* ── 3. SCROLL REVEAL ── */
+    var revealObserver = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          e.target.classList.add('vk-visible');
+          revealObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal, .reveal-l, .reveal-r').forEach(function(el){
+      revealObserver.observe(el);
+    });
+
+    /* ── 4. LAZY IMG SHIMMER ── */
+    document.querySelectorAll('img').forEach(function(img){
+      img.setAttribute('loading', 'lazy');
+      img.classList.add('vk-img-load');
+      if(img.complete && img.naturalWidth > 0){
+        img.classList.add('vk-img-done');
+      } else {
+        img.addEventListener('load',  function(){ img.classList.add('vk-img-done'); });
+        img.addEventListener('error', function(){ img.classList.add('vk-img-done'); });
+      }
+    });
+
+    /* ── 5. SKELETON CARDS ──
+       For every .prod-grid-3 / .prod-grid-4 on the page,
+       prepend skeleton placeholder cards that match the
+       grid count, then remove them once real cards appear.
+    ─────────────────────────────────────────────────────── */
+    function skelCard(imgHeight){
+      var h = imgHeight || 'h240';
+      return '<div class="vk-skel-card">' +
+        '<div class="vk-skel vk-skel-img ' + h + '"></div>' +
+        '<div class="vk-skel-details">' +
+          '<span class="vk-skel vk-skel-name"></span>' +
+          '<span class="vk-skel vk-skel-sub"></span>' +
+          '<span class="vk-skel vk-skel-stars"></span>' +
+          '<div class="vk-skel-bot">' +
+            '<span class="vk-skel vk-skel-price"></span>' +
+            '<span class="vk-skel vk-skel-btn"></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="vk-skel-flag">' +
+          '<span></span><span></span><span></span>' +
+        '</div>' +
+      '</div>';
+    }
+
+    document.querySelectorAll('.prod-grid-3, .prod-grid-4').forEach(function(grid){
+      /* How many columns does this grid have? */
+      var cols = grid.classList.contains('prod-grid-4') ? 4 : 3;
+      /* Detect image height from first real card if it exists */
+      var h = 'h240';
+      var firstImg = grid.querySelector('.prod-img');
+      if(firstImg){
+        if(firstImg.classList.contains('h200')) h = 'h200';
+        if(firstImg.classList.contains('h280')) h = 'h280';
+      }
+      grid.classList.add('vk-skeleton-active');
+      /* Inject skeleton cards BEFORE real cards */
+      var frag = '';
+      for(var i = 0; i < cols; i++){ frag += skelCard(h); }
+      grid.insertAdjacentHTML('afterbegin', frag);
+
+      function finishSkeleton(){
+        grid.querySelectorAll('.vk-skel-card').forEach(function(s){
+          s.style.transition = 'opacity 0.28s ease';
+          s.style.opacity = '0';
+          setTimeout(function(){ s.remove(); }, 300);
+        });
+        grid.classList.remove('vk-skeleton-active');
+      }
+
+      function waitForGridImages(done){
+        var imgs = Array.prototype.slice.call(grid.querySelectorAll('.prod-card img'));
+        if(!imgs.length){ done(); return; }
+        var remaining = imgs.length;
+        var settled = false;
+        function oneDone(){
+          remaining -= 1;
+          if(remaining <= 0 && !settled){
+            settled = true;
+            done();
+          }
+        }
+        imgs.forEach(function(img){
+          if(img.complete){ oneDone(); }
+          else {
+            img.addEventListener('load', oneDone, { once: true });
+            img.addEventListener('error', oneDone, { once: true });
+          }
+        });
+        setTimeout(function(){
+          if(!settled){
+            settled = true;
+            done();
+          }
+        }, 1800);
+      }
+
+      /* Once the grid's real product cards are visible, remove skeletons */
+      var realCards = grid.querySelectorAll('.prod-card');
+      if(realCards.length){
+        /* Real cards already in DOM — remove skeletons immediately after paint */
+        setTimeout(function(){
+          waitForGridImages(finishSkeleton);
+        }, 450);
+      } else {
+        /* Real cards injected later (e.g. via JS fetch) — watch for them */
+        var mo = new MutationObserver(function(){
+          if(grid.querySelector('.prod-card')){
+            mo.disconnect();
+            setTimeout(function(){
+              waitForGridImages(finishSkeleton);
+            }, 450);
+          }
+        });
+        mo.observe(grid, { childList: true, subtree: true });
+      }
+    });
+
+  })();
+  </script>
+
+  <div class="scroll-bar"></div>
+  <script src="{{ url_for('static', filename='js/vektor-reveal.js') }}"></script>
 
 </body>
 </html>

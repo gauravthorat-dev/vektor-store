@@ -1,0 +1,372 @@
+/* ═══════════════════════════════════════════════════════════
+   VEKTOR — typography-fix.css
+   Drop this AFTER home-extra.css to fix font chaos + readability
+   Fixes: font sprawl, invisible subtexts, mixed weight hierarchy
+═══════════════════════════════════════════════════════════ */
+
+/* ── FONT SYSTEM: 2 fonts only ──
+   Display headings  → Bebas Neue  (already loaded, keep it)
+   Everything else   → DM Sans     (clean, premium, very readable)
+   Remove: Space Mono, Cormorant Garamond, Tiro Devanagari Sanskrit
+   Marathi/Hindi text: DM Sans renders Devanagari beautifully
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap');
+
+:root {
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Bebas Neue', sans-serif;
+
+  /* Readability color tokens — replace invisible 0.2/0.3 opacities */
+  --text-primary:   rgba(247, 243, 236, 0.95);   /* main text */
+  --text-secondary: rgba(247, 243, 236, 0.65);   /* subtitles, Marathi labels */
+  --text-tertiary:  rgba(247, 243, 236, 0.40);   /* meta, counts */
+  --text-accent:    #FF6B00;
+}
+
+/* ── GLOBAL BODY OVERRIDE ─────────────────────────────────── */
+body,
+.hero-l,
+.hero-r,
+.mc-card,
+.cat-card,
+.flash,
+.proverb-track,
+.pride,
+.craftsman,
+.testi-card,
+.size-cta,
+.sec-wrap {
+  font-family: var(--font-body);
+}
+
+/* ── DISPLAY HEADINGS: keep Bebas, nothing else ──────────── */
+h1, h2, h3,
+.hero-title,
+.mc-en,
+.flash-big,
+.flash-badge-en,
+.imh-big,
+.cat-en,
+.ft-num,
+.ft-sep,
+.sec-head,
+.pride-title {
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+}
+
+/* ── FIX: invisible subtexts → readable secondary ───────── */
+
+/* Hero eyebrow / glitch line */
+.hero-glitch,
+.hero-sk {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+  opacity: 1;
+}
+
+/* Hero Marathi + English sub-copy */
+.hero-sub-mr {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-secondary);   /* was .3 opacity — unreadable */
+  line-height: 1.6;
+}
+.hero-sub-hi {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-tertiary);    /* slightly dimmer than Marathi */
+  line-height: 1.6;
+  margin-top: 4px;
+}
+
+/* Trust bar — was 8px Space Mono, near-invisible */
+.trust-item {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);    /* was .3 — now .40 with better font */
+}
+.trust-item:hover { color: var(--text-secondary); }
+.trust-icon svg { stroke: var(--text-tertiary); }
+
+/* India Made Card */
+.imh-mr {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);   /* was .3 opacity */
+  margin: 4px 0;
+}
+.imh-en {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);    /* was .2 — practically invisible */
+}
+
+/* Hero stats */
+.hs-num {
+  font-family: var(--font-display);
+  font-size: 32px;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.hs-mr {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);   /* was .6 — decent, now font-matched */
+  margin-top: 4px;
+}
+.hs-en {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);    /* was .4 — now consistent token */
+  margin-top: 2px;
+}
+
+/* ── MARATHA CODE CARDS ─────────────────────────────────── */
+.mc-word {
+  font-family: var(--font-body);   /* was Tiro Devanagari — removed */
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--text-primary);
+  letter-spacing: 0.01em;
+}
+.mc-en {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--text-tertiary);     /* was .25 → now .40 */
+}
+.mc-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-style: normal;              /* removed weird italic */
+  font-weight: 400;
+  color: var(--text-secondary);   /* was .45 */
+  line-height: 1.7;
+}
+.mc-sk {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-accent);
+}
+
+/* ── PROVERB MARQUEE ────────────────────────────────────── */
+.proverb-track {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-tertiary);     /* was .25 */
+}
+
+/* ── CATEGORIES ─────────────────────────────────────────── */
+.cat-num {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--text-tertiary);     /* was .2 — invisible */
+  letter-spacing: 0.06em;
+}
+.cat-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 12px;
+  color: var(--text-secondary);   /* was .3 */
+}
+.cat-hi {
+  font-size: 11px;
+  color: var(--text-tertiary);     /* was .18 — invisible */
+}
+.cat-count {
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--text-accent);
+}
+
+/* ── FLASH SALE ─────────────────────────────────────────── */
+.flash-badge-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 10px;
+  color: rgba(0,0,0,0.55);
+}
+.flash-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 12px;
+  color: var(--text-secondary);   /* was .3 */
+  margin-top: 4px;
+}
+.ft-lbl {
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--text-tertiary);     /* was .2 */
+}
+
+/* ── SECTION HEADERS ────────────────────────────────────── */
+.sec-tag {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-accent);
+}
+.sec-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  margin-left: 10px;
+}
+
+/* ── PRIDE SECTION ──────────────────────────────────────── */
+.pride-sk {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-accent);
+  text-transform: uppercase;
+}
+.pride-sk-tr {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);   /* was probably very faint */
+  margin-top: 4px;
+}
+.pride-body {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+.pr-en {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.pr-langs {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* ── CRAFTSMAN STRIP ────────────────────────────────────── */
+.cr-en {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.cr-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+.cr-sub {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+.cr-stat-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ── TESTIMONIALS ───────────────────────────────────────── */
+.testi-en {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.testi-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 6px;
+  font-style: italic;
+}
+.testi-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.testi-loc {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ── SIZE CTA ───────────────────────────────────────────── */
+.sc-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+.sc-mr {
+  font-family: var(--font-body);   /* was Tiro Devanagari */
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── PRODUCT CARDS ──────────────────────────────────────── */
+.prod-info-name,
+.product-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.prod-info-cat,
+.prod-cat-badge {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+/* ══ REMOVE: Space Mono overrides (global sweep) ═══════════
+   Any selector previously setting Space Mono gets DM Sans  */
+[class*="lbl"],
+[class*="-mr"],
+[class*="-hi"],
+[class*="-sub"],
+[class*="meta"],
+[class*="badge-mr"],
+[class*="count"],
+[class*="loc"] {
+  font-family: var(--font-body);
+}
