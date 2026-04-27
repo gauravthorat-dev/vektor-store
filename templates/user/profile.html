@@ -3,152 +3,803 @@
 {% block title %}My Profile — VEKTOR{% endblock %}
 
 {% block content %}
-
-{# ✅ FIXED — redirect to login if user session expired (caused black screen on back nav) #}
 {% if not current_user %}
 <script>window.location.replace("/login");</script>
 {% else %}
 
-<div style="min-height:80vh;padding:60px 5%;background:var(--ink)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
 
-  <div style="display:grid;grid-template-columns:300px 1fr;gap:3px;align-items:start;max-width:1200px">
+<style>
+/* ════════════════════════════════════════
+   VEKTOR · PROFILE · SS26 — FULL REBUILD
+════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- SIDEBAR PROFILE CARD -->
-    <div style="display:flex;flex-direction:column;gap:3px;position:sticky;top:80px">
+:root {
+  --orange:      #FF6B00;
+  --orange-dim:  rgba(255,107,0,.08);
+  --orange-glow: rgba(255,107,0,.3);
+  --bg:          #080808;
+  --surface:     #0F0F0F;
+  --raised:      #141414;
+  --line:        rgba(255,255,255,.09);
+  --t1:          #F5F0E8;
+  --t2:          rgba(245,240,232,.70);
+  --t3:          rgba(245,240,232,.45);
+  --green:       #1CC76A;
+  --blue:        #5B9EFF;
+  --gold:        #E0A800;
+  --red:         #FF4D4D;
+}
 
-      <!-- AVATAR + NAME -->
-      <div style="background:var(--sf);padding:36px 24px;text-align:center;position:relative;overflow:hidden">
-        <div style="position:absolute;right:-20px;bottom:-20px;font-family:'Bebas Neue',sans-serif;font-size:100px;color:rgba(0,0,0,.08);letter-spacing:2px;user-select:none">VK</div>
-        <div style="width:80px;height:80px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--sf);margin:0 auto 16px;border:3px solid rgba(255,255,255,.2)">
-          {{ current_user.name[0].upper() }}
-        </div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:var(--ink);line-height:1">{{ current_user.name }}</div>
-        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;color:rgba(10,10,10,.55);margin-top:4px;text-transform:uppercase">{{ current_user.role|title }} Member</div>
-        {% if current_user.is_verified %}
-        <div style="display:inline-flex;align-items:center;gap:4px;margin-top:10px;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:4px 12px;background:rgba(0,0,0,.15);color:rgba(10,10,10,.7)">✓ VERIFIED</div>
-        {% endif %}
+#vk-profile {
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'Space Mono', monospace;
+  color: var(--t1);
+  overflow-x: hidden;
+  position: relative;
+}
+
+#vk-profile::before {
+  content: '';
+  position: fixed;
+  top: -180px; right: -180px;
+  width: 650px; height: 650px;
+  background: radial-gradient(circle, rgba(255,107,0,.06) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══ HERO BANNER ══════════════════════ */
+.vk-hero {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+
+.vk-hero-ghost {
+  position: absolute;
+  right: -10px; top: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(90px, 16vw, 190px);
+  color: rgba(255,107,0,.03);
+  letter-spacing: 8px;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  /* Only show in the hero-top zone, not bleeding into stats */
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.vk-hero-top {
+  padding: 56px 5% 48px;
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
+}
+
+/* Avatar */
+.vk-avatar {
+  flex-shrink: 0;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 2px solid var(--orange);
+  box-shadow: 0 0 0 7px rgba(255,107,0,.07), 0 0 36px rgba(255,107,0,.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  color: var(--orange);
+  position: relative;
+}
+
+.vk-avatar-ring {
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,107,0,.18);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+
+@keyframes ringPulse {
+  0%,100% { transform: scale(1);    opacity: .5; }
+  50%      { transform: scale(1.07); opacity: .1; }
+}
+
+.vk-hero-info { flex: 1; min-width: 220px; }
+
+.vk-hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: var(--orange);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.vk-hero-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(40px, 5.5vw, 68px);
+  letter-spacing: 3px;
+  color: var(--t1);
+  line-height: .92;
+}
+
+.vk-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.vk-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 1px solid var(--line);
+  color: var(--t2);
+}
+
+.vk-chip.c-orange { border-color: rgba(255,107,0,.3); color: var(--orange); background: rgba(255,107,0,.05); }
+.vk-chip.c-green  { border-color: rgba(28,199,106,.3); color: var(--green); background: rgba(28,199,106,.05); }
+
+/* Stats row */
+.vk-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--line);
+  position: relative;
+  z-index: 1;
+}
+
+.vk-stat {
+  padding: 24px 28px;
+  border-right: 1px solid var(--line);
+  transition: background .2s;
+}
+
+.vk-stat:last-child { border-right: none; }
+.vk-stat:hover { background: var(--orange-dim); }
+
+.vk-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 38px;
+  color: var(--orange);
+  line-height: 1;
+  letter-spacing: 1px;
+}
+
+.vk-stat-num.small { font-size: 22px; color: var(--t1); }
+.vk-stat-num.green { font-size: 22px; color: var(--green); }
+.vk-stat-num.red   { font-size: 22px; color: var(--red); }
+
+.vk-stat-en {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--t2);
+  margin-top: 5px;
+}
+
+.vk-stat-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 13px;
+  color: var(--t3);
+  margin-top: 3px;
+}
+
+.vk-live {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  margin-right: 7px;
+  vertical-align: middle;
+  animation: livePulse 2s ease-in-out infinite;
+}
+
+@keyframes livePulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .45; transform: scale(.8); }
+}
+
+/* ═══ BODY LAYOUT ══════════════════════ */
+.vk-body {
+  position: relative;
+  z-index: 1;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 28px 5% 80px;
+  display: grid;
+  grid-template-columns: minmax(250px, 290px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* ═══ SIDEBAR ══════════════════════════ */
+.vk-nav {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  position: sticky;
+  top: 88px;
+  z-index: 4;
+  border: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  overflow: hidden;
+  border-radius: 10px;
+  justify-content: initial;
+  align-items: initial;
+}
+
+.vk-nav-head {
+  padding: 14px 20px;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--t3);
+  border-bottom: 1px solid var(--line);
+  background: var(--raised);
+}
+
+.vk-nlink {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  border-left: 3px solid transparent;
+  transition: all .2s;
+}
+
+.vk-nlink { background: transparent; }
+.vk-nlink:hover  { background: var(--orange-dim); }
+.vk-nlink.active { background: rgba(255,107,0,.06); border-left-color: var(--orange); }
+.vk-nlink:last-child { border-bottom: none; }
+
+.vk-nlink-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.vk-nlink > div {
+  min-width: 0;
+}
+
+.vk-nlink-en {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.72);
+  transition: color .2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vk-nlink.active .vk-nlink-en,
+.vk-nlink:hover  .vk-nlink-en { color: var(--orange); }
+.vk-nlink.danger .vk-nlink-en { color: var(--red); }
+.vk-nlink.danger:hover .vk-nlink-en { color: #ff7070; }
+
+.vk-nlink-mr {
+  display: block;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 13px;
+  color: rgba(245,240,232,0.45);
+  margin-top: 2px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ═══ MAIN ═════════════════════════════ */
+.vk-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vk-main > * {
+  animation: fadeUp .4s ease both;
+}
+
+.vk-main > *:nth-child(1) { animation-delay: .1s; }
+.vk-main > *:nth-child(2) { animation-delay: .2s; }
+.vk-main > *:nth-child(3) { animation-delay: .3s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Section */
+.vk-sec {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  transition: border-color .25s;
+}
+.vk-sec:hover { border-color: rgba(255,255,255,.14); }
+
+.vk-sec-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line);
+  background: var(--raised);
+}
+
+.vk-sec-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--t1);
+}
+.vk-sec-title b { color: var(--orange); font-weight: 400; }
+
+.vk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--t2);
+  border: 1px solid var(--line);
+  background: transparent;
+  cursor: pointer;
+  transition: all .2s;
+}
+.vk-btn:hover         { border-color: var(--orange); color: var(--orange); background: var(--orange-dim); }
+.vk-btn.hot           { color: var(--orange); border-color: rgba(255,107,0,.28); }
+.vk-btn.hot:hover     { background: rgba(255,107,0,.1); }
+
+/* Info fields grid */
+.vk-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.vk-field {
+  padding: 26px 30px;
+  border-bottom: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  transition: background .18s;
+}
+.vk-field:hover { background: rgba(255,107,0,.025); }
+.vk-field:nth-child(2n)       { border-right: none; }
+.vk-field:nth-last-child(-n+2) { border-bottom: none; }
+
+.vk-field-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.55);
+  margin-bottom: 5px;
+}
+.vk-field-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 14px;
+  color: rgba(245,240,232,0.45);
+  margin-bottom: 10px;
+}
+.vk-field-val {
+  font-size: 17px;
+  color: var(--t1);
+  line-height: 1.4;
+  letter-spacing: .2px;
+}
+
+/* Order rows */
+.vk-order {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 30px;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none;
+  transition: background .2s;
+  gap: 16px;
+  position: relative;
+}
+.vk-order:last-child { border-bottom: none; }
+.vk-order:hover      { background: rgba(255,107,0,.03); }
+
+.vk-order::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--orange);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform .2s ease;
+}
+.vk-order:hover::before { transform: scaleY(1); }
+
+.vk-order-l { display: flex; align-items: center; gap: 18px; }
+
+.vk-order-id {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--orange);
+  letter-spacing: 1px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.vk-order-desc { font-size: 15px; color: var(--t1); letter-spacing: .4px; }
+.vk-order-date { font-size: 13px; color: var(--t2); margin-top: 5px; letter-spacing: .8px; }
+
+.vk-order-r { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+
+.vk-order-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  color: var(--t1);
+  letter-spacing: 1px;
+}
+
+.vk-pill {
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+}
+.vk-pill.done    { background: rgba(28,199,106,.1); border: 1px solid rgba(28,199,106,.3); color: var(--green); }
+.vk-pill.shipped { background: rgba(91,158,255,.1); border: 1px solid rgba(91,158,255,.3); color: var(--blue);  }
+.vk-pill.pending { background: rgba(224,168,0,.1);  border: 1px solid rgba(224,168,0,.3);  color: var(--gold);  }
+
+/* Empty */
+.vk-empty {
+  padding: 60px 32px;
+  text-align: center;
+}
+.vk-empty-icon  { font-size: 44px; opacity: .45; margin-bottom: 14px; }
+.vk-empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 4px; color: var(--t3); }
+.vk-empty-mr    { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 14px; color: var(--t3); margin-top: 4px; }
+
+/* Footer strip */
+.vk-strip {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative;
+  overflow: hidden;
+}
+.vk-strip::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  opacity: .35;
+}
+.vk-strip-mr  { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 15px; color: var(--t2); }
+.vk-strip-tag { font-size: 11px; letter-spacing: 4px; color: var(--orange); }
+
+.vk-nlink.active {
+  border-left: 3px solid #FF6B00;
+}
+
+.vk-nlink.active .vk-nlink-en {
+  color: #FF6B00;
+}
+
+.vk-nlink.danger .vk-nlink-en {
+  color: #FF4D4D;
+}
+
+.vk-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: #FF6B00;
+}
+
+.vk-stat-en {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: rgba(245,240,232,0.72);
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+.vk-stat-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 14px;
+  color: rgba(245,240,232,0.45);
+  margin-top: 3px;
+}
+
+/* ═══ HERO ANIM ════════════════════════ */
+.vk-hero { animation: heroDown .5s ease both; }
+.vk-body { animation: fadeUp .5s .12s ease both; }
+
+@keyframes heroDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══ RESPONSIVE ═══════════════════════ */
+@media (max-width: 880px) {
+  .vk-body    { grid-template-columns: 1fr; }
+  .vk-nav     { position: static; }
+  .vk-stats   { grid-template-columns: 1fr 1fr; }
+  .vk-fields  { grid-template-columns: 1fr; }
+  .vk-field   { border-right: none !important; }
+  .vk-field:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .vk-field:last-child { border-bottom: none; }
+}
+
+@media (max-width: 520px) {
+  .vk-stats { grid-template-columns: 1fr; }
+  .vk-stat  { border-right: none; }
+  .vk-order { flex-direction: column; align-items: flex-start; }
+  .vk-order-r { width: 100%; justify-content: space-between; }
+}
+
+/* Readability floor for profile page */
+#vk-profile .vk-nav-head,
+#vk-profile .vk-hero-eyebrow,
+#vk-profile .vk-chip,
+#vk-profile .vk-btn,
+#vk-profile .vk-pill,
+#vk-profile .vk-strip-tag {
+  font-size: 12px !important;
+}
+
+#vk-profile .vk-field-mr,
+#vk-profile .vk-nlink-mr,
+#vk-profile .vk-stat-mr {
+  color: rgba(245,240,232,0.45) !important;
+}
+
+#vk-profile .vk-field-label {
+  font-size: 11px !important;
+}
+
+html[data-theme="light"] #vk-profile {
+  --bg: #F5F0E8;
+  --surface: #FFFFFF;
+  --raised: #FAF7F1;
+  --line: rgba(26,26,24,.12);
+  --t1: #1A1A18;
+  --t2: #3D3D3B;
+  --t3: #666662;
+}
+html[data-theme="light"] #vk-profile::before {
+  background: radial-gradient(circle, rgba(232,82,10,.09) 0%, transparent 65%);
+}
+html[data-theme="light"] #vk-profile .vk-hero-ghost {
+  color: rgba(232,82,10,.08);
+}
+html[data-theme="light"] #vk-profile .vk-avatar {
+  background: #F8F4EC;
+  box-shadow: 0 0 0 7px rgba(232,82,10,.08), 0 0 26px rgba(232,82,10,.12);
+}
+html[data-theme="light"] #vk-profile .vk-nlink-en {
+  color: #3D3D3B;
+}
+html[data-theme="light"] #vk-profile .vk-nlink-mr,
+html[data-theme="light"] #vk-profile .vk-field-mr,
+html[data-theme="light"] #vk-profile .vk-stat-mr {
+  color: #666662 !important;
+}
+html[data-theme="light"] #vk-profile .vk-field-label {
+  color: #3D3D3B;
+}
+html[data-theme="light"] #vk-profile .vk-stat-en {
+  color: #3D3D3B;
+}
+html[data-theme="light"] #vk-profile .vk-chip {
+  color: #3D3D3B;
+  background: rgba(26,26,24,.02);
+}
+html[data-theme="light"] #vk-profile .vk-chip.c-orange {
+  color: #E8520A;
+  border-color: rgba(232,82,10,.35);
+  background: rgba(232,82,10,.08);
+}
+html[data-theme="light"] #vk-profile .vk-chip.c-green {
+  color: #0A8A4A;
+  border-color: rgba(10,138,74,.35);
+  background: rgba(10,138,74,.08);
+}
+html[data-theme="light"] #vk-profile .vk-btn {
+  color: #3D3D3B;
+}
+html[data-theme="light"] #vk-profile .vk-empty-title,
+html[data-theme="light"] #vk-profile .vk-empty-mr {
+  color: #666662;
+}
+html[data-theme="light"] #vk-profile .vk-strip-mr {
+  color: #3D3D3B;
+}
+
+</style>
+
+<div id="vk-profile">
+
+  <!-- ══ HERO ════════════════════════════════ -->
+  <div class="vk-hero">
+    <div class="vk-hero-ghost">VEKTOR</div>
+
+    <div class="vk-hero-top">
+      <div class="vk-avatar">
+        {{ current_user.name[0].upper() }}
+        <div class="vk-avatar-ring"></div>
       </div>
-
-      <!-- STATS -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)">
-        <div style="background:var(--card);padding:20px 16px;text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--sf);line-height:1">{{ current_user.total_orders }}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.25);text-transform:uppercase;margin-top:3px">Orders</div>
-          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">ऑर्डर</div>
-        </div>
-        <div style="background:var(--card);padding:20px 16px;text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--white);line-height:1">₹{{ "{:,}".format(current_user.total_spent|int) }}</div>
-          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.25);text-transform:uppercase;margin-top:3px">Spent</div>
-          <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">एकूण खर्च</div>
+      <div class="vk-hero-info">
+        <div class="vk-hero-eyebrow">VEKTOR Member · SS26</div>
+        <div class="vk-hero-name">{{ current_user.name }}</div>
+        <div class="vk-hero-chips">
+          <span class="vk-chip c-orange">{{ current_user.role|title }}</span>
+          {% if current_user.is_verified %}
+          <span class="vk-chip c-green">✓ Verified</span>
+          {% endif %}
+          <span class="vk-chip">{{ current_user.email }}</span>
         </div>
       </div>
-
-      <!-- NAV LINKS -->
-      <div style="background:var(--card);border:0.5px solid var(--border);display:flex;flex-direction:column">
-        {% set nav_items = [
-          ('/profile','👤','My Profile','माझे प्रोफाईल','active'),
-          ('/my-orders','📦','My Orders','माझ्या ऑर्डर',''),
-          ('/wishlist','♡','Wishlist','विशलिस्ट',''),
-          ('/addresses','📍','Saved Addresses','पत्ते',''),
-          ('/edit-profile','✏','Edit Profile','प्रोफाईल बदला',''),
-          ('/logout','→','Logout','बाहेर पडा','logout'),
-        ] %}
-        {% for href, icon, en, mr, cls in nav_items %}
-        <a href="{{ href }}" style="display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:0.5px solid var(--border);text-decoration:none;transition:all .2s;
-          {% if cls == 'active' %}background:rgba(255,107,0,.06);border-left:2px solid var(--sf);{% elif cls == 'logout' %}color:#ff7070!important;{% else %}{% endif %}"
-          onmouseover="this.style.background='rgba(255,107,0,.04)';this.style.paddingLeft='22px'" onmouseout="this.style.background='{% if cls == 'active' %}rgba(255,107,0,.06){% else %}transparent{% endif %}';this.style.paddingLeft='18px'">
-          <span style="font-size:14px;flex-shrink:0">{{ icon }}</span>
-          <div>
-            <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;{% if cls == 'active' %}color:var(--sf);{% elif cls == 'logout' %}color:#ff7070;{% else %}color:rgba(247,243,236,.55);{% endif %}">{{ en }}</div>
-            <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2)">{{ mr }}</div>
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div style="display:flex;flex-direction:column;gap:3px">
-
-      <!-- PAGE TITLE -->
-      <div style="background:var(--smoke);border:0.5px solid var(--border);padding:28px 32px">
-        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:6px">My Profile · माझे प्रोफाईल</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--white);line-height:.9">ACCOUNT DETAILS</div>
+    <div class="vk-stats">
+      <div class="vk-stat">
+        <div class="vk-stat-num">{{ current_user.total_orders }}</div>
+        <div class="vk-stat-en">Total Orders</div>
+        <div class="vk-stat-mr">एकूण ऑर्डर</div>
       </div>
-
-      <!-- PERSONAL INFO -->
-      <div style="background:var(--card);border:0.5px solid var(--border)">
-        <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;justify-content:space-between;align-items:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--white)">PERSONAL INFO</div>
-          <a href="/edit-profile" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;padding:7px 16px;border:0.5px solid var(--border);color:rgba(247,243,236,.35);text-decoration:none;text-transform:uppercase;transition:all .2s" onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'" onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">✏ EDIT</a>
+      <div class="vk-stat">
+        <div class="vk-stat-num">₹{{ "{:,}".format(current_user.total_spent|int) }}</div>
+        <div class="vk-stat-en">Total Spent</div>
+        <div class="vk-stat-mr">एकूण खर्च</div>
+      </div>
+      <div class="vk-stat">
+        <div class="vk-stat-num small">{{ current_user.created_at.strftime('%b %Y') if current_user.created_at else '—' }}</div>
+        <div class="vk-stat-en">Member Since</div>
+        <div class="vk-stat-mr">सदस्य झाल्यापासून</div>
+      </div>
+      <div class="vk-stat">
+        <div class="vk-stat-num {% if current_user.status == 'Active' %}green{% else %}red{% endif %}">
+          {% if current_user.status == 'Active' %}<span class="vk-live"></span>{% endif %}{{ current_user.status }}
         </div>
-        <div style="padding:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div class="vk-stat-en">Account Status</div>
+        <div class="vk-stat-mr">खाते स्थिती</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BODY ════════════════════════════════ -->
+  <div class="vk-body">
+
+    <!-- Sidebar -->
+    <aside class="vk-nav">
+      <div class="vk-nav-head">Navigation · मेनू</div>
+      {% set nav = [
+        ('/profile',      '👤', 'My Profile',     'माझे प्रोफाईल',  'active'),
+        ('/my-orders',    '📦', 'My Orders',       'माझ्या ऑर्डर',   ''),
+        ('/wishlist',     '♡',  'Wishlist',        'विशलिस्ट',        ''),
+        ('/addresses',    '📍', 'Saved Addresses', 'पत्ते',            ''),
+        ('/edit-profile', '✏', 'Edit Profile',    'प्रोफाईल बदला',   ''),
+        ('/logout',       '⎋',  'Logout',          'बाहेर पडा',       'danger'),
+      ] %}
+      {% for href, icon, en, mr, cls in nav %}
+      <a href="{{ href }}" class="vk-nlink {{ cls }}">
+        <span class="vk-nlink-icon">{{ icon }}</span>
+        <div>
+          <span class="vk-nlink-en">{{ en }}</span>
+          <span class="vk-nlink-mr">{{ mr }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </aside>
+
+    <!-- Main -->
+    <div class="vk-main">
+
+      <!-- Personal Info -->
+      <div class="vk-sec">
+        <div class="vk-sec-head">
+          <div class="vk-sec-title">PERSONAL <b>INFO</b></div>
+          <a href="/edit-profile" class="vk-btn">✏ Edit</a>
+        </div>
+        <div class="vk-fields">
           {% set fields = [
-            ('Full Name','नाव', current_user.name),
-            ('Email Address','ईमेल', current_user.email),
-            ('Phone Number','फोन', current_user.phone or '— Not added'),
-            ('Member Since','सदस्य झाल्यापासून', current_user.created_at.strftime('%d %b %Y') if current_user.created_at else '—'),
-            ('Account Role','खाते प्रकार', current_user.role|title),
-            ('Account Status','खाते स्थिती', current_user.status),
+            ('Full Name',     'नाव',               current_user.name),
+            ('Email Address', 'ईमेल',               current_user.email),
+            ('Phone Number',  'फोन नंबर',           current_user.phone or 'Not added yet'),
+            ('Account Role',  'खाते प्रकार',        current_user.role|title),
           ] %}
-          {% for en, mr, val in fields %}
-          <div style="border-bottom:0.5px solid var(--border);padding-bottom:16px">
-            <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(247,243,236,.28);text-transform:uppercase;margin-bottom:4px">{{ en }}</div>
-            <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:10px;color:rgba(247,243,236,.2);margin-bottom:4px">{{ mr }}</div>
-            <div style="font-size:15px;color:{% if val == 'Active' %}var(--gr2){% elif val == 'Blocked' %}#ff7070{% else %}var(--white){% endif %}">{{ val }}</div>
+          {% for label, mr, val in fields %}
+          <div class="vk-field">
+            <div class="vk-field-label">{{ label }}</div>
+            <div class="vk-field-mr">{{ mr }}</div>
+            <div class="vk-field-val">{{ val }}</div>
           </div>
           {% endfor %}
         </div>
       </div>
 
-      <!-- RECENT ORDERS -->
-      <div style="background:var(--card);border:0.5px solid var(--border)">
-        <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;justify-content:space-between;align-items:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px;color:var(--white)">RECENT ORDERS</div>
-          <a href="/my-orders" style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--sf);text-decoration:none">VIEW ALL →</a>
+      <!-- Recent Orders -->
+      <div class="vk-sec">
+        <div class="vk-sec-head">
+          <div class="vk-sec-title">RECENT <b>ORDERS</b></div>
+          <a href="/my-orders" class="vk-btn hot">View All →</a>
         </div>
-        <div>
-          {% if current_user.orders %}
-            {% for order in current_user.orders[-3:]|reverse %}
 
-            {# ✅ FIXED — was: <a /order-details/<int:order_id> which is invalid HTML #}
-            <a href="/order-details/{{ order.id }}" style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:0.5px solid var(--border);text-decoration:none;transition:background .2s" onmouseover="this.style.background='rgba(255,107,0,.03)'" onmouseout="this.style.background='transparent'">
-              <div style="display:flex;align-items:center;gap:14px">
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--sf);">#VK{{ order.id }}</div>
-                <div>
-                  <div style="font-size:13px;color:var(--white)">{{ order.items|length }} item{{ 's' if order.items|length > 1 }}</div>
-                  <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:rgba(247,243,236,.25)">{{ order.created_at.strftime('%d %b %Y') }}</div>
-                </div>
+        {% if current_user.orders %}
+          {% for order in current_user.orders[-3:]|reverse %}
+          <a href="/order-details/{{ order.id }}" class="vk-order">
+            <div class="vk-order-l">
+              <div class="vk-order-id">#VK{{ order.id }}</div>
+              <div>
+                <div class="vk-order-desc">{{ order.items|length }} item{{ 's' if order.items|length != 1 }}</div>
+                <div class="vk-order-date">{{ order.created_at.strftime('%d %b %Y') }}</div>
               </div>
-              <div style="display:flex;align-items:center;gap:12px">
-                <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--sf);letter-spacing:2px">₹{{ "{:,}".format(order.total_price|int) }}</div>
-                {% if order.status == 'Delivered' %}
-                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(10,138,74,.15);border:1px solid rgba(10,138,74,.3);color:#0db85f">DONE</div>
-                {% elif order.status == 'Shipped' %}
-                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(59,125,216,.15);border:1px solid rgba(59,125,216,.3);color:#7aacff">SHIPPED</div>
-                {% else %}
-                <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;padding:3px 10px;background:rgba(200,148,26,.15);border:1px solid rgba(200,148,26,.3);color:var(--gold2)">{{ order.status|upper }}</div>
-                {% endif %}
-              </div>
-            </a>
-
-            {% endfor %}
-          {% else %}
-          <div style="padding:36px;text-align:center;color:rgba(247,243,236,.3);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px">NO ORDERS YET</div>
-          {% endif %}
+            </div>
+            <div class="vk-order-r">
+              <div class="vk-order-price">₹{{ "{:,}".format(order.total_price|int) }}</div>
+              {% if order.status == 'Delivered' %}
+              <span class="vk-pill done">Delivered</span>
+              {% elif order.status == 'Shipped' %}
+              <span class="vk-pill shipped">Shipped</span>
+              {% else %}
+              <span class="vk-pill pending">{{ order.status }}</span>
+              {% endif %}
+            </div>
+          </a>
+          {% endfor %}
+        {% else %}
+        <div class="vk-empty">
+          <div class="vk-empty-icon">📦</div>
+          <div class="vk-empty-title">No Orders Yet</div>
+          <div class="vk-empty-mr">अजून कोणताही ऑर्डर नाही</div>
         </div>
+        {% endif %}
       </div>
 
-      <!-- PROMISE STRIP -->
-      <div style="background:var(--mid);border:0.5px solid var(--border);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-        <div style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:15px;color:rgba(247,243,236,.35)">।। मराठी माणसाने बनवलेले — मराठी माणसासाठी ।।</div>
-        <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:3px;color:var(--sf)">VEKTOR SS/26</div>
+      <!-- Footer -->
+      <div class="vk-strip">
+        <span class="vk-strip-mr">।। मराठी माणसाने बनवलेले — मराठी माणसासाठी ।।</span>
+        <span class="vk-strip-tag">VEKTOR SS/26</span>
       </div>
 
     </div>
   </div>
-
 </div>
+
 {% endif %}
 {% endblock %}

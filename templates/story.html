@@ -2,58 +2,450 @@
 {% set active_page = "story" %}
 {% block title %}Our Story — VEKTOR{% endblock %}
 
+{% block extra_css %}
+<style>
+#page-story {
+  --sx-bg: #070708;
+  --sx-card: #101117;
+  --sx-card-2: #171922;
+  --sx-bd: rgba(247, 243, 236, 0.1);
+  --sx-txt: rgba(247, 243, 236, 0.94);
+  --sx-soft: rgba(247, 243, 236, 0.68);
+  --sx-faint: rgba(247, 243, 236, 0.42);
+  --sx-ac: #ff6b00;
+  --sx-gr: #0a8a4a;
+  background:
+    radial-gradient(1100px 480px at 10% -10%, rgba(255, 107, 0, 0.12), transparent 62%),
+    radial-gradient(900px 400px at 90% 0%, rgba(10, 138, 74, 0.08), transparent 58%),
+    var(--sx-bg);
+}
+
+html[data-theme="light"] #page-story {
+  --sx-bg: #f5f1e9;
+  --sx-card: #ffffff;
+  --sx-card-2: #faf8f3;
+  --sx-bd: rgba(31, 25, 19, 0.14);
+  --sx-txt: #1A1A18;
+  --sx-soft: #3D3D3B;
+  --sx-faint: #666662;
+  --sx-ac: #e25d00;
+  --sx-gr: #0a8a4a;
+  background:
+    radial-gradient(1100px 480px at 10% -10%, rgba(226, 93, 0, 0.12), transparent 62%),
+    radial-gradient(900px 400px at 90% 0%, rgba(10, 138, 74, 0.08), transparent 58%),
+    var(--sx-bg);
+}
+
+.sx-wrap { padding: 44px 36px 60px; }
+
+.sx-hero {
+  border: 1px solid var(--sx-bd);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  min-height: 520px;
+  background: linear-gradient(150deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+}
+
+.sx-hero-l {
+  border-right: 1px solid var(--sx-bd);
+  padding: 48px 44px;
+}
+
+.sx-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--sx-ac);
+  margin-bottom: 12px;
+}
+
+.sx-title {
+  margin: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(70px, 11vw, 152px);
+  line-height: 0.84;
+  letter-spacing: 0.01em;
+  color: var(--sx-txt);
+}
+
+.sx-copy {
+  margin-top: 18px;
+  max-width: 680px;
+  color: var(--sx-soft);
+  font-size: 19px;
+  line-height: 1.58;
+}
+
+.sx-cta {
+  margin-top: 26px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sx-btn {
+  border: 1px solid var(--sx-bd);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  padding: 11px 18px;
+  color: var(--sx-txt);
+}
+
+.sx-btn.primary {
+  background: var(--sx-ac);
+  border-color: var(--sx-ac);
+  color: #060606;
+  font-weight: 700;
+}
+
+.sx-hero-r {
+  padding: 24px;
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+.sx-fact {
+  border: 1px solid var(--sx-bd);
+  background: var(--sx-card);
+  padding: 14px;
+}
+
+.sx-fact-k {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sx-faint);
+}
+
+.sx-fact-v {
+  margin-top: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  line-height: 0.9;
+  color: var(--sx-txt);
+}
+
+.sx-fact-t {
+  margin-top: 6px;
+  color: var(--sx-soft);
+  font-size: 13px;
+}
+
+.sx-values {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sx-val {
+  border: 1px solid var(--sx-bd);
+  background: var(--sx-card);
+  padding: 20px 18px;
+}
+
+.sx-val-word {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 26px;
+  color: var(--sx-txt);
+}
+
+.sx-val-en {
+  margin-top: 2px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sx-ac);
+}
+
+.sx-val-desc {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--sx-soft);
+}
+
+.sx-timeline {
+  margin-top: 20px;
+  border: 1px solid var(--sx-bd);
+  background: var(--sx-card);
+  padding: 22px;
+}
+
+.sx-head {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(34px, 4.4vw, 58px);
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  color: var(--sx-txt);
+  margin: 0 0 16px;
+}
+
+.sx-steps {
+  display: grid;
+  gap: 10px;
+}
+
+.sx-step {
+  border: 1px solid var(--sx-bd);
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: linear-gradient(140deg, rgba(255,107,0,.07), rgba(255,255,255,.01));
+}
+
+.sx-year {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 34px;
+  line-height: 1;
+  color: var(--sx-ac);
+}
+
+.sx-step-title {
+  font-size: 18px;
+  color: var(--sx-txt);
+}
+
+.sx-step-desc {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--sx-soft);
+}
+
+.sx-team {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sx-person {
+  border: 1px solid var(--sx-bd);
+  background: var(--sx-card-2);
+  padding: 22px 18px;
+  text-align: center;
+}
+
+.sx-av {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 24px;
+  color: #050505;
+  background: var(--sx-ac);
+}
+
+.sx-person:nth-child(2) .sx-av { background: var(--sx-gr); color: #f7f3ec; }
+.sx-person:nth-child(3) .sx-av { background: #c8941a; color: #080808; }
+
+.sx-name {
+  font-size: 19px;
+  color: var(--sx-txt);
+}
+
+.sx-role {
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sx-faint);
+}
+
+.sx-marathi {
+  margin-top: 8px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 12px;
+  color: var(--sx-soft);
+}
+
+.sx-promise {
+  margin-top: 20px;
+  border: 1px solid var(--sx-bd);
+  padding: 26px 20px;
+  text-align: center;
+  background: linear-gradient(130deg, rgba(255,107,0,.08), rgba(10,138,74,.06));
+}
+
+.sx-promise-k {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sx-faint);
+}
+
+.sx-promise-v {
+  margin-top: 10px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: clamp(26px, 3.2vw, 44px);
+  line-height: 1.5;
+  color: var(--sx-txt);
+}
+
+.sx-promise-e {
+  margin-top: 4px;
+  font-size: 18px;
+  color: var(--sx-soft);
+  font-style: italic;
+}
+
+html[data-theme="light"] #page-story .sx-hero {
+  background: linear-gradient(150deg, rgba(31,25,19,.02), rgba(31,25,19,.01));
+}
+
+html[data-theme="light"] #page-story .sx-step {
+  background: linear-gradient(140deg, rgba(226,93,0,.06), rgba(255,255,255,.9));
+}
+
+html[data-theme="light"] #page-story .sx-promise {
+  background: linear-gradient(130deg, rgba(226,93,0,.12), rgba(10,138,74,.08));
+}
+
+html[data-theme="light"] #page-story .sx-btn {
+  color: #1A1A18;
+}
+
+html[data-theme="light"] #page-story .sx-btn.primary {
+  color: #ffffff;
+}
+
+@media (max-width: 1100px) {
+  .sx-hero { grid-template-columns: 1fr; }
+  .sx-hero-l { border-right: none; border-bottom: 1px solid var(--sx-bd); }
+  .sx-values { grid-template-columns: 1fr 1fr; }
+  .sx-team { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+  .sx-wrap { padding: 28px 20px 42px; }
+  .sx-title { font-size: clamp(54px, 20vw, 96px); }
+  .sx-copy { font-size: 17px; }
+  .sx-values { grid-template-columns: 1fr; }
+  .sx-step { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page active" id="page-story">
-  <section class="story-hero">
-    <div class="story-hero-l">
-      <div class="story-sk-big">Designed for everyday presence</div>
-      <div class="story-tr">Modern menswear, shaped for Indian fit and daily comfort.</div>
-      <h1 class="story-title">OUR<br>STORY</h1>
-      <p class="story-body">Vektor was born from a simple belief — that Maharashtrian men deserve clothing built for them. Not for stock photos. Not for imported brands. For us. By us.</p>
-      <p class="story-body">२०१९ मध्ये आमच्या एका छोट्या शिलाईकामाच्या खोलीत सुरुवात झाली. आज आम्ही १२,000+ ग्राहकांसाठी कपडे बनवतो.</p>
-      <a href="{{ url_for('shop.shop_page') }}" class="btn-sf" style="margin-top:8px">संग्रह पाहा — Shop Our Story</a>
-    </div>
-    <div class="story-hero-r">
-      <div class="story-r-head">MADE BY<br>MAHARASHTRA</div>
-      <div class="story-r-mr">महाराष्ट्राने बनवलेले · महाराष्ट्रासाठी<br>हर धागा, हर सिलाई — भारत की पहचान</div>
-      <p class="story-r-body">Every founder, every tailor, every thread in a Vektor garment traces back to our land. We don't outsource. We don't cut corners. We build — stitch by stitch — with hands that know what Maharashtra is made of.</p>
-      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border)">
-        <div class="sec-tag" style="margin-bottom:8px">DESIGN PHILOSOPHY</div>
-        <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(247,243,236,.3);line-height:1.7">Clean silhouettes, useful details, and fabric that holds up in real life.</p>
+  <div class="sx-wrap">
+    <section class="sx-hero">
+      <div class="sx-hero-l">
+        <div class="sx-tag">Our Story · आमची कहाणी</div>
+        <h1 class="sx-title">MADE WITH<br>INTENT</h1>
+        <p class="sx-copy">Vektor started in 2019 with one clear belief: Indian men deserve clothes built for Indian life. Better fit, cleaner silhouettes, and fabric that lasts in daily wear.</p>
+        <p class="sx-copy">We did not build this as a trend label. We built it as a long-term uniform for real people.</p>
+        <div class="sx-cta">
+          <a class="sx-btn primary" href="{{ url_for('shop.shop_page') }}">Shop Story</a>
+          <a class="sx-btn" href="{{ url_for('shop.collections') }}">View Collections</a>
+        </div>
       </div>
-    </div>
-  </section>
+      <div class="sx-hero-r">
+        <article class="sx-fact">
+          <div class="sx-fact-k">Founded</div>
+          <div class="sx-fact-v">2019</div>
+          <div class="sx-fact-t">Small workshop, first hand-stitched drops.</div>
+        </article>
+        <article class="sx-fact">
+          <div class="sx-fact-k">Community</div>
+          <div class="sx-fact-v">12K+</div>
+          <div class="sx-fact-t">Customers across Maharashtra and beyond.</div>
+        </article>
+        <article class="sx-fact">
+          <div class="sx-fact-k">Commitment</div>
+          <div class="sx-fact-v">5YR</div>
+          <div class="sx-fact-t">Fabric warranty on selected essentials.</div>
+        </article>
+      </div>
+    </section>
 
-  <div class="story-values">
-    <div class="story-val"><div class="story-val-word">फिट</div><div class="story-val-en">FIT</div><div class="story-val-desc">Proportions made for Indian bodies, with comfort that works all day.</div><div class="story-val-sk">Clean shape. Natural movement.</div></div>
-    <div class="story-val"><div class="story-val-word">कापड</div><div class="story-val-en">FABRIC</div><div class="story-val-desc">Premium textures selected for breathability, structure, and repeat wear.</div><div class="story-val-sk">Made to feel better, longer.</div></div>
-    <div class="story-val"><div class="story-val-word">शैली</div><div class="story-val-en">STYLE</div><div class="story-val-desc">Modern essentials that work across office, travel, weekends, and evenings.</div><div class="story-val-sk">Quiet detail. Strong finish.</div></div>
-  </div>
+    <section class="sx-values">
+      <article class="sx-val">
+        <div class="sx-val-word">फिट</div>
+        <div class="sx-val-en">Fit First</div>
+        <div class="sx-val-desc">Designed for Indian proportions with day-long comfort and clean structure.</div>
+      </article>
+      <article class="sx-val">
+        <div class="sx-val-word">कापड</div>
+        <div class="sx-val-en">Fabric Trust</div>
+        <div class="sx-val-desc">Breathable, durable textiles selected to hold shape over repeated wear.</div>
+      </article>
+      <article class="sx-val">
+        <div class="sx-val-word">शैली</div>
+        <div class="sx-val-en">Modern Style</div>
+        <div class="sx-val-desc">Minimal yet expressive pieces that move from work to weekends without friction.</div>
+      </article>
+    </section>
 
-  <section class="sec-wrap" style="border-top:1px solid var(--border)">
-    <div><div class="sec-tag">Timeline · आमचा प्रवास</div><div class="sec-head">HOW WE GOT HERE<span class="sec-mr">आम्ही इथपर्यंत कसे पोहोचलो</span></div></div>
-    <div class="tl-grid">
-      <div class="tl-item"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2019</div><div class="tl-en">Founded with 10 shirts and a vision</div><div class="tl-mr">१० शर्ट आणि एक स्वप्नासह सुरुवात</div></div>
-      <div class="tl-item"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">2021</div><div class="tl-en">First 500 online orders in one month</div><div class="tl-mr">एका महिन्यात ५०० ऑनलाईन ऑर्डर</div></div>
-      <div class="tl-item"><div class="tl-dot gold"><div class="tl-dot-in"></div></div><div class="tl-year">2023</div><div class="tl-en">10,000 customers and growing</div><div class="tl-mr">१०,000 ग्राहक — आणि वाढत आहे</div></div>
-      <div class="tl-item"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2024</div><div class="tl-en">India's first 5-year fabric warranty</div><div class="tl-mr">भारतातील पहिली ५ वर्ष वॉरंटी</div></div>
-      <div class="tl-item"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">२०२६</div><div class="tl-en">वसंत संग्रह — SS/26 is here</div><div class="tl-mr">वसंत संग्रह आला</div></div>
-    </div>
-  </section>
+    <section class="sx-timeline">
+      <h2 class="sx-head">Timeline</h2>
+      <div class="sx-steps">
+        <article class="sx-step">
+          <div class="sx-year">2019</div>
+          <div>
+            <div class="sx-step-title">Vektor is founded</div>
+            <div class="sx-step-desc">First prototypes were cut and stitched in Pune with a single tailoring unit.</div>
+          </div>
+        </article>
+        <article class="sx-step">
+          <div class="sx-year">2021</div>
+          <div>
+            <div class="sx-step-title">First digital growth wave</div>
+            <div class="sx-step-desc">Initial online drops crossed 500 orders and validated the fit-first approach.</div>
+          </div>
+        </article>
+        <article class="sx-step">
+          <div class="sx-year">2024</div>
+          <div>
+            <div class="sx-step-title">Quality guarantee scale-up</div>
+            <div class="sx-step-desc">Fabric warranty and stronger production standards became core brand commitments.</div>
+          </div>
+        </article>
+      </div>
+    </section>
 
-  <section class="sec-wrap" style="padding-top:0;border-top:1px solid var(--border)">
-    <div><div class="sec-tag">Team · आमची टीम</div><div class="sec-head">THE PEOPLE<span class="sec-mr">आमचे लोक</span></div></div>
-    <div class="story-team" style="margin-top:28px">
-      <div class="story-team-card"><div class="team-av">अ</div><div class="team-name">Arjun Mane</div><div class="team-role">Founder & Head Designer</div><div class="team-mr">संस्थापक व प्रमुख डिझायनर</div></div>
-      <div class="story-team-card"><div class="team-av" style="background:var(--gr)">प</div><div class="team-name">Priya Shinde</div><div class="team-role">Lead Tailor & Quality Head</div><div class="team-mr">प्रमुख शिंपी व गुणवत्ता प्रमुख</div></div>
-      <div class="story-team-card"><div class="team-av" style="background:var(--gold)">र</div><div class="team-name">Rohan Patil</div><div class="team-role">Operations & Fabric Sourcing</div><div class="team-mr">संचालन व कापड खरेदी</div></div>
-    </div>
-  </section>
+    <section class="sx-team">
+      <article class="sx-person">
+        <div class="sx-av">अ</div>
+        <div class="sx-name">Arjun Mane</div>
+        <div class="sx-role">Founder & Design Lead</div>
+        <div class="sx-marathi">संस्थापक व प्रमुख डिझाइन प्रमुख</div>
+      </article>
+      <article class="sx-person">
+        <div class="sx-av">प</div>
+        <div class="sx-name">Priya Shinde</div>
+        <div class="sx-role">Quality & Tailoring Head</div>
+        <div class="sx-marathi">गुणवत्ता आणि शिलाई प्रमुख</div>
+      </article>
+      <article class="sx-person">
+        <div class="sx-av">र</div>
+        <div class="sx-name">Rohan Patil</div>
+        <div class="sx-role">Operations & Fabric Sourcing</div>
+        <div class="sx-marathi">संचालन व कापड स्त्रोत व्यवस्थापन</div>
+      </article>
+    </section>
 
-  <div class="id-strip">
-    <div class="id-label">OUR PROMISE · आमचे वचन</div>
-    <div class="id-big">मराठी माणसाने बनवलेले.<br>मराठी माणसासाठी.</div>
-    <div class="id-en">"Made by a Marathi man. For the Marathi man."</div>
+    <section class="sx-promise">
+      <div class="sx-promise-k">Our Promise</div>
+      <div class="sx-promise-v">मराठी माणसाने बनवलेले.<br>मराठी माणसासाठी.</div>
+      <div class="sx-promise-e">Made by a Marathi man, for the Marathi man.</div>
+    </section>
   </div>
 </div>
 {% endblock %}

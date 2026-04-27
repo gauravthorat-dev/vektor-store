@@ -1,6 +1,6 @@
 from database.db import db
 from datetime import datetime
-import random
+import secrets
 
 
 class Order(db.Model):
@@ -37,6 +37,8 @@ class Order(db.Model):
     delivery_boy_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     delivery_otp    = db.Column(db.String(6), nullable=True)   # 6-digit OTP for delivery confirmation
     otp_verified    = db.Column(db.Boolean, default=False)
+    otp_attempts    = db.Column(db.Integer, default=0)
+    otp_locked_at   = db.Column(db.DateTime, nullable=True)
 
     # ── Stage Timestamps ──────────────────────────────────────
     confirmed_at        = db.Column(db.DateTime, nullable=True)
@@ -73,8 +75,10 @@ class Order(db.Model):
     # ── OTP Helper ───────────────────────────────────────────
     def generate_otp(self):
         """Generate a fresh 6-digit OTP and save to model (call db.session.commit() after)."""
-        self.delivery_otp = str(random.randint(100000, 999999))
+        self.delivery_otp = f"{secrets.randbelow(1_000_000):06d}"
         self.otp_verified = False
+        self.otp_attempts = 0
+        self.otp_locked_at = None
         return self.delivery_otp
 
     # ── Status Transition Helper ─────────────────────────────

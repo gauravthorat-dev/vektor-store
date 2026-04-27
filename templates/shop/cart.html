@@ -3,7 +3,7 @@
 {% block title %}Your Cart — VEKTOR{% endblock %}
 
 {% block content %}
-<div style="min-height:80vh;padding:0;background:var(--ink)">
+<div class="cart-page" style="min-height:80vh;padding:0;background:var(--ink)">
 
   <!-- ══ PAGE HEADER ══ -->
   <div style="padding:40px 5% 28px;border-bottom:1px solid var(--border);background:var(--smoke);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
@@ -305,6 +305,28 @@
 .cart-item-row:hover {
   border-color: rgba(255,107,0,.18) !important;
 }
+
+/* Readability boost: many inline styles were 7-10px and too small */
+.cart-page [style*="font-size:7px"]  { font-size: 10px !important; }
+.cart-page [style*="font-size:8px"]  { font-size: 11px !important; }
+.cart-page [style*="font-size:9px"]  { font-size: 12px !important; }
+.cart-page [style*="font-size:10px"] { font-size: 13px !important; }
+.cart-page [style*="font-size:11px"] { font-size: 14px !important; }
+
+/* Keep headline scale untouched */
+.cart-page [style*="font-size:clamp(36px,5vw,64px)"],
+.cart-page [style*="font-size:clamp(60px,15vw,120px)"] { font-size: inherit !important; }
+
+/* Light-mode readability fixes for inline legacy styles */
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.5)"] { color: rgba(31,25,19,.62) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.4)"] { color: rgba(31,25,19,.58) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.35)"] { color: rgba(31,25,19,.54) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.3)"] { color: rgba(31,25,19,.50) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.28)"] { color: rgba(31,25,19,.48) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.25)"] { color: rgba(31,25,19,.46) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.2)"] { color: rgba(31,25,19,.42) !important; }
+html[data-theme="light"] .cart-page [style*="color:rgba(247,243,236,.15)"] { color: rgba(31,25,19,.38) !important; }
+
 @media (max-width: 900px) {
   /* stack layout on mobile */
   div[style*="grid-template-columns:1.4fr 1fr"] {

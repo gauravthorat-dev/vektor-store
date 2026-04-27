@@ -107,6 +107,15 @@ nav {
 }
 .nav-search-btn:hover { color: var(--vk-white); }
 
+.nav-theme-btn {
+  font-family: var(--fb);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--vk-t3);
+}
+.nav-theme-btn:hover { color: var(--vk-white); }
+
 .nav-login-btn {
   font-family: var(--fb);
   font-size: 10px;
@@ -1168,4 +1177,385 @@ footer a:hover { color: var(--vk-orange); transform: translateX(4px); }
   border-color: #FF6B00;
   color: #FF6B00;
   transform: translateY(-2px);
+}
+/* ══ SPACING FIX — category + new arrivals tight together ══ */
+#page-home section.category-sec {
+  padding-top: 24px !important;
+  padding-bottom: 0 !important;
+}
+#page-home section.new-arrivals-sec {
+  padding-top: 36px !important;
+  margin-top: 0 !important;
+}
+
+/* ═════════════════════════════
+   🔥 GLOBAL SECTION FIX
+═════════════════════════════ */
+
+section {
+  position: relative;
+  padding: 60px 32px;
+}
+
+/* remove extra gap between sections */
+section + section {
+  margin-top: 0;
+}
+
+
+/* ═════════════════════════════
+   🔥 FIX EXTRA HEIGHT ISSUE
+═════════════════════════════ */
+
+.sec-wrap {
+  display: block !important;
+  height: auto !important;
+  min-height: unset !important;
+}
+
+.category-sec {
+  height: fit-content !important;
+  min-height: unset !important;
+  padding-bottom: 10px !important;
+}
+
+
+/* ═════════════════════════════
+   🔥 DIVIDER LINE FIX
+═════════════════════════════ */
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 102, 0, 0.3),
+    transparent
+  );
+}
+
+
+/* ═════════════════════════════
+   🔥 ADD SPACE ABOVE NEW ARRIVALS
+═════════════════════════════ */
+
+.category-sec + .sec-wrap {
+  padding-top: 40px;   /* 🔥 space above JUST DROPPED */
+}
+
+
+/* ═════════════════════════════
+   🔥 CATEGORY GRID (NO BOX)
+═════════════════════════════ */
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  border: none !important;
+}
+
+
+/* ═════════════════════════════
+   🔥 CATEGORY CARD (PREMIUM)
+═════════════════════════════ */
+
+.cat-card {
+  background: linear-gradient(145deg, #121212, #0c0c0c);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+
+  padding: 22px 18px;
+  min-height: 140px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  color: #fff;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* hover */
+.cat-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+/* glow */
+.cat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left,
+      rgba(255,107,0,0.15),
+      transparent 70%);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.cat-card:hover::before {
+  opacity: 1;
+}
+
+
+/* ═════════════════════════════
+   🔥 TEXT STYLING
+═════════════════════════════ */
+
+.cat-en {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.cat-mr {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.cat-count {
+  font-size: 10px;
+  color: #FF6B00;
+}
+
+
+/* remove old line */
+.cat-bar {
+  display: none;
+}
+
+
+/* ═════════════════════════════
+   🔥 FORCE REMOVE OLD BORDER
+═════════════════════════════ */
+
+#page-home .cat-grid {
+  border: none !important;
+}
+
+/* ═════════════════════════════
+   🔥 FIX CATEGORY SECTION HEIGHT (MAIN BUG)
+═════════════════════════════ */
+
+.sec-wrap.category-sec {
+  display: block !important;        /* remove flex stretching */
+  height: auto !important;
+  min-height: unset !important;
+  padding-bottom: 10px !important;
+}
+
+
+/* ═════════════════════════════
+   🔥 ENSURE GRID DOESN'T STRETCH
+═════════════════════════════ */
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  border: none !important;
+}
+
+
+/* ═════════════════════════════
+   🔥 CARD CLEAN PREMIUM LOOK
+═════════════════════════════ */
+
+.cat-card {
+  background: linear-gradient(145deg, #121212, #0c0c0c);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+
+  padding: 22px 18px;
+  min-height: 140px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  color: #fff;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* hover */
+.cat-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+
+/* ═════════════════════════════
+   🔥 REMOVE OLD BOX + BORDER
+═════════════════════════════ */
+
+#page-home .cat-grid {
+  border: none !important;
+}
+
+.cat-bar {
+  display: none;
+}
+
+
+/* ═════════════════════════════
+   🔥 GLOBAL SECTION FIX
+═════════════════════════════ */
+
+section {
+  position: relative;
+  padding: 60px 32px;
+}
+
+section + section {
+  margin-top: 0;
+}
+
+
+/* ═════════════════════════════
+   🔥 DIVIDER LINE (KEEP CLEAN)
+═════════════════════════════ */
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 102, 0, 0.3),
+    transparent
+  );
+}
+
+
+/* ═════════════════════════════
+   🔥 ADD SPACE ABOVE "JUST DROPPED"
+═════════════════════════════ */
+
+.category-sec + .sec-wrap {
+  margin-top: 30px;     /* 🔥 spacing between sections */
+  padding-top: 20px;
+}
+
+/* ================= READABILITY FLOOR (HOME / SHOP / USER) ================= */
+:root {
+  --vk-t3: rgba(247,243,236,0.56);
+  --vk-t4: rgba(247,243,236,0.44);
+}
+
+body {
+  line-height: 1.52;
+}
+
+input,
+select,
+textarea,
+button {
+  font-size: 14px;
+}
+
+.nav-links a,
+.nav-search-btn,
+.nav-login-btn,
+.urg span,
+.form-label,
+.login-divider span,
+.f-newsletter-label,
+.shop-count,
+.shop-sort select,
+.price-vals,
+.sidebar-title,
+.lb-overlay-btn,
+.team-role,
+.fb-l,
+.coll-card-tag,
+.coll-card-count,
+.cat-num,
+.cat-count,
+.prod-info-save,
+.prod-info-rating-txt,
+.prod-info-old,
+.testi-loc,
+.why-hi,
+.mq-item span,
+.cart-item-size {
+  font-size: 12px !important;
+}
+
+.nav-tagline,
+.nav-user-role,
+.cat-hi,
+.search-result-mr,
+.footer-mr,
+.cart-empty-en,
+.cart-empty-btn,
+.cart-continue,
+.cart-total-label,
+.toast-mr {
+  font-size: 12px !important;
+  color: var(--vk-t2) !important;
+}
+
+.prod-info-mr,
+.cat-mr,
+.f-sub,
+.testi-mr,
+.coll-card-sk,
+.story-val-sk,
+.lb-info-mr,
+.lb-ed-mr,
+.cart-title-mr,
+.cart-item-mr {
+  color: var(--vk-t2) !important;
+}
+
+@media (max-width: 768px) {
+  .nav-links a,
+  .shop-count,
+  .shop-sort select,
+  .price-vals,
+  .sidebar-title {
+    font-size: 11px !important;
+  }
+}
+
+html[data-theme="light"] {
+  --vk-orange:      #E25D00;
+  --vk-orange-dim:  rgba(226,93,0,0.08);
+  --vk-orange-glow: rgba(226,93,0,0.16);
+  --vk-gold:        #B68414;
+  --vk-green:       #0C7A43;
+
+  --vk-ink:    #F6F2EA;
+  --vk-deep:   #FFFFFF;
+  --vk-mid:    #F1EBDF;
+  --vk-card:   #FFFDF8;
+  --vk-raise:  #F5EFE3;
+  --vk-border: rgba(31,25,19,0.12);
+  --vk-border2:rgba(31,25,19,0.2);
+
+  --vk-white:  #1F1913;
+  --vk-t1:     rgba(31,25,19,0.95);
+  --vk-t2:     rgba(31,25,19,0.78);
+  --vk-t3:     rgba(31,25,19,0.58);
+  --vk-t4:     rgba(31,25,19,0.44);
 }

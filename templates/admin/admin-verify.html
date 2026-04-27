@@ -1,5 +1,6 @@
 {% extends "components/navbar.html" %}
 {% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 
 <div style="
   min-height: 100vh;
@@ -49,6 +50,7 @@
     {% endwith %}
 
     <form method="POST" action="/admin/verify">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input
         type="password"
         name="password"

@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VEKTOR — Admin Login</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<script>
+  (function () {
+    var theme = "dark";
+    try {
+      var saved = localStorage.getItem("vektor_site_theme");
+      if (saved === "light" || saved === "dark") {
+        theme = saved;
+      } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+        theme = "light";
+      }
+    } catch (e) {}
+    document.documentElement.setAttribute("data-theme", theme);
+  })();
+</script>
 <style>
 :root {
   --bg:     #060606;
@@ -24,6 +38,19 @@
   --font-mono:    'Space Mono', monospace;
   --font-body:    'DM Sans', sans-serif;
   --font-dev:     'Tiro Devanagari Sanskrit', serif;
+}
+
+html[data-theme="light"] {
+  --bg:     #F5F0E8;
+  --bg2:    #FFFFFF;
+  --bg3:    #F7F3EB;
+  --border: rgba(26,26,24,0.10);
+  --border2:rgba(26,26,24,0.16);
+  --fg:     #1A1A18;
+  --fg2:    #3D3D3B;
+  --fg3:    #666662;
+  --sf:     #E8520A;
+  --sf2:    #CC4A09;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -63,6 +90,16 @@ body::after {
   width: 700px; height: 700px;
   background: radial-gradient(circle, rgba(255,107,0,0.06) 0%, transparent 70%);
   pointer-events: none;
+}
+
+html[data-theme="light"] body::before {
+  background-image:
+    linear-gradient(rgba(26,26,24,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,26,24,0.04) 1px, transparent 1px);
+}
+
+html[data-theme="light"] body::after {
+  background: radial-gradient(circle, rgba(232,82,10,0.08) 0%, transparent 70%);
 }
 
 /* Noise overlay */
@@ -341,7 +378,39 @@ body::after {
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--sf); }
+
+html[data-theme="light"] .login-box {
+  box-shadow:
+    0 0 0 1px rgba(232,82,10,0.06),
+    0 26px 60px rgba(26,26,24,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+html[data-theme="light"] .login-sub,
+html[data-theme="light"] .form-label,
+html[data-theme="light"] .form-label-hint,
+html[data-theme="light"] .security-row {
+  color: #666662;
+}
+
+html[data-theme="light"] .form-input {
+  background: #ffffff;
+  color: #1A1A18;
+}
+
+html[data-theme="light"] .form-input::placeholder {
+  color: #666662;
+}
+
+html[data-theme="light"] .login-btn {
+  color: #ffffff;
+}
+
+html[data-theme="light"] .login-footer {
+  color: #666662;
+}
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 
@@ -392,6 +461,7 @@ body::after {
       {% endwith %}
 
       <form method="POST" action="/admin/login" id="loginForm" onsubmit="handleSubmit(event)">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <!-- EMAIL -->
         <div class="form-group">

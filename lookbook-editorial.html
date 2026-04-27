@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEKTOR Lookbook — Editorial</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-cream: #F5F0E8;
+      --text-char: #1A1A1A;
+      --muted: #6F6A62;
+      --cta: #E8520A;
+      --saffron: #F28E1C;
+      --forest: #1F6C43;
+      --cart-bg: #1C1C1C;
+      --cart-text: #F5F0E8;
+      --line: rgba(26, 26, 26, 0.12);
+      --ease: 220ms ease-out;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-cream);
+      color: var(--text-char);
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      opacity: 0;
+      transition: opacity 400ms ease-out;
+    }
+
+    body.ready { opacity: 1; }
+
+    .mr { font-family: 'Noto Sans Devanagari'; }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(245, 240, 232, 0.95);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    }
+
+    .nav-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      gap: 20px;
+    }
+
+    .brand {
+      font-weight: 800;
+      font-size: 28px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand .dot-o,
+    .brand .dot-g {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .brand .dot-o { background: var(--cta); }
+    .brand .dot-g { background: var(--forest); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      text-transform: uppercase;
+      font-variant: all-small-caps;
+      letter-spacing: 0.15em;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .icon-btn {
+      border: 1px solid rgba(26, 26, 26, 0.18);
+      background: transparent;
+      color: var(--text-char);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 700;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: var(--ease);
+    }
+
+    .icon-btn:hover { border-color: var(--cta); color: var(--cta); }
+
+    .cart-counter {
+      display: inline-flex;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      justify-content: center;
+      align-items: center;
+      background: var(--cta);
+      color: white;
+      margin-left: 6px;
+      font-size: 11px;
+      padding: 0 6px;
+      transform-origin: center;
+    }
+
+    .cart-counter.bump { animation: count-bounce 360ms ease-out; }
+
+    @keyframes count-bounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+
+    .hero {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 42px 24px 18px;
+    }
+
+    .hero-kicker {
+      text-transform: uppercase;
+      font-variant: all-small-caps;
+      letter-spacing: 0.22em;
+      font-size: 12px;
+      color: #5A554E;
+      margin-bottom: 14px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-family: 'Playfair Display', serif;
+      font-weight: 800;
+      font-size: clamp(44px, 7vw, 72px);
+      letter-spacing: -0.02em;
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .hero-sub {
+      margin-top: 14px;
+      font-size: 13px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #5D5851;
+    }
+
+    .hero-rule {
+      margin: 24px 0 14px;
+      border: 0;
+      border-top: 1px solid rgba(26, 26, 26, 0.16);
+    }
+
+    .tabs-wrap {
+      position: sticky;
+      top: 64px;
+      z-index: 30;
+      background: linear-gradient(to bottom, rgba(245,240,232,0.98), rgba(245,240,232,0.92));
+      padding: 10px 0 8px;
+      transition: box-shadow var(--ease);
+    }
+
+    .tabs-wrap.stuck { box-shadow: 0 8px 18px rgba(26, 26, 26, 0.07); }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: flex-end;
+    }
+
+    .tab {
+      border: 0;
+      background: transparent;
+      padding: 8px 0;
+      color: #807A72;
+      cursor: pointer;
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      transition: var(--ease);
+    }
+
+    .tab:hover { color: #2B2825; }
+
+    .tab.active {
+      color: var(--text-char);
+      font-weight: 700;
+      border-bottom-color: var(--cta);
+    }
+
+    .featured-count {
+      margin-left: auto;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #69635B;
+      white-space: nowrap;
+    }
+
+    .featured-count strong {
+      color: var(--cta);
+      font-size: 20px;
+      margin-right: 4px;
+      font-weight: 800;
+      font-family: 'Playfair Display', serif;
+    }
+
+    main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 10px 24px 56px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      opacity: 1;
+      transition: opacity 200ms ease-out;
+    }
+
+    .grid.fading { opacity: 0; }
+
+    .card {
+      background: var(--bg-cream);
+      border: 1px solid rgba(26, 26, 26, 0.12);
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--ease), box-shadow var(--ease);
+    }
+
+    .card.hero-card { grid-column: span 2; min-height: 520px; }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(26, 26, 26, 0.14);
+    }
+
+    .media {
+      position: relative;
+      background: #EFE8DE;
+      height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 26px;
+      border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    }
+
+    .hero-card .media { height: 400px; padding: 34px; }
+
+    .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      mix-blend-mode: multiply;
+    }
+
+    .badge {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #fff;
+      line-height: 1;
+    }
+
+    .badge.new { background: var(--saffron); }
+    .badge.limited { background: var(--forest); }
+
+    .price-chip {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--text-char);
+      background: rgba(245, 240, 232, 0.92);
+      border: 1px solid rgba(26, 26, 26, 0.18);
+      padding: 6px 9px;
+    }
+
+    .hover-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to top, rgba(26,26,26,0.88), rgba(26,26,26,0));
+      color: #F5F0E8;
+      padding: 22px 18px 14px;
+      transform: translateY(100%);
+      transition: transform 220ms ease-out;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card:hover .hover-overlay { transform: translateY(0); }
+
+    .overlay-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .overlay-add {
+      border: 1px solid rgba(245, 240, 232, 0.55);
+      background: transparent;
+      color: #F5F0E8;
+      padding: 7px 9px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+    }
+
+    .info {
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .name {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .collection {
+      margin: 0;
+      color: #5A554E;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding-top: 8px;
+    }
+
+    .btn {
+      border: 1px solid rgba(26, 26, 26, 0.22);
+      background: transparent;
+      color: var(--text-char);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 8px 11px;
+      cursor: pointer;
+      transition: var(--ease);
+      transform-origin: center;
+    }
+
+    .btn:hover { border-color: var(--cta); color: var(--cta); }
+
+    .btn.cart {
+      border-color: var(--cta);
+      color: var(--cta);
+    }
+
+    .btn.cart.pulse { animation: pulse 180ms ease-out; }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .footer {
+      border-top: 1px solid var(--cta);
+      margin-top: 42px;
+      background: #F3ECE2;
+    }
+
+    .footer-inner {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 42px 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 44px;
+    }
+
+    .footer-brand {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tagline {
+      margin-top: 14px;
+      color: #4B463F;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .foot-head {
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .foot-link {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: #3D3832;
+      text-decoration: none;
+      transition: var(--ease);
+    }
+
+    .foot-link:hover { color: var(--cta); }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(420px, 92vw);
+      height: 100vh;
+      background: var(--cart-bg);
+      color: var(--cart-text);
+      transform: translateX(100%);
+      transition: transform 300ms ease;
+      z-index: 80;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid rgba(232, 82, 10, 0.55);
+      box-shadow: none;
+    }
+
+    .cart-drawer.open { transform: translateX(0); }
+
+    .cart-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 18px;
+      border-bottom: 1px solid rgba(232, 82, 10, 0.55);
+      font-size: 22px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+    }
+
+    .cart-body {
+      flex: 1;
+      padding: 28px 18px;
+    }
+
+    .cart-empty {
+      border: 1px dashed rgba(245, 240, 232, 0.28);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 24px;
+      gap: 10px;
+    }
+
+    .cart-logo {
+      font-size: 34px;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+      opacity: 0.95;
+    }
+
+    .cart-empty p {
+      margin: 0;
+      font-size: 14px;
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.86);
+    }
+
+    .shop-now {
+      margin-top: 14px;
+      width: 100%;
+      border: 0;
+      background: var(--cta);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 13px 14px;
+      cursor: pointer;
+    }
+
+    .scrim {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.32);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 300ms ease;
+      z-index: 70;
+    }
+
+    .scrim.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .card.hero-card { grid-column: span 2; }
+      .featured-count { width: 100%; margin-left: 0; }
+      .tabs { gap: 16px; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .nav-inner { padding: 14px 16px; }
+      .nav-links { display: none; }
+      .hero { padding: 30px 16px 12px; }
+      .tabs-wrap { top: 56px; }
+      main { padding: 8px 16px 44px; }
+      .grid { grid-template-columns: 1fr; gap: 16px; }
+      .card.hero-card { grid-column: span 1; min-height: 460px; }
+      .media, .hero-card .media { height: 320px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 28px; padding: 34px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-nav">
+    <div class="nav-inner">
+      <div class="brand">VEKTOR <span class="dot-o"></span><span class="dot-g"></span></div>
+      <nav class="nav-links">
+        <span>Home</span>
+        <span>Shop</span>
+        <span>Lookbook</span>
+        <span class="mr">???? ?????</span>
+      </nav>
+      <button id="cartOpen" class="icon-btn">Cart <span id="cartCount" class="cart-counter">0</span></button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-kicker mr">????? ???????? ??????????? · Marathi Premium Streetwear</div>
+    <h1>Seasonal Looks</h1>
+    <p class="hero-sub">Editorial Frames for Maharashtrian Menswear</p>
+    <hr class="hero-rule" />
+
+    <div class="tabs-wrap" id="tabsWrap">
+      <div class="tabs">
+        <button class="tab active" data-filter="all">All Looks</button>
+        <button class="tab" data-filter="new">New Drop</button>
+        <button class="tab" data-filter="limited">Limited</button>
+        <button class="tab" data-filter="heritage">Heritage</button>
+        <button class="tab" data-filter="urban">Urban</button>
+        <div class="featured-count"><strong id="featuredNum">0</strong> Featured Looks</div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section id="lookGrid" class="grid">
+      <article class="card hero-card" data-tags="new heritage">
+        <div class="media">
+          <span class="badge new mr">????</span>
+          <span class="price-chip">?4,990</span>
+          <img src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?auto=format&fit=crop&w=1000&q=80" alt="Maharashtrian Kurta Layered Look" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Maharashtrian Kurta Layered Set</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Maharashtrian Kurta Layered Set</h3>
+          <p class="collection mr">???? ?????? · Vasant Collection</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-tags="limited urban">
+        <div class="media">
+          <span class="badge limited mr">???????</span>
+          <span class="price-chip">?2,999</span>
+          <img src="https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=80" alt="Urban Textured Shirt" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Urban Textured Shirt</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Urban Textured Shirt</h3>
+          <p class="collection mr">??? ???? · City Uniform</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-tags="new urban">
+        <div class="media">
+          <span class="badge new mr">????</span>
+          <span class="price-chip">?3,450</span>
+          <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=80" alt="Relaxed Orange Accent Overshirt" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Orange Accent Overshirt</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Orange Accent Overshirt</h3>
+          <p class="collection mr">??? ????? · Street Chapter</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-tags="limited heritage">
+        <div class="media">
+          <span class="badge limited mr">???????</span>
+          <span class="price-chip">?5,250</span>
+          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=80" alt="Tailored Heritage Jacket" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Tailored Heritage Jacket</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Tailored Heritage Jacket</h3>
+          <p class="collection mr">????? ??????? · Signature Line</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card hero-card" data-tags="new urban">
+        <div class="media">
+          <span class="badge new mr">????</span>
+          <span class="price-chip">?3,999</span>
+          <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=1200&q=80" alt="Monochrome Graphic T-Shirt Frame" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Monochrome Graphic Tee Frame</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Monochrome Graphic Tee Frame</h3>
+          <p class="collection mr">???? ?????? · Studio Drop</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" data-tags="heritage">
+        <div class="media">
+          <span class="badge limited mr">???????</span>
+          <span class="price-chip">?4,250</span>
+          <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=900&q=80" alt="Classic Structured Shirt" />
+          <div class="hover-overlay">
+            <p class="overlay-title">Classic Structured Shirt</p>
+            <button class="overlay-add add-cart">+ Quick Add</button>
+          </div>
+        </div>
+        <div class="info">
+          <h3 class="name">Classic Structured Shirt</h3>
+          <p class="collection mr">??????? ???? · Heritage Edit</p>
+          <div class="card-actions">
+            <button class="btn">View</button>
+            <button class="btn cart add-cart">+ Cart</button>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">VEKTOR <span class="dot-o"></span><span class="dot-g"></span></div>
+        <p class="tagline mr">???????????? ????? — Made with pride</p>
+      </div>
+      <div>
+        <div class="foot-head">Shop</div>
+        <a class="foot-link" href="#">New Arrivals</a>
+        <a class="foot-link" href="#">Shirts</a>
+        <a class="foot-link" href="#">Jackets</a>
+      </div>
+      <div>
+        <div class="foot-head">Help</div>
+        <a class="foot-link" href="#">Size Guide</a>
+        <a class="foot-link" href="#">Shipping</a>
+        <a class="foot-link" href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="scrim" class="scrim"></div>
+  <aside id="cartDrawer" class="cart-drawer" aria-hidden="true">
+    <div class="cart-head">
+      <span>Your Cart</span>
+      <button id="cartClose" class="icon-btn" style="border-color: rgba(245,240,232,.25); color:#F5F0E8;">Close</button>
+    </div>
+    <div class="cart-body">
+      <div class="cart-empty">
+        <div class="cart-logo">VEKTOR</div>
+        <p>Your cart is empty</p>
+        <p class="mr" style="font-style:normal; opacity:.8;">????? ????? ?????? ???</p>
+        <button class="shop-now">Shop Now</button>
+      </div>
+    </div>
+  </aside>
+
+  <script>
+    const body = document.body;
+    const tabsWrap = document.getElementById('tabsWrap');
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const cards = Array.from(document.querySelectorAll('.card'));
+    const grid = document.getElementById('lookGrid');
+    const featuredNum = document.getElementById('featuredNum');
+    const cartCount = document.getElementById('cartCount');
+    const addButtons = Array.from(document.querySelectorAll('.add-cart'));
+
+    const cartDrawer = document.getElementById('cartDrawer');
+    const scrim = document.getElementById('scrim');
+    const cartOpen = document.getElementById('cartOpen');
+    const cartClose = document.getElementById('cartClose');
+
+    let count = 0;
+
+    function animateFeatured(target) {
+      const duration = 700;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        featuredNum.textContent = Math.round(target * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function applyFilter(filter) {
+      grid.classList.add('fading');
+      setTimeout(() => {
+        cards.forEach((card) => {
+          const tags = (card.dataset.tags || '').split(' ');
+          const show = filter === 'all' || tags.includes(filter);
+          card.style.display = show ? '' : 'none';
+        });
+        const visible = cards.filter((c) => c.style.display !== 'none').length;
+        featuredNum.textContent = visible;
+        grid.classList.remove('fading');
+      }, 200);
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        tabs.forEach((t) => t.classList.remove('active'));
+        tab.classList.add('active');
+        applyFilter(tab.dataset.filter);
+      });
+    });
+
+    function openCart() {
+      cartDrawer.classList.add('open');
+      scrim.classList.add('show');
+      cartDrawer.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeCart() {
+      cartDrawer.classList.remove('open');
+      scrim.classList.remove('show');
+      cartDrawer.setAttribute('aria-hidden', 'true');
+    }
+
+    cartOpen.addEventListener('click', openCart);
+    cartClose.addEventListener('click', closeCart);
+    scrim.addEventListener('click', closeCart);
+
+    addButtons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        btn.classList.add('pulse');
+        setTimeout(() => btn.classList.remove('pulse'), 190);
+
+        count += 1;
+        cartCount.textContent = count;
+        cartCount.classList.remove('bump');
+        void cartCount.offsetWidth;
+        cartCount.classList.add('bump');
+      });
+    });
+
+    window.addEventListener('scroll', () => {
+      const isStuck = window.scrollY > 24;
+      tabsWrap.classList.toggle('stuck', isStuck);
+    }, { passive: true });
+
+    window.addEventListener('load', () => {
+      body.classList.add('ready');
+      animateFeatured(cards.length);
+    });
+  </script>
+</body>
+</html>

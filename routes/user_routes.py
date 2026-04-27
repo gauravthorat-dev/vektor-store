@@ -206,9 +206,50 @@ def profile():
 
 
 # ================= EDIT PROFILE =================
-@user.route("/edit-profile")
+@user.route("/edit-profile", methods=["GET", "POST"])
 @jwt_required
 def edit_profile():
+    user_data = get_logged_in_user()
+    if not user_data:
+        return redirect("/login")
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        new_password = request.form.get("new_password", "")
+        confirm_password = request.form.get("confirm_password", "")
+
+        if not name or not email:
+            flash("Name and email are required")
+            return redirect("/edit-profile")
+
+        existing_email_user = User.query.filter_by(email=email).first()
+        if existing_email_user and existing_email_user.id != user_data.id:
+            flash("This email is already in use")
+            return redirect("/edit-profile")
+
+        if new_password or confirm_password:
+            if new_password != confirm_password:
+                flash("New password and confirm password do not match")
+                return redirect("/edit-profile")
+            if len(new_password) < 6:
+                flash("Password must be at least 6 characters")
+                return redirect("/edit-profile")
+            user_data.password = generate_password_hash(new_password)
+
+        user_data.name = name
+        user_data.email = email
+        user_data.phone = phone
+
+        db.session.commit()
+
+        # keep session name in sync for navbar/header displays
+        session["user_name"] = user_data.name
+
+        flash("Profile updated successfully")
+        return redirect("/edit-profile")
+
     return render_template("user/edit-profile.html")
 
 
@@ -531,4 +572,109 @@ def add_address():
     db.session.add(new_address)
     db.session.commit()
 
+    return redirect("/addresses")
+
+
+# ================= SET DEFAULT ADDRESS =================
+@user.route("/set-default-address/<int:address_id>", methods=["POST"])
+@jwt_required
+def set_default_address(address_id):
+
+    token = request.cookies.get("token")
+    data = decode_token(token)
+    if not data:
+        return redirect("/login")
+
+    user_id = data["user_id"]
+    address = Address.query.filter_by(id=address_id, user_id=user_id).first()
+
+    if not address:
+        flash("Address not found")
+        return redirect("/addresses")
+
+    Address.query.filter_by(user_id=user_id).update({"is_default": False})
+    address.is_default = True
+    db.session.commit()
+
+    return redirect("/addresses")
+
+
+# ================= EDIT ADDRESS =================
+@user.route("/edit-address/<int:address_id>", methods=["GET", "POST"])
+@jwt_required
+def edit_address(address_id):
+
+    token = request.cookies.get("token")
+    data = decode_token(token)
+    if not data:
+        return redirect("/login")
+
+    user_id = data["user_id"]
+    address = Address.query.filter_by(id=address_id, user_id=user_id).first()
+
+    if not address:
+        flash("Address not found")
+        return redirect("/addresses")
+
+    if request.method == "POST":
+        address.full_name = request.form.get("full_name", "").strip()
+        address.phone = request.form.get("phone", "").strip()
+        address.line1 = request.form.get("line1", "").strip()
+        address.line2 = request.form.get("line2", "").strip()
+        address.city = request.form.get("city", "").strip()
+        address.state = request.form.get("state", "").strip() or "Maharashtra"
+        address.pincode = request.form.get("pincode", "").strip()
+        address.country = request.form.get("country", "").strip() or "India"
+
+        required_fields = [
+            address.full_name,
+            address.phone,
+            address.line1,
+            address.city,
+            address.state,
+            address.pincode,
+        ]
+        if any(not field for field in required_fields):
+            flash("Please fill all required address fields")
+            return redirect(f"/edit-address/{address_id}")
+
+        if request.form.get("is_default"):
+            Address.query.filter_by(user_id=user_id).update({"is_default": False})
+            address.is_default = True
+
+        db.session.commit()
+        flash("Address updated successfully")
+        return redirect("/addresses")
+
+    return render_template("user/edit-address.html", addr=address)
+
+
+# ================= DELETE ADDRESS =================
+@user.route("/delete-address/<int:address_id>")
+@jwt_required
+def delete_address(address_id):
+
+    token = request.cookies.get("token")
+    data = decode_token(token)
+    if not data:
+        return redirect("/login")
+
+    user_id = data["user_id"]
+    address = Address.query.filter_by(id=address_id, user_id=user_id).first()
+
+    if not address:
+        flash("Address not found")
+        return redirect("/addresses")
+
+    was_default = bool(address.is_default)
+    db.session.delete(address)
+    db.session.commit()
+
+    if was_default:
+        fallback_address = Address.query.filter_by(user_id=user_id).order_by(Address.id.asc()).first()
+        if fallback_address:
+            fallback_address.is_default = True
+            db.session.commit()
+
+    flash("Address deleted")
     return redirect("/addresses")

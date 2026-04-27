@@ -1,11 +1,12 @@
-<!DOCTYPE html>
-<html lang="mr">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEKTOR Admin — Settings</title>
+<title>VEKTOR Admin - Settings</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 <div class="admin-shell">
@@ -13,59 +14,24 @@
   <div class="admin-ticker">
     <div class="ticker-label">VEKTOR ADMIN</div>
     <div class="ticker-track">
-      <div class="ticker-item"><span>SETTINGS</span><div class="ticker-dot"></div><span>सेटिंग्ज</span><div class="ticker-dot"></div><span>STORE CONFIGURATION</span><div class="ticker-dot"></div></div>
-      <div class="ticker-item"><span>SETTINGS</span><div class="ticker-dot"></div><span>सेटिंग्ज</span><div class="ticker-dot"></div><span>STORE CONFIGURATION</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>SETTINGS</span><div class="ticker-dot"></div><span>SYSTEM CONTROLS</span><div class="ticker-dot"></div><span>STORE CONFIGURATION</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>SETTINGS</span><div class="ticker-dot"></div><span>SYSTEM CONTROLS</span><div class="ticker-dot"></div><span>STORE CONFIGURATION</span><div class="ticker-dot"></div></div>
     </div>
   </div>
 
   <!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </a>
-  <a href="/admin/products" class="sb-btn active" title="Products">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  </a>
-  <a href="/admin/orders" class="sb-btn" title="Orders">
-    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-  </a>
-  <a href="/admin/customers" class="sb-btn" title="Customers">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-  </a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics">
-    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-  </a>
-  <a href="/admin/settings" class="sb-btn" title="Settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-  </a>
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-</a>
-{% endif %}
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-  </a>
-  <a href="/admin/logout" class="sb-btn" title="Logout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  </a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">VK</div>
-</div>
+{% set active_menu = 'settings' %}
+{% include 'admin/_sidebar.html' %}
 
   <div class="admin-main">
 
     <div class="admin-hdr">
       <div>
-        <div class="admin-eyebrow">Settings · सेटिंग्ज</div>
+        <div class="admin-eyebrow">Settings - Store Control</div>
         <div class="admin-title">STORE <span>SETTINGS</span></div>
-        <div class="admin-sub">दुकान सेटिंग्ज · Store Configuration & Preferences</div>
+        <div class="admin-sub">Store configuration and preference management</div>
       </div>
-      <button class="admin-btn admin-btn-sf" onclick="saveSettings()">💾 SAVE ALL</button>
+      <button class="admin-btn admin-btn-sf" onclick="saveSettings()">SAVE ALL</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
@@ -77,23 +43,23 @@
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sf)" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            <div class="settings-section-title">Store Information · दुकान माहिती</div>
+            <div class="settings-section-title">Store Information</div>
           </div>
           <div class="settings-section-body">
             <div class="admin-form-group">
-              <label class="admin-label">Store Name · दुकानाचे नाव</label>
+              <label class="admin-label">Store Name</label>
               <input class="admin-input" type="text" value="VEKTOR">
             </div>
             <div class="admin-form-group">
-              <label class="admin-label">Email · ईमेल</label>
+              <label class="admin-label">Email</label>
               <input class="admin-input" type="email" value="support@vektor.in">
             </div>
             <div class="admin-form-group">
-              <label class="admin-label">Phone · फोन</label>
+              <label class="admin-label">Phone</label>
               <input class="admin-input" type="text" value="+91 98765 43210">
             </div>
             <div class="admin-form-group" style="margin-bottom:0">
-              <label class="admin-label">Address · पत्ता</label>
+              <label class="admin-label">Address</label>
               <input class="admin-input" type="text" value="Nashik, Maharashtra, India">
             </div>
           </div>
@@ -103,15 +69,15 @@
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sf)" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            <div class="settings-section-title">Shipping · शिपिंग</div>
+            <div class="settings-section-title">Shipping</div>
           </div>
           <div class="settings-section-body">
             <div class="admin-form-group">
-              <label class="admin-label">Free Shipping Above ₹ · मोफत डिलिव्हरी वरील</label>
+              <label class="admin-label">Free Shipping Above INR</label>
               <input class="admin-input" type="number" value="3000">
             </div>
             <div class="admin-form-group" style="margin-bottom:0">
-              <label class="admin-label">Default Shipping Charge ₹</label>
+              <label class="admin-label">Default Shipping Charge INR</label>
               <input class="admin-input" type="number" value="79">
             </div>
           </div>
@@ -126,15 +92,15 @@
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sf)" stroke-width="1.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            <div class="settings-section-title">Payment · पेमेंट</div>
+            <div class="settings-section-title">Payment</div>
           </div>
           <div class="settings-section-body">
             <div class="toggle-row">
-              <span>Cash on Delivery · कॅश ऑन डिलिव्हरी</span>
+              <span>Cash on Delivery</span>
               <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
             </div>
             <div class="toggle-row">
-              <span>Online Payments · ऑनलाईन पेमेंट</span>
+              <span>Online Payments</span>
               <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
             </div>
             <div class="toggle-row" style="border-bottom:none">
@@ -142,7 +108,7 @@
               <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
             </div>
             <div class="admin-form-group" style="margin-top:16px;margin-bottom:0">
-              <label class="admin-label">Tax Percentage % · कर</label>
+              <label class="admin-label">Tax Percentage %</label>
               <input class="admin-input" type="number" value="18">
             </div>
           </div>
@@ -152,15 +118,15 @@
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sf)" stroke-width="1.5"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-            <div class="settings-section-title">Notifications · सूचना</div>
+            <div class="settings-section-title">Notifications</div>
           </div>
           <div class="settings-section-body">
             <div class="toggle-row">
-              <span>Email Notifications · ईमेल सूचना</span>
+              <span>Email Notifications</span>
               <label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label>
             </div>
             <div class="toggle-row">
-              <span>SMS Notifications · SMS सूचना</span>
+              <span>SMS Notifications</span>
               <label class="toggle-switch"><input type="checkbox"><span class="toggle-slider"></span></label>
             </div>
             <div class="toggle-row" style="border-bottom:none">
@@ -174,13 +140,13 @@
         <div class="settings-section">
           <div class="settings-section-hdr">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sf)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
-            <div class="settings-section-title">Brand · ब्रँड ओळख</div>
+            <div class="settings-section-title">Brand Identity</div>
           </div>
           <div class="settings-section-body">
             <div style="padding:14px;border:1px solid var(--border);border-left:2px solid var(--sf);background:rgba(255,107,0,0.04)">
               <div style="font-family:var(--font-display);font-size:28px;letter-spacing:.12em;margin-bottom:4px">VEKTOR</div>
-              <div style="font-family:var(--font-dev);font-size:12px;color:var(--fg3);margin-bottom:6px">महाराष्ट्रीय पुरुष वस्त्र</div>
-              <div style="font-family:var(--font-dev);font-size:11px;color:var(--sf)">।। वस्त्रं शौर्यस्य चिन्हम् ।।</div>
+              <div style="font-family:var(--font-dev);font-size:12px;color:var(--fg3);margin-bottom:6px">Premium menswear inspired by local roots</div>
+              <div style="font-family:var(--font-dev);font-size:11px;color:var(--sf)">Craft. Presence. Identity.</div>
             </div>
             <div style="display:flex;height:3px;margin-top:12px">
               <div style="flex:1;background:var(--sf)"></div>
@@ -201,10 +167,12 @@
 function saveSettings(){
   const btn=document.querySelector('.admin-btn-sf');
   const orig=btn.innerText;
-  btn.innerText='✓ SAVED!';
+  btn.innerText='SAVED!';
   btn.style.background='var(--gr2)';
   setTimeout(()=>{ btn.innerText=orig; btn.style.background=''; },2000);
 }
 </script>
 </body>
 </html>
+
+

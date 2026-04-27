@@ -1,7 +1,17 @@
 from functools import wraps
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, redirect, request, session, flash
 from werkzeug.security import check_password_hash, generate_password_hash
-from utils.auth import admin_required, manager_required, superadmin_required
+from utils.auth import (
+    admin_required,
+    clear_admin_session,
+    clear_login_failures,
+    manager_required,
+    register_login_failure,
+    set_admin_session,
+    superadmin_required,
+    is_login_rate_limited,
+)
 
 from models.order_model import Order
 from models.order_item_model import OrderItem
@@ -10,8 +20,15 @@ from models.admin_model import Admin
 from models.notification_model import Notification
 from database.db import db
 from models.user_model import User
+from services.dispatch_service import (
+    broadcast_shipped_order,
+    emit_stats_update,
+    get_stats_payload,
+)
+from services.sms_service import send_msg91_otp
 
 admin = Blueprint("admin", __name__, url_prefix="/admin")
+ALLOWED_ADMIN_LEVELS = {"superadmin", "manager", "viewer"}
 
 
 # ═══════════════════════════════════════
@@ -20,11 +37,11 @@ admin = Blueprint("admin", __name__, url_prefix="/admin")
 @admin.route("/dashboard")
 @admin_required
 def dashboard():
-    total_orders    = Order.query.count()
-    total_revenue   = db.session.query(db.func.sum(Order.total_price)).scalar() or 0
+    total_orders = Order.query.count()
+    total_revenue = db.session.query(db.func.sum(Order.total_price)).scalar() or 0
     total_customers = User.query.filter_by(role="user").count()
-    total_products  = Product.query.filter_by(is_active=True).count()
-    recent_orders   = Order.query.order_by(Order.created_at.desc()).limit(5).all()
+    total_products = Product.query.filter_by(is_active=True).count()
+    recent_orders = Order.query.order_by(Order.created_at.desc()).limit(8).all()
     low_stock = (
         Product.query
         .filter(Product.stock <= 5, Product.is_active == True)
@@ -37,16 +54,107 @@ def dashboard():
         .order_by(Notification.created_at.desc())
         .limit(10).all()
     )
+
+    now = datetime.utcnow()
+    today_start = datetime(now.year, now.month, now.day)
+    today_orders = (
+        Order.query
+        .filter(Order.created_at >= today_start)
+        .count()
+    )
+    today_revenue = (
+        db.session.query(db.func.sum(Order.total_price))
+        .filter(Order.created_at >= today_start)
+        .scalar()
+        or 0
+    )
+    avg_order_value = round((total_revenue / total_orders), 2) if total_orders else 0
+
+    # Revenue: last 14 days
+    daily_labels = []
+    daily_revenue = []
+    for i in range(13, -1, -1):
+        day_start = today_start - timedelta(days=i)
+        day_end = day_start + timedelta(days=1)
+        rev = (
+            db.session.query(db.func.sum(Order.total_price))
+            .filter(Order.created_at >= day_start, Order.created_at < day_end)
+            .scalar()
+            or 0
+        )
+        daily_labels.append(day_start.strftime("%d %b"))
+        daily_revenue.append(round(float(rev), 2))
+
+    # Revenue: last 8 months
+    monthly_labels = []
+    monthly_revenue = []
+    for i in range(7, -1, -1):
+        month_anchor = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_start = month_anchor - timedelta(days=32 * i)
+        month_start = month_start.replace(day=1)
+        if month_start.month == 12:
+            month_end = month_start.replace(year=month_start.year + 1, month=1, day=1)
+        else:
+            month_end = month_start.replace(month=month_start.month + 1, day=1)
+        mrev = (
+            db.session.query(db.func.sum(Order.total_price))
+            .filter(Order.created_at >= month_start, Order.created_at < month_end)
+            .scalar()
+            or 0
+        )
+        monthly_labels.append(month_start.strftime("%b"))
+        monthly_revenue.append(round(float(mrev), 2))
+
+    # Status chart buckets
+    pending_like = ["Pending", "Confirmed", "Processing", "Out for Delivery"]
+    status_counts = {
+        "Pending": Order.query.filter(Order.status.in_(pending_like)).count(),
+        "Shipped": Order.query.filter_by(status="Shipped").count(),
+        "Delivered": Order.query.filter_by(status="Delivered").count(),
+        "Cancelled": Order.query.filter_by(status="Cancelled").count(),
+    }
+
+    # Top cities by order volume
+    city_rows = (
+        db.session.query(Order.shipping_city, db.func.count(Order.id))
+        .filter(Order.shipping_city.isnot(None), Order.shipping_city != "")
+        .group_by(Order.shipping_city)
+        .order_by(db.func.count(Order.id).desc())
+        .limit(5)
+        .all()
+    )
+    city_labels = [row[0] for row in city_rows] or ["No Data"]
+    city_counts = [int(row[1]) for row in city_rows] or [0]
+
+    # Top products by revenue
+    active_products = Product.query.filter_by(is_active=True).all()
+    top_products = sorted(
+        active_products,
+        key=lambda p: p.total_revenue,
+        reverse=True
+    )[:5]
+
     return render_template(
         "admin/admin-dashboard.html",
-        total_orders    = total_orders,
-        total_revenue   = round(total_revenue, 2),
-        total_customers = total_customers,
-        total_products  = total_products,
-        recent_orders   = recent_orders,
-        low_stock       = low_stock,
-        notifications   = notifications,
-        notif_count     = len(notifications),
+        total_orders=total_orders,
+        total_revenue=round(total_revenue, 2),
+        total_customers=total_customers,
+        total_products=total_products,
+        recent_orders=recent_orders,
+        low_stock=low_stock,
+        notifications=notifications,
+        notif_count=len(notifications),
+        today_orders=today_orders,
+        today_revenue=round(today_revenue, 2),
+        avg_order_value=avg_order_value,
+        daily_labels=daily_labels,
+        daily_revenue=daily_revenue,
+        monthly_labels=monthly_labels,
+        monthly_revenue=monthly_revenue,
+        status_counts=status_counts,
+        city_labels=city_labels,
+        city_counts=city_counts,
+        top_products=top_products,
     )
 
 
@@ -307,7 +415,7 @@ def edit_product(id):
 # ═══════════════════════════════════════
 # DELETE PRODUCT — manager + superadmin only
 # ═══════════════════════════════════════
-@admin.route("/delete-product/<int:id>")
+@admin.route("/delete-product/<int:id>", methods=["POST"])
 @admin_required
 @manager_required
 def delete_product(id):
@@ -334,6 +442,7 @@ def delete_product(id):
 @admin.route("/orders")
 @admin_required
 def orders():
+    """Render admin orders table with live counters."""
     status_filter = request.args.get("status", "")
     page          = request.args.get("page", 1, type=int)
 
@@ -395,16 +504,19 @@ def orders():
         orders        = order_data,
         pagination    = pagination,
         delivery_boys = delivery_boys,
+        stats         = get_stats_payload(),
     )
 
 
 # ═══════════════════════════════════════
 # UPDATE ORDER STATUS  (REPLACE existing update_order() route)
 # ═══════════════════════════════════════
-@admin.route("/update-order/<int:id>/<status>")
+@admin.route("/update-order/<int:id>", methods=["POST"])
 @admin_required
 @manager_required
-def update_order(id, status):
+def update_order(id):
+    """Update order status and trigger dispatch/stats side effects."""
+    status = request.form.get("status", "").strip()
     allowed = ["Pending", "Confirmed", "Processing", "Shipped",
                "Out for Delivery", "Delivered", "Cancelled"]
     order = Order.query.get_or_404(id)
@@ -413,18 +525,20 @@ def update_order(id, status):
         flash("Invalid status.", "error")
         return redirect("/admin/orders")
 
-    order.set_status(status)
+    try:
+        order.set_status(status)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash("Could not update order status. Please retry.", "error")
+        return redirect("/admin/orders")
 
-    # Auto-generate OTP when order is shipped (customer receives it)
-    if status == "Shipped" and not order.delivery_otp:
-        otp = order.generate_otp()
-        # TODO: Send OTP via SMS to order.shipping_phone using your SMS provider
-        # e.g. send_sms(order.shipping_phone, f"Your VEKTOR delivery OTP is {otp}. Share only with delivery partner.")
-        flash(f"Order #{id} shipped. OTP {otp} generated for customer.", "success")
+    emit_stats_update()
+    if status == "Shipped":
+        broadcast_shipped_order(order.id)
+        flash(f"Order #{id} marked as Shipped. Live dispatch started for delivery boys.", "success")
     else:
         flash(f"Order #{id} marked as {status}.", "success")
-
-    db.session.commit()
     return redirect("/admin/orders")
 
 
@@ -435,6 +549,7 @@ def update_order(id, status):
 @admin_required
 @manager_required
 def assign_delivery(order_id):
+    """Manually assign delivery boy and send OTP SMS."""
     order           = Order.query.get_or_404(order_id)
     boy_id          = request.form.get("delivery_boy_id", type=int)
     delivery_boy    = User.query.get(boy_id) if boy_id else None
@@ -443,21 +558,23 @@ def assign_delivery(order_id):
         flash("Invalid delivery boy selected.", "error")
         return redirect("/admin/orders")
 
-    order.delivery_boy_id = boy_id
+    sms_ok = True
+    sms_msg = "OTP SMS sent."
+    try:
+        order.delivery_boy_id = boy_id
+        if not order.delivery_otp:
+            order.generate_otp()
+        sms_ok, sms_msg = send_msg91_otp(order.shipping_phone or "", order.delivery_otp or "")
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash("Could not assign delivery boy right now.", "error")
+        return redirect("/admin/orders")
 
-    # Auto-advance to Processing if still Pending/Confirmed
-    if order.status in ("Pending", "Confirmed"):
-        order.set_status("Processing")
-
-    # Generate OTP now if not already done
-    if not order.delivery_otp:
-        otp = order.generate_otp()
-        # TODO: SMS to customer → order.shipping_phone
-        flash(f"Assigned to {delivery_boy.name}. OTP {otp} sent to customer.", "success")
+    if sms_ok:
+        flash(f"Assigned to {delivery_boy.name}. OTP sent to customer.", "success")
     else:
-        flash(f"Order reassigned to {delivery_boy.name}.", "success")
-
-    db.session.commit()
+        flash(f"Assigned to {delivery_boy.name}, but OTP SMS failed: {sms_msg}", "error")
     return redirect("/admin/orders")
 
 
@@ -469,11 +586,36 @@ def assign_delivery(order_id):
 @admin_required
 @manager_required
 def regenerate_otp(order_id):
+    """Backward-compatible OTP resend endpoint."""
+    return resend_otp(order_id)
+
+
+@admin.route("/resend-otp/", methods=["POST"])
+@admin.route("/resend-otp/<int:order_id>", methods=["POST"])
+@admin_required
+@manager_required
+def resend_otp(order_id=None):
+    """Regenerate and resend customer OTP SMS."""
+    if order_id is None:
+        order_id = request.form.get("order_id", type=int)
+    if not order_id:
+        flash("Order ID missing for OTP resend.", "error")
+        return redirect("/admin/orders")
+
     order = Order.query.get_or_404(order_id)
-    otp   = order.generate_otp()
-    db.session.commit()
-    # TODO: Resend SMS to order.shipping_phone
-    flash(f"New OTP {otp} generated for Order #{order_id}.", "success")
+    try:
+        otp = order.generate_otp()
+        sms_ok, sms_msg = send_msg91_otp(order.shipping_phone or "", otp)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        flash("Could not regenerate OTP right now.", "error")
+        return redirect("/admin/orders")
+
+    if sms_ok:
+        flash(f"New OTP sent for Order #{order_id}.", "success")
+    else:
+        flash(f"OTP regenerated but SMS failed: {sms_msg}", "error")
     return redirect("/admin/orders")
 
 
@@ -528,7 +670,7 @@ def customers():
 # ═══════════════════════════════════════
 # TOGGLE CUSTOMER — manager + superadmin only
 # ═══════════════════════════════════════
-@admin.route("/toggle-customer/<int:id>")
+@admin.route("/toggle-customer/<int:id>", methods=["POST"])
 @admin_required
 @manager_required
 def toggle_customer(id):
@@ -546,22 +688,207 @@ def toggle_customer(id):
 @admin_required
 def analytics():
     from sqlalchemy import func
-    total_revenue   = db.session.query(func.sum(Order.total_price)).scalar() or 0
-    total_orders    = Order.query.count()
+
+    allowed_ranges = {
+        "7d": 7,
+        "30d": 30,
+        "90d": 90,
+        "365d": 365,
+    }
+    range_key = request.args.get("range", "30d")
+    if range_key not in allowed_ranges:
+        range_key = "30d"
+    range_days = allowed_ranges[range_key]
+
+    now = datetime.utcnow()
+    today_start = datetime(now.year, now.month, now.day)
+    range_start = today_start - timedelta(days=range_days - 1)
+    range_end = today_start + timedelta(days=1)
+    prev_start = range_start - timedelta(days=range_days)
+    prev_end = range_start
+
+    total_revenue = db.session.query(func.sum(Order.total_price)).scalar() or 0
+    total_orders = Order.query.count()
     total_customers = User.query.filter_by(role="user").count()
-    avg_order_value = round(total_revenue / total_orders, 2) if total_orders else 0
-    top_products = sorted(
-        Product.query.filter_by(is_active=True).all(),
-        key=lambda p: p.total_revenue,
-        reverse=True
-    )[:5]
+    total_products = Product.query.filter_by(is_active=True).count()
+
+    period_revenue = (
+        db.session.query(func.sum(Order.total_price))
+        .filter(Order.created_at >= range_start, Order.created_at < range_end)
+        .scalar()
+        or 0
+    )
+    period_orders = (
+        Order.query
+        .filter(Order.created_at >= range_start, Order.created_at < range_end)
+        .count()
+    )
+    prev_period_revenue = (
+        db.session.query(func.sum(Order.total_price))
+        .filter(Order.created_at >= prev_start, Order.created_at < prev_end)
+        .scalar()
+        or 0
+    )
+    prev_period_orders = (
+        Order.query
+        .filter(Order.created_at >= prev_start, Order.created_at < prev_end)
+        .count()
+    )
+
+    def pct_change(current, previous):
+        if previous == 0:
+            return 100.0 if current > 0 else 0.0
+        return round(((current - previous) / previous) * 100, 1)
+
+    revenue_growth = pct_change(float(period_revenue), float(prev_period_revenue))
+    orders_growth = pct_change(float(period_orders), float(prev_period_orders))
+    avg_order_value = round((period_revenue / period_orders), 2) if period_orders else 0
+
+    period_orders_list = (
+        Order.query
+        .filter(Order.created_at >= range_start, Order.created_at < range_end)
+        .order_by(Order.created_at.asc())
+        .all()
+    )
+
+    revenue_map = {}
+    orders_map = {}
+    for i in range(range_days):
+        day = range_start + timedelta(days=i)
+        key = day.strftime("%Y-%m-%d")
+        revenue_map[key] = 0.0
+        orders_map[key] = 0
+
+    pending_like = {"Pending", "Confirmed", "Processing", "Out for Delivery"}
+    status_counts = {"Pending": 0, "Shipped": 0, "Delivered": 0, "Cancelled": 0}
+    city_map = {}
+
+    for order in period_orders_list:
+        day_key = order.created_at.strftime("%Y-%m-%d")
+        if day_key in revenue_map:
+            revenue_map[day_key] += float(order.total_price or 0)
+            orders_map[day_key] += 1
+
+        order_status = (order.status or "Pending").strip()
+        if order_status in pending_like:
+            status_counts["Pending"] += 1
+        elif order_status == "Shipped":
+            status_counts["Shipped"] += 1
+        elif order_status == "Delivered":
+            status_counts["Delivered"] += 1
+        elif order_status == "Cancelled":
+            status_counts["Cancelled"] += 1
+        else:
+            status_counts["Pending"] += 1
+
+        city = (order.shipping_city or "").strip()
+        if city:
+            city_map[city] = city_map.get(city, 0) + 1
+
+    trend_labels = []
+    trend_revenue = []
+    trend_orders = []
+    for i in range(range_days):
+        day = range_start + timedelta(days=i)
+        key = day.strftime("%Y-%m-%d")
+        trend_labels.append(day.strftime("%d %b"))
+        trend_revenue.append(round(revenue_map.get(key, 0), 2))
+        trend_orders.append(int(orders_map.get(key, 0)))
+
+    top_cities = sorted(city_map.items(), key=lambda x: x[1], reverse=True)[:5]
+    city_labels = [c[0] for c in top_cities] or ["No Data"]
+    city_counts = [c[1] for c in top_cities] or [0]
+
+    price_expr = func.coalesce(OrderItem.price_at_purchase, Product.price)
+    category_rows = (
+        db.session.query(
+            Product.category,
+            func.sum(OrderItem.quantity),
+            func.sum(OrderItem.quantity * price_expr),
+        )
+        .join(OrderItem, OrderItem.product_id == Product.id)
+        .join(Order, Order.id == OrderItem.order_id)
+        .filter(Order.created_at >= range_start, Order.created_at < range_end)
+        .group_by(Product.category)
+        .order_by(func.sum(OrderItem.quantity).desc())
+        .limit(6)
+        .all()
+    )
+
+    category_labels = []
+    category_units = []
+    category_revenue = []
+    for row in category_rows:
+        category_labels.append((row[0] or "Uncategorized").strip())
+        category_units.append(int(row[1] or 0))
+        category_revenue.append(round(float(row[2] or 0), 2))
+
+    if not category_labels:
+        category_labels = ["No Data"]
+        category_units = [0]
+        category_revenue = [0]
+
+    top_product_rows = (
+        db.session.query(
+            Product.id,
+            Product.name,
+            Product.category,
+            func.sum(OrderItem.quantity).label("units"),
+            func.sum(OrderItem.quantity * price_expr).label("revenue"),
+        )
+        .join(OrderItem, OrderItem.product_id == Product.id)
+        .join(Order, Order.id == OrderItem.order_id)
+        .filter(Order.created_at >= range_start, Order.created_at < range_end)
+        .group_by(Product.id, Product.name, Product.category)
+        .order_by(func.sum(OrderItem.quantity * price_expr).desc())
+        .limit(8)
+        .all()
+    )
+
+    top_products = [
+        {
+            "id": row[0],
+            "name": row[1],
+            "category": row[2] or "General",
+            "sold": int(row[3] or 0),
+            "revenue": round(float(row[4] or 0), 2),
+        }
+        for row in top_product_rows
+    ]
+
+    range_labels = {
+        "7d": "Last 7 Days",
+        "30d": "Last 30 Days",
+        "90d": "Last 90 Days",
+        "365d": "Last 365 Days",
+    }
+
     return render_template(
         "admin/admin-analytics.html",
-        total_revenue   = round(total_revenue, 2),
-        total_orders    = total_orders,
-        total_customers = total_customers,
-        avg_order_value = avg_order_value,
-        top_products    = top_products,
+        selected_range=range_key,
+        range_days=range_days,
+        range_label=range_labels.get(range_key, "Last 30 Days"),
+        total_revenue=round(float(total_revenue), 2),
+        total_orders=total_orders,
+        total_customers=total_customers,
+        total_products=total_products,
+        period_revenue=round(float(period_revenue), 2),
+        period_orders=period_orders,
+        prev_period_revenue=round(float(prev_period_revenue), 2),
+        prev_period_orders=prev_period_orders,
+        revenue_growth=revenue_growth,
+        orders_growth=orders_growth,
+        avg_order_value=avg_order_value,
+        trend_labels=trend_labels,
+        trend_revenue=trend_revenue,
+        trend_orders=trend_orders,
+        status_counts=status_counts,
+        city_labels=city_labels,
+        city_counts=city_counts,
+        category_labels=category_labels,
+        category_units=category_units,
+        category_revenue=category_revenue,
+        top_products=top_products,
     )
 
 
@@ -590,6 +917,9 @@ def admin_verify():
         return redirect("/admin/dashboard")
 
     u = User.query.get(user_id)
+    if not u or u.status == "Blocked":
+        flash("Your account session is invalid. Please login again.", "error")
+        return redirect("/login")
     admin_user = Admin.query.filter_by(email=u.email, is_active=True).first()
 
     if not admin_user:
@@ -597,23 +927,29 @@ def admin_verify():
         return redirect("/")
 
     if request.method == "POST":
-        password   = request.form.get("password", "")
+        locked, remaining = is_login_rate_limited(scope="admin_verify")
+        if locked:
+            wait_mins = max(1, remaining // 60)
+            flash(f"Too many failed attempts. Try again in {wait_mins} minute(s).", "error")
+            return redirect("/admin/verify")
+
+        password = request.form.get("password", "")
         admin_user = Admin.query.filter_by(email=u.email, is_active=True).first()
 
         if admin_user and check_password_hash(admin_user.password, password):
-            session["admin_id"]    = admin_user.id
-            session["admin_name"]  = admin_user.name
-            session["admin_level"] = admin_user.level
+            set_admin_session(admin_user)
+            session.permanent = True
+            clear_login_failures(scope="admin_verify")
 
             # 🔥 ADD THESE ALSO
-            session["user_role"] = "admin"
-            session["user_id"]   = admin_user.id
+
             
             admin_user.record_login()
             db.session.commit()
             return redirect("/admin/dashboard")
 
-        flash("Wrong admin password. Access denied.")
+        register_login_failure(scope="admin_verify")
+        flash("Wrong admin password. Access denied.", "error")
         return redirect("/admin/verify")
 
     return render_template("admin/admin-verify.html", user=u)
@@ -628,23 +964,29 @@ def admin_login():
         return redirect("/admin/dashboard")
 
     if request.method == "POST":
-        email    = request.form.get("email", "").strip().lower()
+        locked, remaining = is_login_rate_limited(scope="admin_login")
+        if locked:
+            wait_mins = max(1, remaining // 60)
+            flash(f"Too many failed attempts. Try again in {wait_mins} minute(s).", "error")
+            return redirect("/admin/login")
+
+        email = request.form.get("email", "").strip().lower()
         password = request.form.get("password", "")
 
         admin_user = Admin.query.filter_by(email=email, is_active=True).first()
         if admin_user and check_password_hash(admin_user.password, password):
-            session["admin_id"]    = admin_user.id
-            session["admin_name"]  = admin_user.name
-            session["admin_level"] = admin_user.level
+            set_admin_session(admin_user)
+            session.permanent = True
+            clear_login_failures(scope="admin_login")
 
             # 🔥 ADD THESE 2 LINES
-            session["user_role"] = "admin"
-            session["user_id"]   = admin_user.id
+
 
             admin_user.record_login()
             db.session.commit()
             return redirect("/admin/dashboard")
 
+        register_login_failure(scope="admin_login")
         flash("Invalid email or password.", "error")
         return redirect("/admin/login")
 
@@ -655,13 +997,11 @@ def admin_login():
 # ═══════════════════════════════════════
 # ADMIN LOGOUT
 # ═══════════════════════════════════════
-@admin.route("/logout")
+@admin.route("/logout", methods=["POST"])
 def admin_logout():
-    session.pop("admin_id",    None)
-    session.pop("admin_name",  None)
-    session.pop("admin_level", None)
-    session.pop("user_id",     None)
-    session.pop("user_name",   None)
+    clear_admin_session()
+    clear_login_failures(scope="admin_login")
+    clear_login_failures(scope="admin_verify")
     from flask import make_response
     response = make_response(redirect("/"))
     response.delete_cookie("token")
@@ -671,7 +1011,7 @@ def admin_logout():
 # ═══════════════════════════════════════
 # NOTIFICATIONS — mark as read
 # ═══════════════════════════════════════
-@admin.route("/notifications/read/<int:id>")
+@admin.route("/notifications/read/<int:id>", methods=["POST"])
 @admin_required
 def mark_notif_read(id):
     n = Notification.query.get_or_404(id)
@@ -683,11 +1023,9 @@ def mark_notif_read(id):
 # ═══════════════════════════════════════
 # SWITCH ADMIN ACCOUNT
 # ═══════════════════════════════════════
-@admin.route("/switch")
+@admin.route("/switch", methods=["POST"])
 def admin_switch():
-    session.pop("admin_id",    None)
-    session.pop("admin_name",  None)
-    session.pop("admin_level", None)
+    clear_admin_session()
     return redirect("/admin/login")
 
 
@@ -716,8 +1054,7 @@ def create_admin():
         name      = request.form.get("name", "").strip()
         email     = request.form.get("email", "").strip().lower()
         password  = request.form.get("password", "")
-        level     = request.form.get("level", "manager")
-        is_super  = bool(request.form.get("is_superadmin"))
+        level     = request.form.get("level", "manager").strip().lower()
 
         EMAIL_RE = re.compile(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$')
 
@@ -740,6 +1077,9 @@ def create_admin():
         if not re.search(r'[^A-Za-z0-9]', password):
             flash("Password must contain at least one symbol.", "error")
             return redirect("/admin/manage-admins")
+        if level not in ALLOWED_ADMIN_LEVELS:
+            flash("Invalid admin role selected.", "error")
+            return redirect("/admin/manage-admins")
 
         existing = Admin.query.filter_by(email=email).first()
         if existing:
@@ -754,7 +1094,6 @@ def create_admin():
             password      = hashed,
             level         = level,
             is_active     = True,
-            is_superadmin = is_super,
         )
         db.session.add(new_admin)
 
@@ -788,7 +1127,7 @@ def edit_admin(id):
 
     name     = request.form.get("name", "").strip()
     email    = request.form.get("email", "").strip().lower()
-    level    = request.form.get("level", target.level)
+    level    = request.form.get("level", target.level).strip().lower()
     password = request.form.get("password", "").strip()
 
     EMAIL_RE = re.compile(r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$')
@@ -798,6 +1137,9 @@ def edit_admin(id):
         return redirect("/admin/manage-admins")
     if not EMAIL_RE.match(email):
         flash("Enter a valid email address.", "error")
+        return redirect("/admin/manage-admins")
+    if level not in ALLOWED_ADMIN_LEVELS:
+        flash("Invalid admin role selected.", "error")
         return redirect("/admin/manage-admins")
 
     # Email uniqueness — exclude self

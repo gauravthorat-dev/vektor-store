@@ -2,26 +2,123 @@
 {% set active_page = "" %}
 {% block title %}Saved Addresses — VEKTOR{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Addresses page: unique look + readability */
+  #vk-addresses {
+    background:
+      radial-gradient(900px 420px at 10% 0%, rgba(255, 107, 0, 0.08), transparent 64%),
+      radial-gradient(820px 360px at 92% 100%, rgba(4, 106, 56, 0.08), transparent 62%),
+      var(--ink);
+  }
+
+  #vk-addresses .vk-addr-head { backdrop-filter: blur(4px); }
+  #vk-addresses .vk-addr-grid { gap: 14px !important; }
+
+  #vk-addresses .vk-addr-card {
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+  }
+
+  #vk-addresses .vk-addr-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b00, #c8941a, #046a38);
+    opacity: .75;
+    z-index: 3;
+  }
+
+  #vk-addresses .vk-addr-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px rgba(0,0,0,.26);
+  }
+
+  /* Light mode readability fix for faded inline text */
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.45)"] { color: rgba(31,25,19,.78) !important; }
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.4)"]  { color: rgba(31,25,19,.74) !important; }
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.35)"] { color: rgba(31,25,19,.70) !important; }
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.3)"]  { color: rgba(31,25,19,.66) !important; }
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.25)"] { color: rgba(31,25,19,.62) !important; }
+  html[data-theme="light"] #vk-addresses [style*="color:rgba(247,243,236,.2)"]  { color: rgba(31,25,19,.58) !important; }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-head {
+    background: rgba(255,253,248,.92) !important;
+    border-bottom-color: rgba(31,25,19,.14) !important;
+  }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-card,
+  html[data-theme="light"] #vk-addresses .vk-addr-form {
+    background: #fffdf8 !important;
+    border: 1px solid rgba(31,25,19,.14) !important;
+    box-shadow: 0 10px 24px rgba(31,25,19,.08);
+  }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-top-btn,
+  html[data-theme="light"] #vk-addresses .vk-addr-btn-muted {
+    border: 1px solid rgba(31,25,19,.24) !important;
+    color: rgba(31,25,19,.78) !important;
+    background: rgba(31,25,19,.02) !important;
+  }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-top-btn:hover,
+  html[data-theme="light"] #vk-addresses .vk-addr-btn-muted:hover {
+    border-color: var(--sf) !important;
+    color: var(--sf) !important;
+    background: rgba(226,93,0,.06) !important;
+  }
+
+  /* Address card action row visibility */
+  #vk-addresses .vk-addr-actions,
+  #vk-addresses .vk-addr-action-btn,
+  #vk-addresses .vk-addr-action-link {
+    font-size: 10px !important;
+    letter-spacing: 1.5px !important;
+  }
+
+  #vk-addresses .vk-addr-action-btn,
+  #vk-addresses .vk-addr-action-link {
+    color: rgba(247,243,236,.68) !important;
+  }
+
+  #vk-addresses .vk-addr-action-link.danger {
+    color: rgba(255,112,112,.88) !important;
+  }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-action-btn,
+  html[data-theme="light"] #vk-addresses .vk-addr-action-link {
+    color: rgba(31,25,19,.76) !important;
+  }
+
+  html[data-theme="light"] #vk-addresses .vk-addr-action-link.danger {
+    color: rgba(196,54,45,.9) !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="min-height:80vh;padding:60px 5%;background:var(--ink)">
+<div id="vk-addresses" style="min-height:80vh;padding:60px 5%;background:var(--ink)">
 
   <!-- HEADER -->
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:16px">
+  <div class="vk-addr-head" style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;padding-bottom:24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:16px">
     <div>
       <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Saved Addresses · पत्ते</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,60px);letter-spacing:2px;color:var(--white);line-height:.9">MY ADDRESSES</div>
     </div>
-    <button onclick="openAddressForm()" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:12px 24px;background:var(--sf);color:var(--ink);border:none;cursor:pointer;font-weight:700;transition:background .2s" onmouseover="this.style.background='#FF8C35'" onmouseout="this.style.background='#FF6B00'">
+    <button onclick="openAddressForm()" class="vk-addr-top-btn" style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:12px 24px;background:var(--sf);color:var(--ink);border:none;cursor:pointer;font-weight:700;transition:background .2s" onmouseover="this.style.background='#FF8C35'" onmouseout="this.style.background='#FF6B00'">
       + ADD NEW ADDRESS
     </button>
   </div>
 
   <!-- ADDRESS GRID -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:3px;margin-bottom:40px">
+  <div class="vk-addr-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:3px;margin-bottom:40px">
 
     {% if addresses %}
       {% for addr in addresses %}
-      <div style="background:var(--card);border:0.5px solid {% if addr.is_default %}rgba(255,107,0,.4){% else %}var(--border){% endif %};position:relative;overflow:hidden;transition:border-color .3s" onmouseover="this.style.borderColor='rgba(255,107,0,.3)'" onmouseout="this.style.borderColor='{% if addr.is_default %}rgba(255,107,0,.4){% else %}rgba(247,243,236,.07){% endif %}'">
+      <div class="vk-addr-card" style="background:var(--card);border:0.5px solid {% if addr.is_default %}rgba(255,107,0,.4){% else %}var(--border){% endif %};position:relative;overflow:hidden;transition:border-color .3s" onmouseover="this.style.borderColor='rgba(255,107,0,.3)'" onmouseout="this.style.borderColor='{% if addr.is_default %}rgba(255,107,0,.4){% else %}rgba(247,243,236,.07){% endif %}'">
 
         {% if addr.is_default %}
         <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--sf)"></div>
@@ -46,18 +143,18 @@
         </div>
 
         <!-- ACTIONS -->
-        <div style="display:flex;border-top:0.5px solid var(--border)">
+        <div class="vk-addr-actions" style="display:flex;border-top:0.5px solid var(--border)">
           {% if not addr.is_default %}
-          <form method="POST" action="/set-default-address/{{ addr.id }}" style="flex:1">
-            <button type="submit" style="width:100%;padding:11px;background:transparent;border:none;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);cursor:pointer;text-transform:uppercase;transition:all .2s;border-right:0.5px solid var(--border)" onmouseover="this.style.color='var(--sf)';this.style.background='rgba(255,107,0,.04)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">
+          <form method="POST" action="{{ url_for('user.set_default_address', address_id=addr.id) }}" style="flex:1">
+            <button type="submit" class="vk-addr-action-btn" style="width:100%;padding:11px;background:transparent;border:none;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);cursor:pointer;text-transform:uppercase;transition:all .2s;border-right:0.5px solid var(--border)" onmouseover="this.style.color='var(--sf)';this.style.background='rgba(255,107,0,.04)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">
               SET DEFAULT
             </button>
           </form>
           {% else %}
           <div style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--sf);border-right:0.5px solid var(--border)">✓ DEFAULT</div>
           {% endif %}
-          <a href="/edit-address/{{ addr.id }}" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);text-decoration:none;transition:all .2s;border-right:0.5px solid var(--border);display:block" onmouseover="this.style.color='var(--white)';this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">EDIT</a>
-          <a href="/delete-address/{{ addr.id }}" onclick="return confirm('Delete this address?')" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(224,48,48,.5);text-decoration:none;transition:all .2s;display:block" onmouseover="this.style.color='#ff7070';this.style.background='rgba(224,48,48,.05)'" onmouseout="this.style.color='rgba(224,48,48,.5)';this.style.background='transparent'">DELETE</a>
+          <a href="{{ url_for('user.edit_address', address_id=addr.id) }}" class="vk-addr-action-link" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.35);text-decoration:none;transition:all .2s;border-right:0.5px solid var(--border);display:block" onmouseover="this.style.color='var(--white)';this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.color='rgba(247,243,236,.35)';this.style.background='transparent'">EDIT</a>
+          <a href="{{ url_for('user.delete_address', address_id=addr.id) }}" class="vk-addr-action-link danger" onclick="return confirm('Delete this address?')" style="flex:1;padding:11px;text-align:center;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(224,48,48,.5);text-decoration:none;transition:all .2s;display:block" onmouseover="this.style.color='#ff7070';this.style.background='rgba(224,48,48,.05)'" onmouseout="this.style.color='rgba(224,48,48,.5)';this.style.background='transparent'">DELETE</a>
         </div>
 
       </div>
@@ -75,7 +172,7 @@
   </div>
 
   <!-- ADD ADDRESS FORM (inline, toggled) -->
-  <div id="addressForm" style="display:none;background:var(--card);border:0.5px solid var(--border);max-width:680px">
+  <div id="addressForm" class="vk-addr-form" style="display:none;background:var(--card);border:0.5px solid var(--border);max-width:680px">
     <div style="padding:16px 24px;border-bottom:0.5px solid var(--border);background:var(--smoke);display:flex;align-items:center;justify-content:space-between">
       <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:3px;color:var(--white)">ADD NEW ADDRESS · नवीन पत्ता</div>
       <button onclick="closeAddressForm()" style="background:none;border:0.5px solid var(--border);color:rgba(247,243,236,.4);width:30px;height:30px;cursor:pointer;font-size:14px;transition:all .2s" onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'" onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.4)'">✕</button>
@@ -107,7 +204,7 @@
       </div>
 
       <div style="display:flex;gap:8px;margin-top:4px">
-        <button type="button" onclick="closeAddressForm()" style="flex:1;padding:12px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.35);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s">CANCEL</button>
+        <button type="button" onclick="closeAddressForm()" class="vk-addr-btn-muted" style="flex:1;padding:12px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.35);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s">CANCEL</button>
         <button type="submit" style="flex:2;padding:12px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;transition:background .2s" onmouseover="this.style.background='#FF8C35'" onmouseout="this.style.background='#FF6B00'">
           + SAVE ADDRESS — पत्ता जतन करा
         </button>

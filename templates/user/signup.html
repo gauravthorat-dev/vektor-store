@@ -5,7 +5,7 @@
 {% block content %}
 <div class="al-scene">
 
-  <!-- LEFT: anime art panel -->
+  <!-- LEFT: premium art panel -->
   <div class="al-art">
     <div class="al-art-bg">
       <svg width="100%" height="100%" viewBox="0 0 280 700" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -69,7 +69,7 @@
         <circle cx="30"  cy="80"  r="1"   fill="rgba(255,255,255,0.3)"/>
         <circle cx="250" cy="90"  r="1"   fill="rgba(255,255,255,0.35)"/>
         <circle cx="100" cy="25"  r="1"   fill="rgba(255,255,255,0.4)"/>
-        <!-- figure 1 (male) -->
+        <!-- figures -->
         <ellipse cx="148" cy="200" rx="16" ry="18" fill="#0A0A18"/>
         <polygon points="132,193 128,173 140,187" fill="#0A0A18"/>
         <polygon points="136,185 134,163 146,183" fill="#0A0A18"/>
@@ -85,7 +85,6 @@
         <path d="M166,225 L190,260 L178,263 L162,233" fill="#0A0A18"/>
         <rect x="132" y="283" width="12" height="32" fill="#080814"/>
         <rect x="153" y="283" width="12" height="32" fill="#080814"/>
-        <!-- figure 2 (second silhouette) -->
         <ellipse cx="95" cy="210" rx="12" ry="14" fill="#0A0A18"/>
         <polygon points="83,206 81,188 92,202" fill="#0A0A18"/>
         <path d="M83,222 L72,278 L118,278 L107,222 Z" fill="#0A0A18"/>
@@ -96,10 +95,48 @@
       </svg>
     </div>
     <div class="al-scanlines"></div>
+
+    <!-- Premium gradient overlay -->
+    <div class="al-art-overlay"></div>
+
     <div class="al-art-content">
-      <div class="al-brand">VEKTOR</div>
-      <div class="al-brand-sub">महाराष्ट्रीय पुरुष वस्त्र</div>
-      <div class="al-quote">।। नवीन सुरुवात ।।<br><span style="font-size:10px;opacity:0.5">"A new beginning awaits"</span></div>
+      <!-- Top badge -->
+      <div class="al-made-badge">
+        <span class="al-made-dot"></span>
+        MADE IN INDIA · भारतात बनलेले
+      </div>
+
+      <!-- Brand block -->
+      <div class="al-brand-block">
+        <div class="al-brand-eyebrow">महाराष्ट्रीय पुरुष वस्त्र</div>
+        <div class="al-brand">VEKTOR</div>
+        <div class="al-brand-rule">
+          <span class="al-rule-line"></span>
+          <span class="al-rule-diamond">◆</span>
+          <span class="al-rule-line"></span>
+        </div>
+
+        <!-- Tagline -->
+        <div class="al-tagline-block">
+          <div class="al-tagline-main">MODERN EVERYDAY</div>
+          <div class="al-tagline-main al-tagline-accent">MENSWEAR</div>
+        </div>
+
+        <!-- Feature pills -->
+        <div class="al-pills">
+          <span class="al-pill">Clean Fits</span>
+          <span class="al-pill-dot">·</span>
+          <span class="al-pill">Premium Fabrics</span>
+          <span class="al-pill-dot">·</span>
+          <span class="al-pill">Made in India</span>
+        </div>
+
+        <!-- New beginning quote -->
+        <div class="al-quote-new">
+          <span class="al-quote-deva">।। नवीन सुरुवात ।।</span>
+          <span class="al-quote-eng">"A new beginning awaits"</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -112,13 +149,10 @@
       <div class="al-form-title">JOIN US</div>
       <div class="al-form-sub">खाते तयार करा · नवीन सदस्य व्हा</div>
 
-      <!-- Flash Messages -->
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
           {% for category, msg in messages %}
-            <div class="al-flash {{ category }}">
-              {{ msg }}
-            </div>
+            <div class="al-flash {{ category }}">{{ msg }}</div>
           {% endfor %}
         {% endif %}
       {% endwith %}
@@ -130,7 +164,6 @@
 
       <form method="POST" action="{{ url_for('user.signup') }}" autocomplete="off" id="signupForm">
 
-        <!-- Name Row -->
         <div class="al-row">
           <div class="al-field">
             <label class="al-field-label">First Name / नाव</label>
@@ -152,7 +185,6 @@
           <input class="al-input" type="tel" name="phone" placeholder="+91 98765 43210" maxlength="15" autocomplete="off"/>
         </div>
 
-        <!-- PASSWORD -->
         <div class="al-field password-field">
           <label class="al-field-label">Password / पासवर्ड</label>
           <input class="al-input" type="password" name="password" id="passwordField"
@@ -173,7 +205,6 @@
           <span class="strength-label" id="strengthLabel"></span>
         </div>
 
-        <!-- CONFIRM PASSWORD -->
         <div class="al-field confirm-field">
           <label class="al-field-label">Confirm Password / पुष्टी करा</label>
           <input class="al-input" type="password" name="confirm_password" id="confirmField"
@@ -221,6 +252,8 @@
 
 {% block extra_css %}
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit:ital@0;1&display=swap');
+
   .al-scene {
     min-height: calc(100vh - 120px);
     background: #050508;
@@ -249,40 +282,174 @@
     pointer-events: none;
   }
 
+  /* Deep gradient for legibility */
+  .al-art-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 25%,
+      rgba(6,6,16,0.45) 52%,
+      rgba(6,6,16,0.85) 70%,
+      rgba(5,5,12,0.97) 100%
+    );
+    z-index: 4;
+    pointer-events: none;
+  }
+
   .al-art-content {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 32px 28px;
-    z-index: 4;
+    justify-content: space-between;
+    padding: 28px 28px 36px;
+    z-index: 5;
+  }
+
+  /* ── TOP BADGE ── */
+  .al-made-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    padding: 6px 14px;
+    width: fit-content;
+  }
+  .al-made-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #FF6B00;
+    box-shadow: 0 0 6px #FF6B00;
+    animation: pulse-dot 2s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px #FF6B00; }
+    50% { opacity: 0.5; box-shadow: 0 0 14px #FF6B00; }
+  }
+
+  /* ── BRAND BLOCK ── */
+  .al-brand-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .al-brand-eyebrow {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 11px;
+    color: #FF6B00;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    opacity: 0.9;
   }
 
   .al-brand {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 56px;
-    letter-spacing: 10px;
+    font-size: clamp(52px, 8vw, 76px);
+    letter-spacing: 12px;
     color: #fff;
-    line-height: 1;
-    margin-bottom: 4px;
-  }
-  .al-brand-sub {
-    font-family: 'Tiro Devanagari Sanskrit', serif;
-    font-size: 12px;
-    color: #FF6B00;
-    letter-spacing: 2px;
-    margin-bottom: 20px;
-  }
-  .al-quote {
-    font-family: 'Tiro Devanagari Sanskrit', serif;
-    font-size: 13px;
-    color: rgba(255,255,255,0.35);
-    line-height: 1.7;
-    border-left: 2px solid #FF6B00;
-    padding-left: 12px;
+    line-height: 0.9;
+    margin-bottom: 14px;
+    text-shadow:
+      0 0 40px rgba(255,107,0,0.25),
+      0 0 80px rgba(255,107,0,0.1),
+      0 2px 0 rgba(255,255,255,0.06);
   }
 
+  /* Ornamental rule */
+  .al-brand-rule {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .al-rule-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,107,0,0.5), transparent);
+  }
+  .al-rule-diamond {
+    font-size: 7px;
+    color: #FF6B00;
+    opacity: 0.8;
+  }
+
+  /* ── TAGLINE ── */
+  .al-tagline-block { margin-bottom: 18px; }
+  .al-tagline-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(18px, 3vw, 26px);
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.82);
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+  .al-tagline-accent {
+    color: #FF6B00;
+    text-shadow: 0 0 30px rgba(255,107,0,0.45);
+  }
+
+  /* ── FEATURE PILLS ── */
+  .al-pills {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .al-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 1.8px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(4px);
+    white-space: nowrap;
+  }
+  .al-pill-dot {
+    color: #FF6B00;
+    font-size: 14px;
+    line-height: 1;
+    opacity: 0.6;
+  }
+
+  /* ── QUOTE (signup only) ── */
+  .al-quote-new {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-left: 12px;
+    border-left: 2px solid rgba(255,107,0,0.5);
+  }
+  .al-quote-deva {
+    font-family: 'Tiro Devanagari Sanskrit', serif;
+    font-size: 13px;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 1px;
+  }
+  .al-quote-eng {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+  }
+
+  /* Animations */
   @keyframes spin-slow { to { transform: rotate(360deg); } }
   @keyframes spin-rev  { to { transform: rotate(-360deg); } }
   .spin-slow { animation: spin-slow 18s linear infinite; transform-origin: 140px 240px; }
@@ -293,11 +460,14 @@
   /* ── FORM SIDE ── */
   .al-form-side {
     flex: 1;
-    background: #07070F;
+    background:
+      radial-gradient(circle at 85% 12%, rgba(255,107,0,0.16), transparent 46%),
+      radial-gradient(circle at 8% 90%, rgba(4,106,56,0.12), transparent 52%),
+      #07070F;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 32px 36px;
+    padding: 52px 52px;
     position: relative;
     overflow: hidden;
   }
@@ -312,222 +482,202 @@
   .al-corner-tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; }
   .al-corner-br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; }
 
-  .al-form-inner { width: 100%; max-width: 320px; }
+  .al-form-inner {
+    width: 100%;
+    max-width: 560px;
+    background: linear-gradient(160deg, rgba(12,14,23,0.95), rgba(7,8,14,0.92));
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 22px;
+    padding: 34px 30px 28px;
+    box-shadow: 0 28px 60px rgba(0,0,0,0.52), 0 1px 0 rgba(255,255,255,0.1) inset;
+    backdrop-filter: blur(10px);
+  }
 
   .al-form-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 42px;
-    letter-spacing: 6px;
+    font-size: 56px;
+    letter-spacing: 5px;
     color: #fff;
     line-height: 1;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+    text-shadow: 0 8px 22px rgba(255,107,0,0.2);
   }
   .al-form-sub {
     font-family: 'Tiro Devanagari Sanskrit', serif;
-    font-size: 11px;
-    color: rgba(255,107,0,0.7);
-    margin-bottom: 22px;
-    letter-spacing: 1px;
+    font-size: 14px;
+    color: rgba(255,216,190,0.95);
+    margin-bottom: 26px;
+    letter-spacing: 0.5px;
   }
 
   .al-flash {
     background: rgba(255,107,0,0.08);
     border-left: 2px solid #FF6B00;
+    border-radius: 0;
     padding: 10px 12px;
     margin-bottom: 16px;
     font-size: 11px;
     color: #FF6B00;
     letter-spacing: 1px;
   }
+  .al-flash.success { border-left-color: #0A8A4A; color: #5DD98F; background: rgba(10,138,74,0.08); }
+  .al-flash.error   { border-left-color: #FF3B3B; color: #FF7777; background: rgba(255,59,59,0.08); }
 
   .al-tabs {
     display: flex;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    margin-bottom: 20px;
+    padding: 4px;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    margin-bottom: 26px;
+    gap: 4px;
   }
   .al-tab {
     flex: 1;
     text-align: center;
-    padding: 8px 0;
+    padding: 10px 0;
     font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.25);
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.72);
+    border-radius: 9px;
     text-transform: uppercase;
     text-decoration: none;
     display: block;
-    transition: all 0.2s;
+    transition: all 0.22s ease;
   }
-  .al-tab.active { color: #FF6B00; border-bottom-color: #FF6B00; }
-  .al-tab:hover  { color: rgba(255,107,0,0.7); }
+  .al-tab.active {
+    color: #111;
+    background: linear-gradient(90deg, #FF6B00, #FF8C35);
+    box-shadow: 0 8px 20px rgba(255,107,0,0.3);
+  }
+  .al-tab:hover { color: rgba(255,255,255,0.95); }
 
-  /* Name side-by-side row */
   .al-row { display: flex; gap: 10px; }
   .al-row .al-field { flex: 1; min-width: 0; }
 
-  .al-field { position: relative; margin-bottom: 12px; }
+  .al-field { position: relative; margin-bottom: 16px; }
   .al-field-label {
     font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.28);
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    color: rgba(255,255,255,0.94);
     text-transform: uppercase;
-    margin-bottom: 5px;
+    margin-bottom: 7px;
     display: block;
   }
   .al-input {
     width: 100%;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(4,7,12,0.95);
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 12px;
     color: #F7F3EC;
     font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    padding: 11px 14px;
+    font-size: 14px;
+    padding: 12px 16px;
     outline: none;
     transition: border-color 0.25s, background 0.25s;
-    letter-spacing: 1px;
+    letter-spacing: 0.4px;
     box-sizing: border-box;
   }
   .al-input:focus {
-    border-color: #FF6B00;
-    background: rgba(255,107,0,0.04);
+    border-color: rgba(255,141,53,0.9);
+    background: rgba(255,107,0,0.08);
+    box-shadow: 0 0 0 3px rgba(255,107,0,0.2), 0 10px 24px rgba(255,107,0,0.12);
   }
-  .al-input::placeholder { color: rgba(255,255,255,0.1); }
-  .al-input.error { border-color: rgba(255,60,60,0.5); }
+  .al-input::placeholder { color: rgba(255,255,255,0.38); }
+  .al-input.error { border-color: rgba(255,60,60,0.6); }
 
-/* Base eye style */
-.al-eye{
-  position:absolute;
-  right:12px;
-  transform:translateY(-50%);
-  color:rgba(255,255,255,0.25);
-  cursor:pointer;
-  background:none;
-  border:none;
-  padding:0;
-  line-height:1;
-  transition:all 0.25s ease;
-}
+  .al-eye {
+    position: absolute;
+    right: 13px;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .al-eye:hover { color: #FF6B00; }
+  .password-field .al-eye { top: 44px; }
+  .confirm-field  .al-eye { top: 40px; }
 
-.al-eye:hover{
-  color:#FF6B00;
-  transform:translateY(-50%) scale(1.1);
-}
-
-/* 🔥 Password field (with strength bar) */
-.password-field .al-eye{
-  top:46%;   /* adjusted visually */
-}
-
-
-
-.confirm-field .al-eye{
-  top:65%;   /* 👈 little down */
-  transform:translateY(-50%);
-}
-
-  /* Password strength */
   .strength-bar {
     display: flex;
     gap: 4px;
-    margin-top: 6px;
+    margin-top: 8px;
     height: 2px;
   }
   .strength-seg {
     flex: 1;
     background: rgba(255,255,255,0.06);
+    border-radius: 2px;
     transition: background 0.3s;
   }
   .strength-label {
-    font-size: 8px;
+    font-size: 9px;
     letter-spacing: 2px;
-    color: rgba(255,255,255,0.2);
-    margin-top: 4px;
+    color: rgba(255,255,255,0.62);
+    margin-top: 5px;
     display: block;
+    height: 12px;
+    text-transform: uppercase;
   }
 
-  /* FIXED HEIGHT WRAPPER */
-.strength-wrapper{
-  height:20px;
-  margin-top:6px;
-}
-
-/* BAR */
-.strength-bar{
-  display:flex;
-  gap:4px;
-  height:2px;
-}
-
-/* LABEL */
-.strength-label{
-  font-size:8px;
-  letter-spacing:2px;
-  color:rgba(255,255,255,0.3);
-  display:block;
-  height:10px;
-  margin-top:4px;
-}
-
-  /* Error message */
   .al-err-msg {
-    font-size: 8px;
+    font-size: 9px;
     letter-spacing: 1px;
-    color: rgba(255,80,80,0.7);
-    margin-top: 4px;
+    color: rgba(255,133,133,0.94);
+    margin-top: 5px;
     display: none;
   }
   .al-err-msg.show { display: block; }
 
-  /* Terms checkbox */
   .al-terms {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    margin: 14px 0;
+    margin: 16px 0;
   }
   .al-terms input[type="checkbox"] {
     accent-color: #FF6B00;
-    width: 13px;
-    height: 13px;
+    width: 14px;
+    height: 14px;
     margin-top: 2px;
     flex-shrink: 0;
     cursor: pointer;
   }
   .al-terms label {
     font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.2);
-    line-height: 1.8;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.9;
     cursor: pointer;
   }
-  .al-terms label a {
-    color: #FF6B00;
-    text-decoration: none;
-  }
+  .al-terms label a { color: #FF6B00; text-decoration: none; }
   .al-terms label a:hover { text-decoration: underline; }
 
   .al-submit {
     width: 100%;
-    padding: 14px;
-    background: #FF6B00;
+    padding: 15px 16px;
+    background: linear-gradient(90deg, #FF6B00, #FF8C35);
+    border-radius: 12px;
     color: #050508;
     font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
+    font-size: 11px;
+    letter-spacing: 2.4px;
     text-transform: uppercase;
     font-weight: 700;
     border: none;
     cursor: pointer;
-    transition: background 0.25s;
+    transition: filter 0.25s;
     position: relative;
     overflow: hidden;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
   }
-  .al-submit:hover { background: #FF8C35; }
+  .al-submit:hover { filter: brightness(1.05); }
   .al-submit::after {
     content: '';
     position: absolute;
@@ -542,31 +692,32 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
   }
   .al-divider::before, .al-divider::after {
     content: '';
     flex: 1;
     height: 0.5px;
-    background: rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.16);
   }
   .al-divider span {
     font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.15);
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    color: rgba(255,255,255,0.7);
     text-transform: uppercase;
   }
 
   .al-wa {
     width: 100%;
-    padding: 11px;
+    padding: 13px 16px;
     background: transparent;
-    border: 1px solid rgba(4,106,56,0.4);
-    color: #0A8A4A;
+    border: 1px solid rgba(93,217,143,0.45);
+    border-radius: 12px;
+    color: #5DD98F;
     font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
+    font-size: 10px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
@@ -576,26 +727,112 @@
     transition: all 0.25s;
     box-sizing: border-box;
   }
-  .al-wa:hover { background: rgba(4,106,56,0.08); border-color: #0A8A4A; }
+  .al-wa:hover {
+    background: rgba(93,217,143,0.1);
+    border-color: #5DD98F;
+    color: #89F1B3;
+  }
 
   .al-note {
-    margin-top: 16px;
+    margin-top: 18px;
     font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.12);
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    color: rgba(255,255,255,0.72);
     text-align: center;
-    line-height: 1.8;
+    line-height: 1.9;
   }
-  .al-note a {
-    color: rgba(255,107,0,0.5);
-    text-decoration: none;
-  }
+  .al-note a { color: rgba(255,163,104,0.94); text-decoration: none; }
   .al-note a:hover { color: #FF6B00; }
+
+  html[data-theme="light"] .al-scene {
+    background: #F5F0E8;
+  }
+  html[data-theme="light"] .al-art {
+    display: block;
+    background: #ECE4D8;
+    border-right: 1px solid rgba(26,26,24,0.12);
+  }
+  html[data-theme="light"] .al-form-side {
+    background:
+      radial-gradient(circle at 85% 12%, rgba(232,82,10,0.14), transparent 46%),
+      radial-gradient(circle at 8% 90%, rgba(4,106,56,0.1), transparent 52%),
+      #F5F0E8;
+    padding: 52px 24px;
+  }
+  html[data-theme="light"] .al-corner {
+    border-color: rgba(26,26,24,0.14);
+  }
+  html[data-theme="light"] .al-form-inner {
+    background: #ffffff;
+    border-color: rgba(26,26,24,0.15);
+    box-shadow: 0 18px 40px rgba(26,26,24,0.1), 0 1px 0 rgba(255,255,255,0.8) inset;
+  }
+  html[data-theme="light"] .al-form-title {
+    color: #1A1A18;
+    text-shadow: none;
+  }
+  html[data-theme="light"] .al-form-sub {
+    color: #3D3D3B;
+  }
+  html[data-theme="light"] .al-tabs {
+    border-color: rgba(26,26,24,0.14);
+    background: #F8F4EC;
+  }
+  html[data-theme="light"] .al-tab {
+    color: #666662;
+  }
+  html[data-theme="light"] .al-tab:hover {
+    color: #1A1A18;
+  }
+  html[data-theme="light"] .al-field-label {
+    color: #3D3D3B;
+  }
+  html[data-theme="light"] .al-input {
+    background: #ffffff;
+    border-color: rgba(26,26,24,0.2);
+    color: #1A1A18;
+  }
+  html[data-theme="light"] .al-input::placeholder {
+    color: #666662;
+  }
+  html[data-theme="light"] .al-eye {
+    color: #666662;
+  }
+  html[data-theme="light"] .strength-seg {
+    background: rgba(26,26,24,0.12);
+  }
+  html[data-theme="light"] .strength-label {
+    color: #666662;
+  }
+  html[data-theme="light"] .al-terms label {
+    color: #3D3D3B;
+  }
+  html[data-theme="light"] .al-divider::before,
+  html[data-theme="light"] .al-divider::after {
+    background: rgba(26,26,24,0.16);
+  }
+  html[data-theme="light"] .al-divider span {
+    color: #666662;
+  }
+  html[data-theme="light"] .al-note {
+    color: #3D3D3B;
+  }
+  html[data-theme="light"] .al-note a {
+    color: #E8520A;
+  }
 
   @media (max-width: 700px) {
     .al-art { display: none; }
-    .al-form-side { padding: 28px 20px; }
+    .al-form-side { padding: 22px 14px; }
+    .al-form-inner {
+      max-width: 100%;
+      padding: 26px 20px 22px;
+      border-radius: 18px;
+    }
+    .al-form-title { font-size: 46px; letter-spacing: 4px; }
+    .al-form-sub { font-size: 12px; }
+    .al-row { flex-direction: column; gap: 0; }
   }
 </style>
 {% endblock %}
@@ -616,30 +853,23 @@
   }
 
   function checkStrength(val) {
-    const segs  = ['s1', 's2', 's3', 's4'];
-    const label = document.getElementById('strengthLabel');
     let score = 0;
     if (val.length >= 8)          score++;
     if (/[A-Z]/.test(val))        score++;
     if (/[0-9]/.test(val))        score++;
     if (/[^A-Za-z0-9]/.test(val)) score++;
     const colors = [
-      'rgba(255,60,60,0.7)',
-      'rgba(255,165,0,0.7)',
-      'rgba(255,200,0,0.7)',
-      'rgba(4,138,74,0.8)'
+      'rgba(255,60,60,0.8)',
+      'rgba(255,165,0,0.8)',
+      'rgba(255,200,0,0.8)',
+      'rgba(4,138,74,0.9)'
     ];
-    const labels = [
-      'WEAK · कमकुवत',
-      'FAIR · ठीक',
-      'GOOD · चांगला',
-      'STRONG · मजबूत'
-    ];
-    segs.forEach((id, i) => {
+    const labels = ['WEAK · कमकुवत', 'FAIR · ठीक', 'GOOD · चांगला', 'STRONG · मजबूत'];
+    ['s1','s2','s3','s4'].forEach((id, i) => {
       document.getElementById(id).style.background =
         i < score ? colors[score - 1] : 'rgba(255,255,255,0.06)';
     });
-    label.textContent = val.length ? labels[Math.max(0, score - 1)] : '';
+    document.getElementById('strengthLabel').textContent = val.length ? labels[Math.max(0, score - 1)] : '';
   }
 
   document.getElementById('signupForm').addEventListener('submit', function(e) {
@@ -647,7 +877,6 @@
     const conf = document.getElementById('confirmField').value;
     const err  = document.getElementById('confirmErr');
     const cfld = document.getElementById('confirmField');
-
     if (pwd !== conf) {
       e.preventDefault();
       err.classList.add('show');
@@ -660,29 +889,24 @@
   });
 
   document.getElementById('confirmField').addEventListener('blur', function() {
-  const pwd  = document.getElementById('passwordField').value;
-  const err  = document.getElementById('confirmErr');
-  const cfld = document.getElementById('confirmField');
+    const pwd = document.getElementById('passwordField').value;
+    const err = document.getElementById('confirmErr');
+    const cfld = document.getElementById('confirmField');
+    if (this.value && this.value !== pwd) {
+      err.classList.add('show'); cfld.classList.add('error');
+    } else {
+      err.classList.remove('show'); cfld.classList.remove('error');
+    }
+  });
 
-  if (this.value && this.value !== pwd) {
-    err.classList.add('show');
-    cfld.classList.add('error');
-  } else {
-    err.classList.remove('show');
-    cfld.classList.remove('error');
-  }
-});
-
-document.getElementById('confirmField').addEventListener('input', function() {
-  const pwd  = document.getElementById('passwordField').value;
-  const err  = document.getElementById('confirmErr');
-  const cfld = document.getElementById('confirmField');
-
-  if (this.value === pwd) {
-    err.classList.remove('show');
-    cfld.classList.remove('error');
-  }
-});
+  document.getElementById('confirmField').addEventListener('input', function() {
+    const pwd = document.getElementById('passwordField').value;
+    const err = document.getElementById('confirmErr');
+    const cfld = document.getElementById('confirmField');
+    if (this.value === pwd) {
+      err.classList.remove('show'); cfld.classList.remove('error');
+    }
+  });
 
   function signupWithWhatsApp() {
     alert("WhatsApp signup coming soon! / लवकरच येत आहे!");
@@ -692,11 +916,13 @@ document.getElementById('confirmField').addEventListener('input', function() {
     const form = document.getElementById('signupForm');
     if (form) form.reset();
   };
+
   setTimeout(() => {
     document.querySelectorAll('.al-flash').forEach(el => {
-        el.style.display = 'none';
+      el.style.transition = 'opacity 0.5s';
+      el.style.opacity = '0';
+      setTimeout(() => el.style.display = 'none', 500);
     });
-}, 5000);
-
+  }, 5000);
 </script>
 {% endblock %}

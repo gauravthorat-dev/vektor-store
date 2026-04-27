@@ -1987,3 +1987,108 @@ a { text-decoration: none !important; }
   padding-left: 44px;
   padding-right: 44px;
 }
+
+/* ============================================================
+   LIGHT MODE FIXES: readability + smoother rendering
+   ============================================================ */
+html[data-theme="light"] body::after {
+  display: none;
+}
+
+html[data-theme="light"] .product-wrap::before {
+  display: none;
+  animation: none;
+}
+
+html[data-theme="light"] .breadcrumb {
+  background: #f8f4ec;
+}
+
+html[data-theme="light"] .bc-item {
+  color: rgba(31, 25, 19, 0.62);
+}
+
+html[data-theme="light"] .bc-active {
+  color: rgba(31, 25, 19, 0.9);
+}
+
+html[data-theme="light"] .zoom-close {
+  color: rgba(31, 25, 19, 0.75);
+}
+
+html[data-theme="light"] .info-side,
+html[data-theme="light"] .main-gallery,
+html[data-theme="light"] .thumb-col {
+  background: var(--smoke);
+}
+
+html[data-theme="light"] .prod-title,
+html[data-theme="light"] .price-main,
+html[data-theme="light"] .rating-num,
+html[data-theme="light"] .desc-hl-en,
+html[data-theme="light"] .spec-title,
+html[data-theme="light"] .review-title,
+html[data-theme="light"] .review-name,
+html[data-theme="light"] .sticky-prod-name,
+html[data-theme="light"] .prod-name-en {
+  color: rgba(31, 25, 19, 0.96);
+}
+
+html[data-theme="light"] .prod-title-mr,
+html[data-theme="light"] .review-count,
+html[data-theme="light"] .price-inc,
+html[data-theme="light"] .select-label,
+html[data-theme="light"] .size-guide-link,
+html[data-theme="light"] .offer-text,
+html[data-theme="light"] .trust-mr,
+html[data-theme="light"] .del-mr,
+html[data-theme="light"] .share-label,
+html[data-theme="light"] .desc-body,
+html[data-theme="light"] .desc-hl-mr,
+html[data-theme="light"] .spec-key,
+html[data-theme="light"] .spec-val,
+html[data-theme="light"] .prod-name-mr,
+html[data-theme="light"] .prod-old,
+html[data-theme="light"] .toast-mr,
+html[data-theme="light"] .sec-mr {
+  color: rgba(31, 25, 19, 0.72);
+}
+
+html[data-theme="light"] .pincode-input::placeholder {
+  color: rgba(31, 25, 19, 0.45);
+}
+
+html[data-theme="light"] .verified-badge,
+html[data-theme="light"] .save-text,
+html[data-theme="light"] .del-highlight {
+  color: #0a6a3a;
+}
+
+html[data-theme="light"] .gallery-img-counter,
+html[data-theme="light"] .gal-btn,
+html[data-theme="light"] .sticky-buy-bar,
+html[data-theme="light"] .toast {
+  backdrop-filter: none;
+}
+
+html[data-theme="light"] .reveal,
+html[data-theme="light"] .reveal-l,
+html[data-theme="light"] .reveal-r,
+html[data-theme="light"] .stagger-child {
+  transition-duration: 0.28s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-wrap::before,
+  body::after,
+  .save-text,
+  .sticky-buy-bar,
+  .toast,
+  .reveal,
+  .reveal-l,
+  .reveal-r,
+  .stagger-child {
+    animation: none !important;
+    transition: none !important;
+  }
+}

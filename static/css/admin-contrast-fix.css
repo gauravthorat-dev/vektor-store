@@ -1,0 +1,180 @@
+/* Global readability + consistency layer for all admin screens */
+
+:root,
+html[data-theme="dark"] {
+  --fg: #f5f1e9;
+  --fg2: rgba(245, 241, 233, 0.82);
+  --fg3: rgba(245, 241, 233, 0.62);
+  --border2: rgba(245, 241, 233, 0.2);
+  --placeholder-fg: rgba(245, 241, 233, 0.5);
+}
+
+html[data-theme="light"] {
+  --fg: #1f1913;
+  --fg2: rgba(31, 25, 19, 0.82);
+  --fg3: rgba(31, 25, 19, 0.62);
+  --border2: rgba(31, 25, 19, 0.24);
+  --placeholder-fg: rgba(31, 25, 19, 0.46);
+}
+
+body {
+  color: var(--fg);
+}
+
+.admin-eyebrow,
+.eyebrow,
+.admin-label,
+.stat-label,
+.metric-label,
+.page-info,
+.panel-tag,
+.o-sub,
+.order-sub,
+.cust-phone,
+.empty-s,
+.pop-sub,
+.tl-ts2,
+.otp-info,
+.pip-tip,
+.page-sub,
+.admin-sub,
+.flash-sub {
+  color: var(--fg3) !important;
+}
+
+.admin-table th,
+.activity-table th {
+  color: var(--fg3) !important;
+}
+
+.admin-table td,
+.activity-table td,
+.tbl-name,
+.cust-name,
+.o-name,
+.prod-name,
+.popup-row,
+.pop-v {
+  color: var(--fg) !important;
+}
+
+.admin-input,
+.admin-select,
+.admin-textarea,
+.search-box input,
+.admin-search input,
+.confirm-input {
+  color: var(--fg) !important;
+  border-color: var(--border2) !important;
+}
+
+.admin-input::placeholder,
+.admin-textarea::placeholder,
+.search-box input::placeholder,
+.admin-search input::placeholder,
+.confirm-input::placeholder {
+  color: var(--placeholder-fg) !important;
+  opacity: 1;
+}
+
+.admin-select option {
+  color: var(--fg) !important;
+}
+
+/* Upgrade many inline dim text declarations used across templates */
+[style*="color:var(--fg3)"] {
+  color: var(--fg3) !important;
+}
+
+[style*="color:rgba(247,243,236,.2)"],
+[style*="color:rgba(247,243,236,.25)"],
+[style*="color:rgba(247,243,236,.3)"],
+[style*="color:rgba(247,243,236,.35)"] {
+  color: var(--fg3) !important;
+}
+
+[style*="color:rgba(255,255,255,.2)"],
+[style*="color:rgba(255,255,255,.25)"],
+[style*="color:rgba(255,255,255,.3)"] {
+  color: var(--fg3) !important;
+}
+
+.badge,
+.ppill,
+.fchip,
+.filter-chip,
+.btn-view,
+.admin-btn-sm {
+  letter-spacing: 0.06em;
+}
+
+/* Admin management/readability overrides (tiny 8px-10px text -> accessible sizes) */
+.page-eyebrow,
+.admin-eyebrow {
+  font-size: 11px !important;
+  letter-spacing: 0.12em !important;
+  color: var(--fg2) !important;
+}
+
+.page-sub,
+.admin-sub,
+.name-email,
+.date-cell {
+  font-size: 12px !important;
+  color: var(--fg2) !important;
+}
+
+.fsearch input,
+.fsearch input::placeholder,
+.fbtn,
+.filter-btn,
+.fcount,
+.filter-count,
+.btn-back,
+.tpanel-tag {
+  font-size: 11px !important;
+}
+
+.atable th,
+.admins-table th {
+  font-size: 11px !important;
+  color: var(--fg2) !important;
+}
+
+.atable td,
+.admins-table td,
+.name-main {
+  font-size: 13px !important;
+}
+
+.act-btn,
+.actions .action-btn {
+  font-size: 11px !important;
+  padding: 7px 11px !important;
+}
+
+.flabel,
+.drawer-sub,
+.cmodal-sub,
+.btn-ghost,
+.page-footer,
+.name-email span,
+.atable td span {
+  font-size: 11px !important;
+}
+
+.ferr,
+.pw-toggle,
+.str-lbl {
+  font-size: 10px !important;
+}
+
+/* Prevent last admin row clipping on manage-admins table */
+.tpanel {
+  overflow: visible !important;
+}
+
+.twrap {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+}

@@ -1,579 +1,369 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEKTOR — Command Center</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
+<title>VEKTOR Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
-:root {
-  --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
-  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
-  --fg:#f0ece4;--fg2:#a09890;--fg3:#555;
-  --sf:#FF6B00;--sf2:#ff8c38;--gold:#c8941a;--gold2:#e0aa30;
-  --gr:#0aab5a;--gr2:#0db85f;--blue:#3b7dd8;--blue2:#7aacff;
-  --red:#e03030;--red2:#ff5555;
-  --font-display:'Bebas Neue',sans-serif;--font-mono:'Space Mono',monospace;
-  --font-body:'DM Sans',sans-serif;--font-dev:'Tiro Devanagari Sanskrit',serif;
-  --sb-w:52px;--ticker-h:34px;--radius:2px;
+:root{
+  --bg:#080808;--bg2:#101010;--bg3:#161616;--line:rgba(255,255,255,.09);
+  --txt:#f3eee7;--muted:#9e978e;--orange:#ff6b00;--gold:#d8a327;--green:#1cc76a;--blue:#6aa8ff;--red:#ff5a5a;
+  --side:52px;--ticker:34px;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:13px;overflow:hidden;}
-::-webkit-scrollbar{width:3px;height:3px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--sf);border-radius:2px;}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:0.4;}
-
-/* TICKER */
-.admin-ticker{position:fixed;top:0;left:0;right:0;height:var(--ticker-h);background:var(--sf);z-index:200;display:flex;align-items:center;overflow:hidden;}
-.ticker-label{font-family:var(--font-display);font-size:13px;letter-spacing:.15em;color:#000;padding:0 16px;white-space:nowrap;border-right:2px solid rgba(0,0,0,0.25);height:100%;display:flex;align-items:center;background:rgba(0,0,0,0.12);flex-shrink:0;}
-.ticker-track{display:flex;animation:ticker 32s linear infinite;white-space:nowrap;}
+html[data-theme="light"]{
+  --bg:#f6f2ea;--bg2:#ffffff;--bg3:#f3ece1;--line:rgba(25,20,14,.15);
+  --txt:#1f1913;--muted:#6a5e52;--orange:#ff6b00;--gold:#b98718;--green:#0b9a54;--blue:#2f74d9;--red:#c93a3a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;overflow:hidden}
+a{color:inherit}
+.ticker{position:fixed;top:0;left:0;right:0;height:var(--ticker);background:var(--orange);color:#111;z-index:1000;display:flex;align-items:center;overflow:hidden}
+.ticker b{padding:0 14px;font-family:'Bebas Neue',sans-serif;letter-spacing:.14em;font-size:14px;background:rgba(0,0,0,.12);height:100%;display:flex;align-items:center}
+.ticker-track{white-space:nowrap;font:700 10px 'Space Mono',monospace;letter-spacing:.1em;animation:ticker 28s linear infinite}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.ticker-item{display:flex;align-items:center;gap:14px;padding:0 14px;font-family:var(--font-mono);font-size:10px;color:#000;font-weight:700;letter-spacing:.1em;}
-.ticker-dot{width:4px;height:4px;background:rgba(0,0,0,0.4);border-radius:50%;}
-.ticker-pulse{display:inline-block;width:6px;height:6px;background:#000;border-radius:50%;animation:tpulse 1s ease-in-out infinite;}
-@keyframes tpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(0.7)}}
-
-/* SIDEBAR */
-.admin-sidebar{position:fixed;top:var(--ticker-h);left:0;bottom:0;width:var(--sb-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:0 0 16px;z-index:100;gap:4px;}
-.sb-logo{font-family:var(--font-display);font-size:10px;letter-spacing:.2em;color:var(--sf);writing-mode:vertical-rl;transform:rotate(180deg);padding:16px 0;text-align:center;height:80px;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border);width:100%;margin-bottom:8px;}
-.sb-btn{width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;color:var(--fg3);text-decoration:none;transition:all .2s;position:relative;border:1px solid transparent;}
-.sb-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
-.sb-btn:hover{color:var(--fg);background:var(--bg3);border-color:var(--border);}
-.sb-btn.active{color:var(--sf);background:rgba(255,107,0,0.1);border-color:rgba(255,107,0,0.25);}
-.sb-ping{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--sf);border-radius:50%;border:1.5px solid var(--bg2);animation:ping 2s ease-in-out infinite;}
-@keyframes ping{0%,100%{box-shadow:0 0 0 0 rgba(255,107,0,0.6)}50%{box-shadow:0 0 0 5px rgba(255,107,0,0)}}
-.sb-spacer{flex:1;}
-.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--sf),var(--gold));color:#000;font-family:var(--font-display);font-size:12px;letter-spacing:.05em;display:flex;align-items:center;justify-content:center;border:2px solid var(--sf);cursor:pointer;}
-.sb-divider{width:28px;height:1px;background:var(--border);margin:4px 0;}
-
-/* MAIN */
-.admin-shell{display:flex;height:100vh;padding-top:var(--ticker-h);}
-.admin-main{margin-left:var(--sb-w);flex:1;overflow-y:auto;overflow-x:hidden;padding:0 20px 30px;display:flex;flex-direction:column;gap:14px;}
-
-/* HEADER */
-.admin-hdr{position:sticky;top:0;z-index:90;background:linear-gradient(to bottom,var(--bg) 70%,transparent);padding:18px 0 12px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;}
-.admin-eyebrow{font-family:var(--font-mono);font-size:9px;letter-spacing:.2em;color:var(--fg3);margin-bottom:5px;}
-.admin-title{font-family:var(--font-display);font-size:38px;letter-spacing:.04em;line-height:1;}
-.admin-title span{color:var(--sf);}
-.admin-sub{font-family:var(--font-dev);font-size:11px;color:var(--fg3);margin-top:6px;letter-spacing:.04em;}
-.admin-hdr-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
-.admin-back{color:var(--sf);font-size:10px;letter-spacing:.12em;text-decoration:none;border-bottom:1px solid rgba(255,107,0,0.35);padding-bottom:2px;transition:opacity .2s;margin-bottom:8px;display:inline-block;}
-.admin-back:hover{opacity:.7;}
-.admin-admin-name{color:var(--gold2);font-size:11px;letter-spacing:.1em;font-family:var(--font-mono);}
-.admin-search{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);padding:8px 14px;width:220px;transition:border-color .2s;}
-.admin-search:focus-within{border-color:rgba(255,107,0,0.4);}
-.admin-search svg{width:13px;height:13px;stroke:var(--fg3);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0;}
-.admin-search input{background:none;border:none;outline:none;color:var(--fg);font-family:var(--font-mono);font-size:10px;width:100%;letter-spacing:.05em;}
-.admin-search input::placeholder{color:var(--fg3);}
-.admin-notif{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .3s;}
-.admin-notif svg{width:15px;height:15px;stroke:var(--fg2);fill:none;stroke-width:1.8;stroke-linecap:round;}
-.notif-badge{position:absolute;top:-5px;right:-5px;min-width:16px;height:16px;background:var(--sf);color:#000;font-family:var(--font-mono);font-size:8px;font-weight:700;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--bg);transition:transform .3s cubic-bezier(.175,.885,.32,1.275);}
-.refresh-btn{width:36px;height:36px;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--fg3);transition:all .2s;}
-.refresh-btn:hover{color:var(--sf);border-color:rgba(255,107,0,0.3);}
-.refresh-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-
-/* STATUS BAR */
-.status-bar{display:flex;align-items:center;gap:20px;padding:8px 16px;background:var(--bg2);border:1px solid var(--border);font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;color:var(--fg3);}
-.status-item{display:flex;align-items:center;gap:6px;}
-.status-dot{width:5px;height:5px;border-radius:50%;}
-.status-dot.on{background:var(--gr);animation:ping 2s ease-in-out infinite;}
-.status-dot.warn{background:var(--gold2);}
-.status-divider{width:1px;height:12px;background:var(--border2);}
-.status-val{color:var(--fg);}
-
-/* FLASH WIDGET */
-.flash-widget{background:linear-gradient(135deg,rgba(255,107,0,0.1),rgba(255,107,0,0.03));border:1px solid rgba(255,107,0,0.22);padding:14px 20px;display:flex;align-items:center;gap:20px;}
-.flash-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--sf);margin-bottom:4px;}
-.flash-title{font-family:var(--font-display);font-size:18px;letter-spacing:.06em;}
-.flash-countdown{font-family:var(--font-display);font-size:28px;letter-spacing:.06em;color:var(--sf);}
-.flash-sub{font-size:10px;color:var(--fg3);margin-top:2px;}
-.flash-progress{height:2px;background:var(--bg4);border-radius:2px;margin-top:8px;overflow:hidden;}
-.flash-progress-fill{height:100%;background:var(--sf);border-radius:2px;width:62%;}
-
-/* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
-.stat-card{background:var(--bg2);border:1px solid var(--border);padding:20px;position:relative;overflow:hidden;transition:border-color .3s,transform .2s;cursor:default;}
-.stat-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);transition:width .3s;}
-.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
-.stat-card:hover::before{width:3px;}
-.stat-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.15em;color:var(--fg3);margin-bottom:10px;line-height:1.5;}
-.stat-num{font-family:var(--font-display);font-size:36px;letter-spacing:.02em;line-height:1;margin-bottom:8px;}
-.stat-sub{font-size:11px;color:var(--fg2);}
-.stat-sub.up{color:var(--gr);}
-.stat-sub.dn{color:var(--red);}
-.stat-icon{position:absolute;right:16px;top:16px;opacity:.07;}
-.stat-icon svg{width:40px;height:40px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;}
-
-/* METRIC ROW */
-.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.metric-card{background:var(--bg2);border:1px solid var(--border);padding:14px 16px;}
-.metric-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:8px;}
-.metric-val{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;color:var(--fg);}
-.metric-delta{font-size:10px;color:var(--gr);margin-top:3px;}
-.metric-delta.neg{color:var(--red2);}
-.metric-bar{height:2px;margin-top:10px;background:var(--bg4);border-radius:1px;}
-.metric-bar-fill{height:100%;border-radius:1px;}
-
-/* PANELS */
-.panel{background:var(--bg2);border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.panel-title{font-family:var(--font-display);font-size:16px;letter-spacing:.06em;}
-.panel-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);}
-.panel-body{overflow-y:auto;}
-.live-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:9px;color:var(--gr2);letter-spacing:.12em;}
-.live-badge::before{content:'';width:5px;height:5px;background:var(--gr2);border-radius:50%;animation:ping 2s ease-in-out infinite;}
-
-/* CHART TABS */
-.chart-tabs{display:flex;gap:2px;}
-.chart-tab{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;padding:4px 10px;cursor:pointer;color:var(--fg3);border:1px solid transparent;transition:all .2s;}
-.chart-tab.active{color:var(--sf);border-color:rgba(255,107,0,0.3);background:rgba(255,107,0,0.06);}
-.chart-tab:hover:not(.active){color:var(--fg);border-color:var(--border);}
-
-/* ORDER FEED */
-.order-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);animation:slideIn .3s ease-out;}
-@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
-.order-item:last-child{border-bottom:none;}
-.o-ava{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:11px;letter-spacing:.04em;}
-.o-info{flex:1;min-width:0;}
-.o-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
-.o-sub{font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.05em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.o-right{text-align:right;flex-shrink:0;}
-.o-price{font-family:var(--font-display);font-size:14px;letter-spacing:.03em;margin-bottom:3px;}
-.o-status{font-family:var(--font-mono);font-size:8px;letter-spacing:.12em;padding:2px 7px;}
-.st-p{background:rgba(200,148,26,0.15);color:var(--gold2);border:1px solid rgba(200,148,26,0.25);}
-.st-s{background:rgba(59,125,216,0.15);color:var(--blue2);border:1px solid rgba(59,125,216,0.25);}
-.st-d{background:rgba(13,184,95,0.12);color:var(--gr2);border:1px solid rgba(13,184,95,0.2);}
-.st-c{background:rgba(224,48,48,0.12);color:var(--red2);border:1px solid rgba(224,48,48,0.2);}
-
-/* QUICK ACTIONS */
-.qa-btn{width:100%;display:flex;align-items:center;gap:10px;background:none;border:1px solid var(--border);color:var(--fg2);padding:10px 12px;cursor:pointer;text-align:left;transition:all .2s;font-family:var(--font-body);font-size:12px;margin-bottom:6px;}
-.qa-btn:hover{border-color:var(--border2);color:var(--fg);background:var(--bg3);}
-.qa-btn:hover .qa-arr{color:var(--sf);transform:translateX(3px);}
-.qa-icon{font-size:13px;flex-shrink:0;}
-.qa-text{flex:1;letter-spacing:.02em;}
-.qa-arr{color:var(--fg3);transition:all .2s;font-size:16px;}
-
-/* TOP PRODUCTS */
-.prod-row{display:flex;align-items:center;gap:10px;}
-.prod-num{font-family:var(--font-display);font-size:11px;color:var(--fg3);width:22px;flex-shrink:0;}
-.prod-info{flex:1;min-width:0;}
-.prod-name{font-size:11px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.prod-bar-bg{height:2px;background:var(--bg4);border-radius:1px;}
-.prod-bar-fill{height:100%;border-radius:1px;transition:width .8s cubic-bezier(.25,.46,.45,.94);}
-.prod-val{font-family:var(--font-display);font-size:13px;flex-shrink:0;}
-.prod-badge{font-family:var(--font-mono);font-size:8px;letter-spacing:.08em;padding:2px 6px;color:var(--gr2);background:rgba(13,184,95,0.1);border:1px solid rgba(13,184,95,0.2);flex-shrink:0;}
-
-/* TABLE */
-.activity-table{width:100%;border-collapse:collapse;}
-.activity-table th{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);text-align:left;padding:8px 16px;border-bottom:1px solid var(--border);font-weight:400;}
-.activity-table td{padding:11px 16px;border-bottom:1px solid var(--border);font-size:12px;color:var(--fg2);}
-.activity-table tr:last-child td{border-bottom:none;}
-.activity-table tr:hover td{background:var(--bg3);}
-.tbl-id{font-family:var(--font-mono);font-size:10px;color:var(--fg3);}
-.tbl-name{color:var(--fg);font-weight:500;}
-.tbl-price{font-family:var(--font-display);font-size:14px;}
-
-/* INVENTORY ALERTS */
-.alert-item{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--border);transition:background .2s;}
-.alert-item:hover{background:var(--bg3);}
-.alert-item:last-child{border-bottom:none;}
-.alert-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.alert-text{flex:1;font-size:11px;}
-.alert-text strong{color:var(--fg);font-weight:500;display:block;margin-bottom:1px;}
-.alert-text span{font-family:var(--font-mono);font-size:9px;color:var(--fg3);}
-.alert-qty{font-family:var(--font-display);font-size:16px;flex-shrink:0;}
-
-/* TOAST */
-.toast-container{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
-.toast{background:var(--bg3);border:1px solid var(--border2);padding:10px 16px;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;color:var(--fg2);animation:toastIn .3s ease-out;border-left:3px solid var(--sf);display:flex;align-items:center;gap:8px;min-width:220px;}
-@keyframes toastIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-/* FOOTER */
-.admin-footer{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid var(--border);font-family:var(--font-mono);font-size:9px;color:var(--fg3);letter-spacing:.1em;}
-.footer-dot{display:inline-block;width:5px;height:5px;background:var(--gr);border-radius:50%;margin-right:6px;animation:ping 2s ease-in-out infinite;}
-
-/* GRIDS */
-.grid-2-1{display:grid;grid-template-columns:1.6fr 1fr;gap:14px;}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.ticker-item{display:inline-flex;gap:12px;padding:0 16px}
+.admin-sidebar{position:fixed;top:var(--ticker);left:0;bottom:0;width:var(--side);background:var(--bg2);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px}
+.sb-logo{writing-mode:vertical-lr;transform:rotate(180deg);font:400 11px 'Bebas Neue',sans-serif;letter-spacing:.32em;color:var(--orange);margin:0 0 16px;line-height:1}
+.sb-btn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;color:var(--muted);border-radius:0;margin:0;position:relative;background:transparent}
+.sb-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8}
+.sb-btn:hover{background:var(--bg3);color:var(--txt);border-color:var(--line)}
+.sb-btn.active{background:rgba(255,107,0,.1);color:var(--orange);border-color:rgba(255,107,0,.25)}
+.sb-btn.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--orange)}
+.sb-divider{width:26px;height:1px;background:var(--line);margin:8px 0}
+.sb-spacer{flex:1}
+.sb-avatar{width:32px;height:32px;border-radius:0;display:grid;place-items:center;background:var(--orange);color:#000;font:400 12px 'Bebas Neue',sans-serif;letter-spacing:.08em}
+.main{margin-left:var(--side);padding-top:var(--ticker);height:100vh;overflow:auto}
+.wrap{max-width:1500px;margin:0 auto;padding:16px 18px 22px;display:flex;flex-direction:column;gap:12px}
+.head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+.title{font:400 44px 'Bebas Neue',sans-serif;letter-spacing:.06em;line-height:.9}
+.title span{color:var(--orange)}
+.sub{font:11px 'Space Mono',monospace;color:var(--muted);margin-top:6px}
+.right{display:flex;align-items:center;gap:8px}
+.search{display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--bg3);padding:8px 12px;width:260px}
+.search input{background:none;border:0;outline:none;color:var(--txt);width:100%;font:10px 'Space Mono',monospace}
+.btn{border:1px solid var(--line);background:var(--bg3);color:var(--txt);height:36px;padding:0 12px;font:10px 'Space Mono',monospace;letter-spacing:.12em;cursor:pointer}
+.badge{min-width:20px;height:20px;padding:0 6px;display:grid;place-items:center;border-radius:12px;background:var(--orange);color:#111;font:700 10px 'Space Mono',monospace}
+.status{display:flex;gap:14px;flex-wrap:wrap;border:1px solid var(--line);background:var(--bg2);padding:9px 12px;font:10px 'Space Mono',monospace;color:var(--muted)}
+.status b{color:var(--txt)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.card{border:1px solid var(--line);background:var(--bg2);padding:14px}
+.label{font:10px 'Space Mono',monospace;color:var(--muted);letter-spacing:.12em}
+.num{font:400 34px 'Bebas Neue',sans-serif;margin:6px 0 2px}
+.meta{font:11px 'DM Sans',sans-serif;color:var(--muted)}
+.row{display:grid;grid-template-columns:1.6fr 1fr;gap:10px}
+.panel{border:1px solid var(--line);background:var(--bg2)}
+.ph{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line)}
+.ph h3{font:400 19px 'Bebas Neue',sans-serif;letter-spacing:.06em}
+.pt{font:10px 'Space Mono',monospace;color:var(--muted)}
+.pb{padding:12px 14px}
+.tabs{display:flex;gap:4px}
+.tab{font:10px 'Space Mono',monospace;padding:4px 10px;border:1px solid transparent;cursor:pointer;color:var(--muted)}
+.tab.active{color:var(--orange);border-color:rgba(255,107,0,.35);background:rgba(255,107,0,.08)}
+.feed{display:flex;flex-direction:column;gap:7px}
+.item{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.left{min-width:0}
+.name{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.small{font:10px 'Space Mono',monospace;color:var(--muted)}
+.price{font:400 20px 'Bebas Neue',sans-serif;color:var(--orange)}
+.pill{font:10px 'Space Mono',monospace;padding:2px 7px;border:1px solid}
+.p-p{color:var(--gold);border-color:rgba(216,163,39,.35);background:rgba(216,163,39,.12)}
+.p-s{color:var(--blue);border-color:rgba(106,168,255,.35);background:rgba(106,168,255,.12)}
+.p-d{color:var(--green);border-color:rgba(28,199,106,.35);background:rgba(28,199,106,.12)}
+.p-c{color:var(--red);border-color:rgba(255,90,90,.35);background:rgba(255,90,90,.12)}
+.triple{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.prod{display:flex;align-items:center;gap:9px}
+.bar{flex:1;height:2px;background:var(--bg3)}
+.fill{height:100%;background:var(--orange)}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+.table th{font:10px 'Space Mono',monospace;color:var(--muted);letter-spacing:.12em}
+.table td{font-size:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.alert{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.alert:last-child{border-bottom:0}
+.footer{display:flex;justify-content:space-between;font:10px 'Space Mono',monospace;color:var(--muted);padding:2px 0}
+@media (max-width:1200px){.cards{grid-template-columns:1fr 1fr}.triple{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+@media (max-width:900px){.row{grid-template-columns:1fr}.head{flex-direction:column}.search{width:100%}}
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
-
-<div class="toast-container" id="toastContainer"></div>
-
-<!-- TICKER -->
-<div class="admin-ticker">
-  <div class="ticker-label">VEKTOR ADMIN</div>
+<div class="ticker">
+  <b>VEKTOR ADMIN</b>
   <div class="ticker-track">
-    <div class="ticker-item"><span class="ticker-pulse"></span>LIVE<div class="ticker-dot"></div>TODAY ₹42,800<div class="ticker-dot"></div>128 ORDERS<div class="ticker-dot"></div>12K+ CUSTOMERS<div class="ticker-dot"></div>SS/26 LIVE<div class="ticker-dot"></div>40% FLASH SALE ACTIVE<div class="ticker-dot"></div>AVG ORDER ₹1,840<div class="ticker-dot"></div>RETURN RATE 4.2%<div class="ticker-dot"></div>CONV RATE 3.8%<div class="ticker-dot"></div></div>
-    <div class="ticker-item"><span class="ticker-pulse"></span>LIVE<div class="ticker-dot"></div>TODAY ₹42,800<div class="ticker-dot"></div>128 ORDERS<div class="ticker-dot"></div>12K+ CUSTOMERS<div class="ticker-dot"></div>SS/26 LIVE<div class="ticker-dot"></div>40% FLASH SALE ACTIVE<div class="ticker-dot"></div>AVG ORDER ₹1,840<div class="ticker-dot"></div>RETURN RATE 4.2%<div class="ticker-dot"></div>CONV RATE 3.8%<div class="ticker-dot"></div></div>
+    <span class="ticker-item">TODAY ₹{{ "{:,.0f}".format(today_revenue) }} · {{ today_orders }} ORDERS · {{ total_customers }} CUSTOMERS · {{ total_products }} PRODUCTS · AVG ₹{{ "{:,.0f}".format(avg_order_value) }} · {{ notif_count }} ALERTS</span>
+    <span class="ticker-item">TODAY ₹{{ "{:,.0f}".format(today_revenue) }} · {{ today_orders }} ORDERS · {{ total_customers }} CUSTOMERS · {{ total_products }} PRODUCTS · AVG ₹{{ "{:,.0f}".format(avg_order_value) }} · {{ notif_count }} ALERTS</span>
   </div>
 </div>
 
-<!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </a>
-  <a href="/admin/products" class="sb-btn active" title="Products">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  </a>
-  <a href="/admin/orders" class="sb-btn" title="Orders">
-    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-  </a>
-  <a href="/admin/customers" class="sb-btn" title="Customers">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-  </a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics">
-    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-  </a>
-  <a href="/admin/settings" class="sb-btn" title="Settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-  </a>
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-</a>
-{% endif %}
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-  </a>
-  <a href="/admin/logout" class="sb-btn" title="Logout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  </a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">VK</div>
-</div>
+{% set active_menu = 'dashboard' %}
+{% include 'admin/_sidebar.html' %}
 
-<!-- MAIN CONTENT -->
-<div class="admin-shell">
-<div class="admin-main">
-
-  <!-- HEADER -->
-  <div class="admin-hdr">
+<main class="main">
+<div class="wrap">
+  <section class="head">
     <div>
-      <a href="/" class="admin-back">← BACK TO STORE</a>
-      <div class="admin-eyebrow">Command Center · नियंत्रण केंद्र</div>
-      <div class="admin-title">VEKTOR <span>ADMIN</span></div>
-      <div class="admin-sub">।। वस्त्रं शौर्यस्य चिन्हम् ।। — महाराष्ट्रीय पुरुष वस्त्र</div>
+      <div class="title">COMMAND <span>CENTER</span></div>
+      <div class="sub">Dynamic dashboard powered by live database data</div>
     </div>
-    <div class="admin-hdr-right">
-      <div class="admin-admin-name">👑 {{ session.get('admin_name', 'MR KAALX') }}</div>
-      <div class="admin-search">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Search orders, products..." id="searchInput">
-      </div>
-      <div class="refresh-btn" onclick="refreshDashboard()" title="Refresh">
-        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-      </div>
-      <div class="admin-notif" id="notifBtn" onclick="clearNotifs()">
-        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-        <div class="notif-badge" id="notifCount">0</div>
-      </div>
+    <div class="right">
+      <div class="search"><input id="searchInput" placeholder="Search in recent orders"></div>
+      <button class="btn" onclick="refreshDashboard()">REFRESH</button>
+      <div class="badge" id="notifCount">{{ notif_count }}</div>
     </div>
-  </div>
+  </section>
 
-  <!-- STATUS BAR -->
-  <div class="status-bar">
-    <div class="status-item"><div class="status-dot on"></div>API <span class="status-val">ONLINE</span></div>
-    <div class="status-divider"></div>
-    <div class="status-item"><div class="status-dot on"></div>PAYMENTS <span class="status-val">ACTIVE</span></div>
-    <div class="status-divider"></div>
-    <div class="status-item"><div class="status-dot warn"></div>INVENTORY SYNC <span class="status-val">DELAYED 2M</span></div>
-    <div class="status-divider"></div>
-    <div class="status-item">LAST REFRESH <span class="status-val" id="lastRefresh">JUST NOW</span></div>
-    <div class="status-divider"></div>
-    <div class="status-item">UPTIME <span class="status-val">99.98%</span></div>
-  </div>
+  <section class="status">
+    <span>ORDERS <b>{{ total_orders }}</b></span>
+    <span>REVENUE <b>₹{{ "{:,.0f}".format(total_revenue) }}</b></span>
+    <span>TODAY <b>{{ today_orders }}</b></span>
+    <span>LOW STOCK <b>{{ low_stock|length }}</b></span>
+    <span id="lastRefresh">LAST REFRESH JUST NOW</span>
+  </section>
 
-  <!-- FLASH SALE -->
-  <div class="flash-widget">
-    <div style="flex:1">
-      <div class="flash-label">⚡ ACTIVE CAMPAIGN</div>
-      <div class="flash-title">SS/26 SUMMER FLASH SALE — 40% OFF SITEWIDE</div>
-      <div class="flash-progress"><div class="flash-progress-fill"></div></div>
-      <div class="flash-sub" style="margin-top:4px">62% REDEEMED · 38% REMAINING · ₹84,200 REVENUE FROM SALE</div>
-    </div>
-    <div style="text-align:right;flex-shrink:0">
-      <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--fg3);margin-bottom:4px">ENDS IN</div>
-      <div class="flash-countdown" id="countdown">05:42:18</div>
-    </div>
-  </div>
+  <section class="cards">
+    <article class="card"><div class="label">TOTAL REVENUE</div><div class="num" style="color:var(--orange)">₹{{ "{:,.0f}".format(total_revenue) }}</div><div class="meta">Today: ₹{{ "{:,.0f}".format(today_revenue) }}</div></article>
+    <article class="card"><div class="label">ORDERS TODAY</div><div class="num" style="color:var(--gold)">{{ today_orders }}</div><div class="meta">Total orders: {{ total_orders }}</div></article>
+    <article class="card"><div class="label">CUSTOMERS</div><div class="num" style="color:var(--green)">{{ "{:,}".format(total_customers) }}</div><div class="meta">Registered users</div></article>
+    <article class="card"><div class="label">PRODUCTS</div><div class="num" style="color:var(--blue)">{{ "{:,}".format(total_products) }}</div><div class="meta">{{ low_stock|length }} low stock alerts</div></article>
+  </section>
 
-  <!-- STAT CARDS -->
-  <div class="stat-grid">
-    <div class="stat-card" style="--accent:var(--sf)">
-      <div class="stat-label">TOTAL REVENUE · एकूण महसूल</div>
-      <div class="stat-num" style="color:var(--sf)">₹2.4L</div>
-      <div class="stat-sub up">↑ 18% from last month</div>
-      <div class="stat-icon" style="color:var(--sf)"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
-    </div>
-    <div class="stat-card" style="--accent:var(--gold)">
-      <div class="stat-label">ORDERS TODAY · आजचे ऑर्डर</div>
-      <div class="stat-num" style="color:var(--gold2)" id="ordersNum">128</div>
-      <div class="stat-sub up">↑ 24 new since morning</div>
-      <div class="stat-icon" style="color:var(--gold)"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div>
-    </div>
-    <div class="stat-card" style="--accent:var(--gr)">
-      <div class="stat-label">CUSTOMERS · ग्राहक</div>
-      <div class="stat-num" style="color:var(--gr2)">12,048</div>
-      <div class="stat-sub up">↑ 342 this week</div>
-      <div class="stat-icon" style="color:var(--gr)"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-    </div>
-    <div class="stat-card" style="--accent:var(--blue)">
-      <div class="stat-label">PRODUCTS · उत्पादने</div>
-      <div class="stat-num" style="color:var(--blue2)">54</div>
-      <div class="stat-sub up">↑ 8 new this month</div>
-      <div class="stat-icon" style="color:var(--blue)"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-    </div>
-  </div>
-
-  <!-- METRIC ROW -->
-  <div class="metric-row">
-    <div class="metric-card">
-      <div class="metric-label">AVG ORDER VALUE</div>
-      <div class="metric-val">₹1,840</div>
-      <div class="metric-delta">↑ 12% vs last week</div>
-      <div class="metric-bar"><div class="metric-bar-fill" style="width:74%;background:var(--sf)"></div></div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">CONVERSION RATE</div>
-      <div class="metric-val">3.8%</div>
-      <div class="metric-delta neg">↓ 0.4% vs yesterday</div>
-      <div class="metric-bar"><div class="metric-bar-fill" style="width:38%;background:var(--gold2)"></div></div>
-    </div>
-    <div class="metric-card">
-      <div class="metric-label">RETURN RATE</div>
-      <div class="metric-val">4.2%</div>
-      <div class="metric-delta">↓ 1.1% improved this month</div>
-      <div class="metric-bar"><div class="metric-bar-fill" style="width:20%;background:var(--gr2)"></div></div>
-    </div>
-  </div>
-
-  <!-- CHART + LIVE ORDERS -->
-  <div class="grid-2-1">
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Revenue · महसूल</div>
-        <div style="display:flex;align-items:center;gap:12px">
-          <div class="chart-tabs">
-            <div class="chart-tab active" onclick="switchChart(this,'weekly')">WEEKLY</div>
-            <div class="chart-tab" onclick="switchChart(this,'monthly')">MONTHLY</div>
-          </div>
+  <section class="row">
+    <article class="panel">
+      <div class="ph">
+        <h3>Revenue</h3>
+        <div class="tabs">
+          <button class="tab active" onclick="switchChart(this,'weekly')">WEEKLY</button>
+          <button class="tab" onclick="switchChart(this,'monthly')">MONTHLY</button>
         </div>
       </div>
-      <div class="panel-body" style="height:250px;padding:16px 16px 8px">
-        <canvas id="revChart"></canvas>
+      <div class="pb" style="height:260px"><canvas id="revChart"></canvas></div>
+    </article>
+    <article class="panel">
+      <div class="ph"><h3>Latest Orders</h3><span class="pt">LIVE DATA</span></div>
+      <div class="pb feed">
+        {% for order in recent_orders[:6] %}
+        <div class="item">
+          <div class="left">
+            <div class="name">{{ order.customer or "Unknown" }}</div>
+            <div class="small">#{{ order.id }} · {{ order.items|length }} item(s) · {{ order.shipping_city or "NA" }}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="price">₹{{ "{:,.0f}".format(order.total_price or 0) }}</div>
+            {% set st = (order.status or "")|lower %}
+            {% if st == "delivered" %}
+            <span class="pill p-d">DELIVERED</span>
+            {% elif st == "shipped" %}
+            <span class="pill p-s">SHIPPED</span>
+            {% elif st == "cancelled" %}
+            <span class="pill p-c">CANCELLED</span>
+            {% else %}
+            <span class="pill p-p">{{ (order.status or "Pending")|upper }}</span>
+            {% endif %}
+          </div>
+        </div>
+        {% else %}
+        <div class="small">No recent orders.</div>
+        {% endfor %}
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Live Orders</div>
-        <div class="live-badge">LIVE AUTO-REFRESH</div>
-      </div>
-      <div class="panel-body" style="padding:0 20px" id="orderFeed"></div>
-    </div>
-  </div>
+    </article>
+  </section>
 
-  <!-- BOTTOM 3-COL -->
-  <div class="grid-3">
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Order Status</div>
-        <div class="panel-tag">DISTRIBUTION</div>
+  <section class="triple">
+    <article class="panel">
+      <div class="ph"><h3>Order Status</h3><span class="pt">DISTRIBUTION</span></div>
+      <div class="pb" style="height:220px"><canvas id="statusChart"></canvas></div>
+    </article>
+    <article class="panel">
+      <div class="ph"><h3>Top Products</h3><span class="pt">BY REVENUE</span></div>
+      <div class="pb" style="display:flex;flex-direction:column;gap:12px">
+        {% set max_rev = (top_products[0].total_revenue if top_products else 0) %}
+        {% for p in top_products %}
+        <div class="prod">
+          <span class="small">{{ "%02d"|format(loop.index) }}</span>
+          <span class="name" style="width:180px">{{ p.name }}</span>
+          <div class="bar"><div class="fill" style="width:{% if max_rev > 0 %}{{ ((p.total_revenue / max_rev) * 100)|round(0)|int }}{% else %}0{% endif %}%"></div></div>
+          <span class="small">₹{{ "{:,.0f}".format(p.total_revenue) }}</span>
+          <span class="small">{{ p.total_sold }} sold</span>
+        </div>
+        {% else %}
+        <div class="small">No product sales yet.</div>
+        {% endfor %}
       </div>
-      <div class="panel-body" style="height:210px;padding:10px">
-        <canvas id="statusChart"></canvas>
+    </article>
+    <article class="panel">
+      <div class="ph"><h3>Quick Actions</h3></div>
+      <div class="pb feed">
+        {% if session.get('admin_level') == 'superadmin' %}<a class="btn" style="display:block;text-decoration:none;padding:10px 12px;height:auto" href="/admin/manage-admins">MANAGE ADMINS</a>{% endif %}
+        <a class="btn" style="display:block;text-decoration:none;padding:10px 12px;height:auto" href="/admin/add-product">ADD PRODUCT</a>
+        <a class="btn" style="display:block;text-decoration:none;padding:10px 12px;height:auto" href="/admin/orders">MANAGE ORDERS</a>
+        <a class="btn" style="display:block;text-decoration:none;padding:10px 12px;height:auto" href="/admin/products">ALL PRODUCTS</a>
+        <a class="btn" style="display:block;text-decoration:none;padding:10px 12px;height:auto" href="/admin/settings">SETTINGS</a>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Top Products · शीर्ष</div>
-        <div class="panel-tag">BY REVENUE</div>
-      </div>
-      <div class="panel-body" style="padding:14px 20px;display:flex;flex-direction:column;gap:13px">
-        <div class="prod-row"><div class="prod-num">01</div><div class="prod-info"><div class="prod-name">Biker Jacket</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:100%;background:var(--sf)"></div></div></div><div class="prod-val" style="color:var(--sf)">₹48K</div><div class="prod-badge">+23%</div></div>
-        <div class="prod-row"><div class="prod-num">02</div><div class="prod-info"><div class="prod-name">Oxford Shirt</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:75%;background:var(--gold2)"></div></div></div><div class="prod-val" style="color:var(--gold2)">₹36K</div><div class="prod-badge">+14%</div></div>
-        <div class="prod-row"><div class="prod-num">03</div><div class="prod-info"><div class="prod-name">Slim Jeans</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:60%;background:var(--gr2)"></div></div></div><div class="prod-val" style="color:var(--gr2)">₹29K</div><div class="prod-badge">+9%</div></div>
-        <div class="prod-row"><div class="prod-num">04</div><div class="prod-info"><div class="prod-name">Linen Shirt</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:46%;background:var(--blue2)"></div></div></div><div class="prod-val" style="color:var(--blue2)">₹22K</div><div class="prod-badge">+6%</div></div>
-        <div class="prod-row"><div class="prod-num">05</div><div class="prod-info"><div class="prod-name">Polo Tee</div><div class="prod-bar-bg"><div class="prod-bar-fill" style="width:30%;background:var(--fg3)"></div></div></div><div class="prod-val" style="color:var(--fg2)">₹14K</div><div class="prod-badge">+2%</div></div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Quick Actions · जलद</div>
-      </div>
-      <div class="panel-body" style="padding:12px 14px">
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" style="text-decoration:none">
-  <button class="qa-btn"><span class="qa-icon">🔐</span><span class="qa-text">Manage Admins</span><span class="qa-arr">›</span></button>
-</a>
-{% endif %}
-  <a href="/admin/add-product" style="text-decoration:none"><button class="qa-btn"><span class="qa-icon">＋</span><span class="qa-text">Add New Product</span><span class="qa-arr">›</span></button></a>
-  <a href="/admin/analytics" style="text-decoration:none"><button class="qa-btn"><span class="qa-icon">↗</span><span class="qa-text">Export Analytics</span><span class="qa-arr">›</span></button></a>
-  <a href="/admin/orders" style="text-decoration:none"><button class="qa-btn"><span class="qa-icon">📦</span><span class="qa-text">Manage Orders</span><span class="qa-arr">›</span></button></a>
-  <a href="/admin/products" style="text-decoration:none"><button class="qa-btn"><span class="qa-icon">🛍</span><span class="qa-text">All Products</span><span class="qa-arr">›</span></button></a>
-  <a href="/admin/settings" style="text-decoration:none"><button class="qa-btn"><span class="qa-icon">⚙</span><span class="qa-text">Store Settings</span><span class="qa-arr">›</span></button></a>
-</div>
-    </div>
-  </div>
+    </article>
+  </section>
 
-  <!-- RECENT ORDERS TABLE -->
-  <div class="panel">
-    <div class="panel-hdr">
-      <div class="panel-title">Recent Orders · अलीकडील ऑर्डर</div>
-      <a href="/admin/orders" style="font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;color:var(--sf);text-decoration:none;border-bottom:1px solid rgba(255,107,0,0.3)">VIEW ALL →</a>
-    </div>
-    <div class="panel-body">
-      <table class="activity-table">
-        <thead><tr><th>ORDER ID</th><th>CUSTOMER</th><th>PRODUCT</th><th>CITY</th><th>AMOUNT</th><th>STATUS</th><th>TIME</th></tr></thead>
-        <tbody id="recentOrdersTbody"></tbody>
+  <section class="panel">
+    <div class="ph"><h3>Recent Orders</h3><a class="pt" href="/admin/orders" style="text-decoration:none;color:var(--orange)">VIEW ALL →</a></div>
+    <div class="pb" style="overflow:auto">
+      <table class="table">
+        <thead><tr><th>ORDER</th><th>CUSTOMER</th><th>PRODUCT</th><th>CITY</th><th>AMOUNT</th><th>STATUS</th><th>TIME</th></tr></thead>
+        <tbody id="recentOrdersTbody">
+          {% for order in recent_orders %}
+          <tr>
+            <td>#{{ order.id }}</td>
+            <td>{{ order.customer or "Unknown" }}</td>
+            <td>{{ order.items[0].product_name if order.items and order.items[0].product_name else (order.items[0].product.name if order.items and order.items[0].product else "—") }}</td>
+            <td>{{ order.shipping_city or "NA" }}</td>
+            <td>₹{{ "{:,.0f}".format(order.total_price or 0) }}</td>
+            <td>{{ order.status or "Pending" }}</td>
+            <td>{{ order.created_at.strftime('%d %b %H:%M') if order.created_at else "NA" }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="small">No recent orders.</td></tr>
+          {% endfor %}
+        </tbody>
       </table>
     </div>
-  </div>
+  </section>
 
-  <!-- INVENTORY + CITY CHART -->
-  <div class="grid-2">
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Inventory Alerts · स्टॉक</div>
-        <div class="panel-tag" style="color:var(--red2)">⚠ 4 LOW STOCK</div>
+  <section class="grid2">
+    <article class="panel">
+      <div class="ph"><h3>Inventory Alerts</h3><span class="pt">{{ low_stock|length }} LOW STOCK</span></div>
+      <div class="pb">
+        {% for p in low_stock %}
+        <div class="alert">
+          <div>
+            <div class="name">{{ p.name }}</div>
+            <div class="small">SKU: {{ p.sku or ("VK-" ~ p.id) }} · {{ p.category or "NA" }}</div>
+          </div>
+          <div class="price" style="font-size:24px;color:{% if p.stock <= 2 %}var(--red){% else %}var(--gold){% endif %}">{{ p.stock }}</div>
+        </div>
+        {% else %}
+        <div class="small">No low-stock products right now.</div>
+        {% endfor %}
       </div>
-      <div class="panel-body">
-        <div class="alert-item"><div class="alert-dot" style="background:var(--red2)"></div><div class="alert-text"><strong>Biker Jacket — Size L</strong><span>SKU: VK-BJ-L-BLK · Last restock: 18 days ago</span></div><div class="alert-qty" style="color:var(--red2)">3</div></div>
-        <div class="alert-item"><div class="alert-dot" style="background:var(--red2)"></div><div class="alert-text"><strong>Oxford Shirt — Size XL</strong><span>SKU: VK-OS-XL-WHT · Last restock: 24 days ago</span></div><div class="alert-qty" style="color:var(--red2)">5</div></div>
-        <div class="alert-item"><div class="alert-dot" style="background:var(--gold2)"></div><div class="alert-text"><strong>Slim Jeans — Size 32</strong><span>SKU: VK-SJ-32-IND · Last restock: 11 days ago</span></div><div class="alert-qty" style="color:var(--gold2)">12</div></div>
-        <div class="alert-item"><div class="alert-dot" style="background:var(--gold2)"></div><div class="alert-text"><strong>Chino Pants — Size M</strong><span>SKU: VK-CP-M-KHK · Last restock: 9 days ago</span></div><div class="alert-qty" style="color:var(--gold2)">8</div></div>
-        <div class="alert-item"><div class="alert-dot" style="background:var(--gr2)"></div><div class="alert-text"><strong>Linen Shirt — Size S</strong><span>SKU: VK-LS-S-BLU · In stock — OK</span></div><div class="alert-qty" style="color:var(--gr2)">28</div></div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-hdr">
-        <div class="panel-title">Orders by City · शहर</div>
-        <div class="panel-tag">TOP 5 CITIES</div>
-      </div>
-      <div class="panel-body" style="height:220px;padding:10px">
-        <canvas id="cityChart"></canvas>
-      </div>
-    </div>
-  </div>
+    </article>
+    <article class="panel">
+      <div class="ph"><h3>Orders By City</h3><span class="pt">TOP 5</span></div>
+      <div class="pb" style="height:260px"><canvas id="cityChart"></canvas></div>
+    </article>
+  </section>
 
-  <!-- FOOTER -->
-  <div class="admin-footer">
-    <span><span class="footer-dot"></span>VEKTOR ADMIN v2.6 · SS/26</span>
-    <span>।। वस्त्रं शौर्यस्य चिन्हम् ।।</span>
-    <span id="footerTime"></span>
-  </div>
-
+  <section class="footer">
+    <span>VEKTOR ADMIN · Dynamic Mode</span>
+    <span id="clock"></span>
+  </section>
 </div>
-</div>
+</main>
 
 <script>
-const NAMES=[['RK','Rahul Kadam','Oxford Shirt','Nashik'],['SM','Siddharth More','Biker Jacket','Pune'],['VP','Vikram Patil','Slim Jeans','Mumbai'],['AS','Arjun Shinde','Linen Shirt','Aurangabad'],['DM','Deepa Mane','Polo Tee','Nagpur'],['RS','Rohan Salvi','Chino Pants','Kolhapur'],['PJ','Priya Joshi','Oxford Shirt','Solapur'],['MB','Mayur Bhagat','Biker Jacket','Nashik'],['NK','Nikhil Kulkarni','Slim Jeans','Pune']];
-const AVCOL=[['rgba(255,107,0,0.15)','#FF6B00'],['rgba(13,184,95,0.12)','#0db85f'],['rgba(200,148,26,0.15)','#e0aa30'],['rgba(59,125,216,0.15)','#7aacff'],['rgba(160,80,200,0.15)','#c07aff']];
-const STATS=[['st-p','PENDING'],['st-s','SHIPPED'],['st-d','DELIVERED'],['st-c','CANCELLED']];
-const STATUSMAP={'st-p':'<span class="o-status st-p">PENDING</span>','st-s':'<span class="o-status st-s">SHIPPED</span>','st-d':'<span class="o-status st-d">DELIVERED</span>','st-c':'<span class="o-status st-c">CANCELLED</span>'};
-let notifN=0, ordersCount=128;
-const rand=a=>a[Math.floor(Math.random()*a.length)];
+const dailyLabels = {{ daily_labels|tojson }};
+const dailyRevenue = {{ daily_revenue|tojson }};
+const monthlyLabels = {{ monthly_labels|tojson }};
+const monthlyRevenue = {{ monthly_revenue|tojson }};
+const statusCounts = {{ status_counts|tojson }};
+const cityLabels = {{ city_labels|tojson }};
+const cityCounts = {{ city_counts|tojson }};
 
-/* ── REVENUE CHART ── */
-const revCtx=document.getElementById('revChart').getContext('2d');
-const grad=revCtx.createLinearGradient(0,0,0,220);
-grad.addColorStop(0,'rgba(255,107,0,0.28)');grad.addColorStop(1,'rgba(255,107,0,0)');
-const weeklyData=[4200,5800,4900,7100,6300,8400,9200,7800,10100,9400,11200,12000,10800,13400];
-const monthlyData=[12000,19000,15000,26000,32000,28000,38000,42000];
-let revChart=new Chart(revCtx,{type:'line',data:{labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'],datasets:[{data:weeklyData,borderColor:'#FF6B00',backgroundColor:grad,borderWidth:2,tension:0.45,fill:true,pointBackgroundColor:'#FF6B00',pointBorderColor:'#080808',pointBorderWidth:2,pointRadius:3,pointHoverRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1a1a',borderColor:'rgba(255,107,0,0.3)',borderWidth:1,titleColor:'#FF6B00',bodyColor:'#f0ece4',padding:10,cornerRadius:0,callbacks:{label:c=>' ₹'+c.raw.toLocaleString('en-IN')}}},scales:{x:{ticks:{color:'#555',font:{size:9,family:'Space Mono'}},grid:{color:'rgba(255,255,255,0.02)'},border:{color:'transparent'}},y:{ticks:{color:'#555',font:{size:9},callback:v=>'₹'+(v/1000)+'K'},grid:{color:'rgba(255,255,255,0.03)'},border:{color:'transparent'}}}}});
-function switchChart(el,type){document.querySelectorAll('.chart-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');if(type==='weekly'){revChart.data.labels=['Mon','Tue','Wed','Thu','Fri','Sat','Sun','Mon','Tue','Wed','Thu','Fri','Sat','Sun'];revChart.data.datasets[0].data=weeklyData;}else{revChart.data.labels=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];revChart.data.datasets[0].data=monthlyData;}revChart.update('active');}
-
-/* ── STATUS DONUT ── */
-new Chart(document.getElementById('statusChart'),{type:'doughnut',data:{labels:['Pending','Shipped','Delivered','Cancelled'],datasets:[{data:[25,35,55,13],backgroundColor:['rgba(200,148,26,0.85)','rgba(59,125,216,0.85)','rgba(13,184,95,0.85)','rgba(224,48,48,0.85)'],borderColor:'#0f0f0f',borderWidth:3,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{labels:{color:'#777',font:{size:9,family:'Space Mono'},boxWidth:8,padding:10}},tooltip:{backgroundColor:'#1a1a1a',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#f0ece4',bodyColor:'#a09890',padding:8,cornerRadius:0}}}});
-
-/* ── CITY CHART ── */
-new Chart(document.getElementById('cityChart'),{type:'bar',data:{labels:['Mumbai','Pune','Nashik','Nagpur','Aurangabad'],datasets:[{data:[42,28,19,14,10],backgroundColor:['rgba(255,107,0,0.8)','rgba(200,148,26,0.8)','rgba(13,184,95,0.8)','rgba(59,125,216,0.8)','rgba(160,80,200,0.8)'],borderColor:'transparent',borderRadius:1}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1a1a',borderColor:'rgba(255,255,255,0.1)',borderWidth:1,titleColor:'#f0ece4',bodyColor:'#a09890',padding:8,cornerRadius:0,callbacks:{label:c=>` ${c.raw} orders`}}},scales:{x:{ticks:{color:'#555',font:{size:9,family:'Space Mono'}},grid:{color:'rgba(255,255,255,0.03)'},border:{color:'transparent'}},y:{ticks:{color:'#aaa',font:{size:10}},grid:{display:false},border:{color:'transparent'}}}}});
-
-/* ── LIVE FEED ── */
-function addOrder(){
-  const n=rand(NAMES),c=rand(AVCOL),s=rand(STATS);
-  const amt=(Math.floor(Math.random()*48+5)*100).toLocaleString('en-IN');
-  const id=Math.floor(Math.random()*9000+800);
-  const feed=document.getElementById('orderFeed');
-  const row=document.createElement('div');row.className='order-item';
-  row.innerHTML=`<div class="o-ava" style="background:${c[0]};color:${c[1]}">${n[0]}</div><div class="o-info"><div class="o-name">${n[1]}</div><div class="o-sub">#${id} · ${n[2]} · ${n[3]}</div></div><div class="o-right"><div class="o-price" style="color:${c[1]}">₹${amt}</div><div class="o-status ${s[0]}">${s[1]}</div></div>`;
-  feed.insertBefore(row,feed.firstChild);
-  if(feed.children.length>6)feed.removeChild(feed.lastChild);
-  ordersCount++;
-  document.getElementById('ordersNum').textContent=ordersCount.toLocaleString('en-IN');
-  notifN++;
-  const badge=document.getElementById('notifCount');
-  badge.textContent=notifN>9?'9+':notifN;badge.style.transform='scale(1.4)';
-  setTimeout(()=>badge.style.transform='scale(1)',300);
-  const btn=document.getElementById('notifBtn');btn.style.borderColor='rgba(255,107,0,0.5)';
-  setTimeout(()=>btn.style.borderColor='',600);
-  addTableRow(n,id,amt,s);
-  showToast(`New order #${id} — ${n[1]}`);
-}
-
-/* ── TABLE ── */
-function addTableRow(n,id,amt,s){
-  const tbody=document.getElementById('recentOrdersTbody');
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td class="tbl-id">#${id}</td><td class="tbl-name">${n[1]}</td><td style="font-size:11px">${n[2]}</td><td style="color:var(--fg3)">${n[3]}</td><td class="tbl-price">₹${amt}</td><td>${STATUSMAP[s[0]]}</td><td style="color:var(--fg3);font-family:var(--font-mono);font-size:9px">Just now</td>`;
-  tbody.insertBefore(tr,tbody.firstChild);
-  if(tbody.children.length>8)tbody.removeChild(tbody.lastChild);
-}
-(function seedTable(){
-  const seeds=[[NAMES[0],7435,'3,500',STATS[0],'5m ago'],[NAMES[1],5180,'800',STATS[0],'8m ago'],[NAMES[3],1402,'5,000',STATS[0],'12m ago'],[NAMES[4],7509,'4,600',STATS[1],'15m ago'],[NAMES[2],9322,'1,600',STATS[2],'22m ago']];
-  const tbody=document.getElementById('recentOrdersTbody');
-  seeds.forEach(([n,id,amt,s,t])=>{const tr=document.createElement('tr');tr.innerHTML=`<td class="tbl-id">#${id}</td><td class="tbl-name">${n[1]}</td><td style="font-size:11px">${n[2]}</td><td style="color:var(--fg3)">${n[3]}</td><td class="tbl-price">₹${amt}</td><td>${STATUSMAP[s[0]]}</td><td style="color:var(--fg3);font-family:var(--font-mono);font-size:9px">${t}</td>`;tbody.appendChild(tr);});
-})();
-
-/* ── INIT FEED ── */
-for(let i=0;i<5;i++){
-  const n=rand(NAMES),c=rand(AVCOL),s=rand(STATS),amt=(Math.floor(Math.random()*48+5)*100).toLocaleString('en-IN'),id=Math.floor(Math.random()*9000+800);
-  const feed=document.getElementById('orderFeed');const row=document.createElement('div');
-  row.className='order-item';row.style.animation='none';
-  row.innerHTML=`<div class="o-ava" style="background:${c[0]};color:${c[1]}">${n[0]}</div><div class="o-info"><div class="o-name">${n[1]}</div><div class="o-sub">#${id} · ${n[2]} · ${n[3]}</div></div><div class="o-right"><div class="o-price" style="color:${c[1]}">₹${amt}</div><div class="o-status ${s[0]}">${s[1]}</div></div>`;
-  feed.appendChild(row);
-}
-
-/* ── TOAST ── */
-function showToast(msg){
-  const c=document.getElementById('toastContainer');const t=document.createElement('div');
-  t.className='toast';t.innerHTML=`<span style="color:var(--sf)">●</span>${msg}`;
-  c.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(20px)';t.style.transition='all .3s';setTimeout(()=>t.remove(),300);},3000);
-  if(c.children.length>3)c.removeChild(c.firstChild);
-}
-function clearNotifs(){notifN=0;document.getElementById('notifCount').textContent='0';showToast('Notifications cleared');}
-
-/* ── COUNTDOWN ── */
-let countdownSecs=5*3600+42*60+18;
-setInterval(()=>{countdownSecs=Math.max(0,countdownSecs-1);const h=String(Math.floor(countdownSecs/3600)).padStart(2,'0'),m=String(Math.floor((countdownSecs%3600)/60)).padStart(2,'0'),s=String(countdownSecs%60).padStart(2,'0');document.getElementById('countdown').textContent=`${h}:${m}:${s}`;},1000);
-
-/* ── CLOCK ── */
-function updateClock(){document.getElementById('footerTime').textContent=new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});}
-setInterval(updateClock,1000);updateClock();
-
-/* ── REFRESH ── */
-function refreshDashboard(){document.getElementById('lastRefresh').textContent='JUST NOW';showToast('Dashboard refreshed');addOrder();}
-
-/* ── SEARCH ── */
-document.getElementById('searchInput').addEventListener('input',function(){
-  const q=this.value.toLowerCase();
-  document.querySelectorAll('#recentOrdersTbody tr').forEach(r=>r.style.opacity=(!q||r.textContent.toLowerCase().includes(q))?'1':'0.3');
-});
-document.getElementById('searchInput').addEventListener('blur',function(){
-  document.querySelectorAll('#recentOrdersTbody tr').forEach(r=>r.style.opacity='1');
+const revCtx = document.getElementById('revChart').getContext('2d');
+const grad = revCtx.createLinearGradient(0, 0, 0, 240);
+grad.addColorStop(0, 'rgba(255,107,0,.30)');
+grad.addColorStop(1, 'rgba(255,107,0,0)');
+let revChart = new Chart(revCtx, {
+  type: 'line',
+  data: {
+    labels: dailyLabels,
+    datasets: [{
+      data: dailyRevenue,
+      borderColor: '#ff6b00',
+      backgroundColor: grad,
+      fill: true,
+      tension: .35,
+      borderWidth: 2,
+      pointRadius: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#8e877f', font: { size: 9, family: 'Space Mono' } }, grid: { color: 'rgba(255,255,255,.03)' } },
+      y: { ticks: { color: '#8e877f', callback: v => '₹' + Number(v).toLocaleString('en-IN') }, grid: { color: 'rgba(255,255,255,.03)' } }
+    }
+  }
 });
 
-setInterval(addOrder,4500);
+function switchChart(el, mode){
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+  if(mode === 'weekly'){
+    revChart.data.labels = dailyLabels;
+    revChart.data.datasets[0].data = dailyRevenue;
+  } else {
+    revChart.data.labels = monthlyLabels;
+    revChart.data.datasets[0].data = monthlyRevenue;
+  }
+  revChart.update();
+}
+
+new Chart(document.getElementById('statusChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Pending', 'Shipped', 'Delivered', 'Cancelled'],
+    datasets: [{
+      data: [statusCounts.Pending || 0, statusCounts.Shipped || 0, statusCounts.Delivered || 0, statusCounts.Cancelled || 0],
+      backgroundColor: ['rgba(216,163,39,.88)', 'rgba(106,168,255,.88)', 'rgba(28,199,106,.88)', 'rgba(255,90,90,.88)'],
+      borderColor: '#101010',
+      borderWidth: 3
+    }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, cutout: '66%', plugins: { legend: { labels: { color: '#8e877f' } } } }
+});
+
+new Chart(document.getElementById('cityChart'), {
+  type: 'bar',
+  data: {
+    labels: cityLabels,
+    datasets: [{
+      data: cityCounts,
+      backgroundColor: ['rgba(255,107,0,.86)', 'rgba(216,163,39,.86)', 'rgba(28,199,106,.86)', 'rgba(106,168,255,.86)', 'rgba(255,90,90,.86)'],
+      borderRadius: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#8e877f' }, grid: { color: 'rgba(255,255,255,.03)' } },
+      y: { ticks: { color: '#bcb4ab' }, grid: { display: false } }
+    }
+  }
+});
+
+function refreshDashboard(){
+  document.getElementById('lastRefresh').textContent = 'REFRESHING...';
+  window.location.reload();
+}
+
+function tickClock(){
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+document.getElementById('searchInput').addEventListener('input', function(){
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('#recentOrdersTbody tr').forEach(tr => {
+    tr.style.opacity = (!q || tr.textContent.toLowerCase().includes(q)) ? '1' : '.35';
+  });
+});
 </script>
 </body>
 </html>

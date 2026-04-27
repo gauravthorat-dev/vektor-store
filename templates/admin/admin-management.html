@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
 :root {
   --bg:#080808;--bg2:#0f0f0f;--bg3:#141414;--bg4:#1a1a1a;
   --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
-  --fg:#f0ece4;--fg2:#a09890;--fg3:#555;
+  --fg:#f0ece4;--fg2:#b7aea4;--fg3:rgba(240,236,228,0.58);
   --sf:#FF6B00;--sf2:#ff8c38;--gold:#c8941a;--gold2:#e0aa30;
   --gr:#0aab5a;--gr2:#0db85f;--blue:#3b7dd8;--blue2:#7aacff;
   --red:#e03030;--red2:#ff5555;
@@ -18,6 +18,11 @@
   --font-body:'DM Sans',sans-serif;
   --font-dev:'Tiro Devanagari Sanskrit',serif;
   --sb-w:52px;--ticker-h:34px;
+}
+html[data-theme="light"]{
+  --bg:#f6f2ea;--bg2:#ffffff;--bg3:#f3ece1;--bg4:#ede3d5;
+  --border:rgba(31,25,19,0.12);--border2:rgba(31,25,19,0.2);
+  --fg:#1f1913;--fg2:rgba(31,25,19,0.82);--fg3:rgba(31,25,19,0.62);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:13px;overflow:hidden;}
@@ -235,6 +240,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
 .fdot{display:inline-block;width:5px;height:5px;background:var(--gr);border-radius:50%;margin-right:6px;animation:fp 2s ease-in-out infinite;}
 @keyframes fp{0%,100%{box-shadow:0 0 0 0 rgba(13,184,95,.5)}50%{box-shadow:0 0 0 5px rgba(13,184,95,0)}}
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 
@@ -247,22 +253,8 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
   </div>
 </div>
 
-<!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></a>
-  <a href="/admin/products" class="sb-btn" title="Products"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></a>
-  <a href="/admin/orders" class="sb-btn" title="Orders"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></a>
-  <a href="/admin/customers" class="sb-btn" title="Customers"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></a>
-  <a href="/admin/manage-admins" class="sb-btn active" title="Manage Admins"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></a>
-  <a href="/admin/settings" class="sb-btn" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg></a>
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account"><svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg></a>
-  <a href="/admin/logout" class="sb-btn" title="Logout"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name','VK')[:2].upper() }}</div>
-</div>
+{% set active_menu = 'manage_admins' %}
+{% include 'admin/_sidebar.html' %}
 
 <!-- MAIN -->
 <div class="admin-shell">
@@ -459,6 +451,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
   </div>
   <div class="drawer-body">
     <form method="POST" action="/admin/create-admin" id="createForm" autocomplete="off" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <div class="fg">
         <label class="flabel">ADMIN NAME · नाव</label>
@@ -541,6 +534,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
   </div>
   <div class="drawer-body">
     <form method="POST" id="editForm" autocomplete="off" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
       <div class="fg">
         <label class="flabel">ADMIN NAME</label>
@@ -622,6 +616,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
 
       <!-- ✅ FIXED (POST FORM) -->
       <form id="toggleForm" method="POST" style="margin:0;">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button type="submit"
                 class="act-btn"
                 id="toggleConfirmBtn"
@@ -651,6 +646,7 @@ html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--fon
              oninput="checkDeleteConfirm()">
     </div>
     <form method="POST" id="deleteForm">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="confirm_name" id="deleteConfirmHidden">
       <div class="cmodal-footer">
         <button type="button" class="btn-ghost" onclick="closeDelete()">CANCEL</button>
@@ -809,6 +805,7 @@ function openToggle(id, name, isActive) {
     btn.className          = 'act-btn act-unblock';
     btn.style.cssText      = 'padding:10px 20px;font-size:10px;letter-spacing:.1em;';
   }
+  icon.textContent = isActive ? 'LOCK' : 'UNLOCK';
   document.getElementById('toggleForm').action = `/admin/toggle-admin/${id}`;
   document.getElementById('toggleOverlay').classList.add('open');
 }
@@ -841,6 +838,59 @@ function checkDeleteConfirm() {
 }
 
 /* ── CLOCK ── */
+function sanitizeAdminManagementText() {
+  const setText = (sel, txt) => {
+    const el = document.querySelector(sel);
+    if (el) el.textContent = txt;
+  };
+  setText('.page-eyebrow', 'SUPERADMIN ONLY - HIGH SECURITY ZONE');
+  setText('.page-sub', 'Restricted access area - role-based admin control');
+  setText('.tpanel-title', 'ADMIN ACCOUNTS');
+  setText('.tpanel-tag', 'SUPERADMIN VIEW');
+
+  const ths = document.querySelectorAll('.atable thead th');
+  if (ths[1]) ths[1].textContent = 'ADMIN';
+
+  document.querySelectorAll('.flash-tag').forEach((el) => {
+    el.textContent = el.textContent.toLowerCase().includes('error') ? 'ERROR' : 'SUCCESS';
+  });
+
+  document.querySelectorAll('.drawer-close').forEach((el) => { el.textContent = 'X'; });
+
+  const createLabels = document.querySelectorAll('#createDrawer .flabel');
+  if (createLabels[0]) createLabels[0].childNodes[0].nodeValue = 'ADMIN NAME ';
+  if (createLabels[1]) createLabels[1].childNodes[0].nodeValue = 'EMAIL ';
+  if (createLabels[2]) createLabels[2].childNodes[0].nodeValue = 'PASSWORD ';
+  if (createLabels[3]) createLabels[3].childNodes[0].nodeValue = 'ACCESS LEVEL ';
+
+  setText('#createDrawer .drawer-sub', 'Create a new administrator account');
+  setText('#editDrawer .drawer-sub', 'Edit administrator profile and permissions');
+
+  const createBtn = document.querySelector('#createDrawer .btn-sf');
+  if (createBtn) createBtn.textContent = 'CREATE ADMIN';
+  const editBtn = document.querySelector('#editDrawer .btn-sf');
+  if (editBtn) editBtn.textContent = 'SAVE CHANGES';
+
+  document.querySelectorAll('.rcard-icon').forEach((el, i) => {
+    el.textContent = i % 3 === 0 ? 'M' : (i % 3 === 1 ? 'V' : 'S');
+  });
+
+  document.querySelectorAll('.lbadge').forEach((el) => {
+    el.textContent = el.textContent.replace(/[^A-Za-z ]/g, '').trim();
+  });
+
+  const emptyIcon = document.querySelector('.empty-icon');
+  if (emptyIcon) emptyIcon.textContent = '[]';
+  const delIcon = document.querySelector('#deleteOverlay .cmodal-icon');
+  if (delIcon) delIcon.textContent = 'X';
+
+  const footerSpans = document.querySelectorAll('.page-footer > span');
+  if (footerSpans[0]) footerSpans[0].innerHTML = '<span class="fdot"></span>VEKTOR ADMIN v2.6 - SS/26';
+  if (footerSpans[1]) footerSpans[1].textContent = 'Role-based secure operations';
+}
+
+document.addEventListener('DOMContentLoaded', sanitizeAdminManagementText);
+
 setInterval(() => {
   document.getElementById('clock').textContent =
     new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});

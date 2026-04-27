@@ -18,6 +18,8 @@ class User(db.Model):
     # "user" | "admin" | "delivery_boy"
     role   = db.Column(db.String(20), default="user")
     status = db.Column(db.String(20), default="Active")  # "Active" | "Blocked"
+    is_online = db.Column(db.Boolean, default=False)
+    last_heartbeat = db.Column(db.DateTime, nullable=True)
 
     # ── Timestamps ────────────────────────────────────────────
     created_at = db.Column(db.DateTime, default=datetime.utcnow)

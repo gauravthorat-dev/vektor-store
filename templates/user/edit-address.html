@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% set active_page = "" %}
+{% block title %}Edit Address - VEKTOR{% endblock %}
+
+{% block extra_css %}
+<style>
+  #vk-edit-address {
+    min-height: 80vh;
+    padding: 60px 5%;
+    background:
+      radial-gradient(900px 420px at 10% 0%, rgba(255, 107, 0, 0.08), transparent 64%),
+      radial-gradient(820px 360px at 92% 100%, rgba(4, 106, 56, 0.08), transparent 62%),
+      var(--ink);
+  }
+
+  .vk-edit-wrap {
+    max-width: 840px;
+    margin: 0 auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  }
+
+  .vk-edit-head {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--smoke);
+  }
+
+  .vk-edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .vk-edit-full {
+    grid-column: 1 / -1;
+  }
+
+  .vk-edit-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: rgba(247, 243, 236, 0.56);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .vk-edit-input {
+    width: 100%;
+    background: var(--smoke);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .vk-edit-input:focus {
+    border-color: rgba(255, 107, 0, 0.5);
+    box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.08);
+  }
+
+  .vk-edit-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .vk-edit-btn,
+  .vk-edit-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .vk-edit-btn {
+    border: none;
+    background: var(--sf);
+    color: var(--ink);
+    font-weight: 700;
+    flex: 2;
+  }
+
+  .vk-edit-btn:hover {
+    background: #ff8c35;
+  }
+
+  .vk-edit-link {
+    border: 1px solid var(--border);
+    color: rgba(247, 243, 236, 0.72);
+    background: transparent;
+    flex: 1;
+  }
+
+  .vk-edit-link:hover {
+    border-color: rgba(255, 107, 0, 0.5);
+    color: var(--sf);
+  }
+
+  html[data-theme="light"] #vk-edit-address .vk-edit-wrap {
+    background: #fffdf8;
+    border-color: rgba(31, 25, 19, 0.15);
+    box-shadow: 0 12px 28px rgba(31, 25, 19, 0.08);
+  }
+
+  html[data-theme="light"] #vk-edit-address .vk-edit-head {
+    background: rgba(255, 253, 248, 0.92);
+    border-bottom-color: rgba(31, 25, 19, 0.14);
+  }
+
+  html[data-theme="light"] #vk-edit-address .vk-edit-label {
+    color: rgba(31, 25, 19, 0.7);
+  }
+
+  html[data-theme="light"] #vk-edit-address .vk-edit-input {
+    background: #ffffff;
+    border-color: rgba(31, 25, 19, 0.2);
+    color: #1f1913;
+  }
+
+  html[data-theme="light"] #vk-edit-address .vk-edit-link {
+    color: rgba(31, 25, 19, 0.75);
+    border-color: rgba(31, 25, 19, 0.22);
+  }
+
+  @media (max-width: 860px) {
+    .vk-edit-grid {
+      grid-template-columns: 1fr;
+    }
+    .vk-edit-full {
+      grid-column: auto;
+    }
+    .vk-edit-actions {
+      flex-direction: column;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="vk-edit-address">
+  <div class="vk-edit-wrap">
+    <div class="vk-edit-head">
+      <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Saved Addresses</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;color:var(--white);line-height:0.95">EDIT ADDRESS</div>
+    </div>
+
+    <form method="POST" action="" style="padding:24px;display:flex;flex-direction:column;gap:12px">
+      <div class="vk-edit-grid">
+        <div>
+          <div class="vk-edit-label">Full Name</div>
+          <input class="vk-edit-input" type="text" name="full_name" required value="{{ addr.full_name }}">
+        </div>
+        <div>
+          <div class="vk-edit-label">Phone</div>
+          <input class="vk-edit-input" type="text" name="phone" required value="{{ addr.phone }}">
+        </div>
+
+        <div class="vk-edit-full">
+          <div class="vk-edit-label">Address Line 1</div>
+          <input class="vk-edit-input" type="text" name="line1" required value="{{ addr.line1 }}">
+        </div>
+        <div class="vk-edit-full">
+          <div class="vk-edit-label">Address Line 2 (Optional)</div>
+          <input class="vk-edit-input" type="text" name="line2" value="{{ addr.line2 or '' }}">
+        </div>
+
+        <div>
+          <div class="vk-edit-label">City</div>
+          <input class="vk-edit-input" type="text" name="city" required value="{{ addr.city }}">
+        </div>
+        <div>
+          <div class="vk-edit-label">State</div>
+          <input class="vk-edit-input" type="text" name="state" required value="{{ addr.state }}">
+        </div>
+        <div>
+          <div class="vk-edit-label">Pincode</div>
+          <input class="vk-edit-input" type="text" name="pincode" required value="{{ addr.pincode }}">
+        </div>
+        <div>
+          <div class="vk-edit-label">Country</div>
+          <input class="vk-edit-input" type="text" name="country" value="{{ addr.country or 'India' }}">
+        </div>
+      </div>
+
+      <label style="display:flex;align-items:center;gap:10px;margin-top:8px">
+        <input type="checkbox" name="is_default" style="accent-color:var(--sf);width:16px;height:16px" {% if addr.is_default %}checked{% endif %}>
+        <span style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1.5px;color:rgba(247,243,236,.7)">Set as default address</span>
+      </label>
+
+      <div class="vk-edit-actions">
+        <a class="vk-edit-link" href="/addresses">Cancel</a>
+        <button class="vk-edit-btn" type="submit">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

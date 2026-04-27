@@ -2,52 +2,360 @@
 {% set active_page = "collections" %}
 {% block title %}Collections — VEKTOR{% endblock %}
 
+{% block extra_css %}
+<style>
+#page-collections {
+  --cx-bg: #070708;
+  --cx-card: #101116;
+  --cx-card-2: #15171e;
+  --cx-bd: rgba(247, 243, 236, 0.1);
+  --cx-txt: rgba(247, 243, 236, 0.92);
+  --cx-soft: rgba(247, 243, 236, 0.64);
+  --cx-faint: rgba(247, 243, 236, 0.42);
+  --cx-ac: #ff6b00;
+  --cx-gr: #0a8a4a;
+  background:
+    radial-gradient(1000px 460px at 12% -6%, rgba(255, 107, 0, 0.12), transparent 62%),
+    radial-gradient(900px 420px at 88% 0%, rgba(10, 138, 74, 0.08), transparent 60%),
+    var(--cx-bg);
+}
+
+.cx-wrap {
+  padding: 44px 36px 60px;
+}
+
+.cx-hero {
+  border: 1px solid var(--cx-bd);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  min-height: 470px;
+}
+
+.cx-hero-left {
+  padding: 48px 44px;
+  border-right: 1px solid var(--cx-bd);
+}
+
+.cx-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cx-ac);
+  margin-bottom: 12px;
+}
+
+.cx-title {
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--cx-txt);
+  font-size: clamp(68px, 11vw, 148px);
+  line-height: 0.84;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.cx-sub {
+  margin-top: 18px;
+  max-width: 600px;
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--cx-soft);
+}
+
+.cx-hero-cta {
+  margin-top: 28px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cx-btn {
+  border: 1px solid var(--cx-bd);
+  padding: 11px 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 9px;
+  font-family: 'Space Mono', monospace;
+  text-decoration: none;
+  color: var(--cx-txt);
+  background: transparent;
+}
+
+.cx-btn.primary {
+  background: var(--cx-ac);
+  border-color: var(--cx-ac);
+  color: #060606;
+  font-weight: 700;
+}
+
+.cx-hero-right {
+  padding: 26px;
+  display: grid;
+  gap: 10px;
+  align-content: center;
+}
+
+.cx-chip {
+  border: 1px solid var(--cx-bd);
+  background: linear-gradient(145deg, rgba(255, 107, 0, 0.08), rgba(255, 255, 255, 0.02));
+  padding: 14px;
+}
+
+.cx-chip-head {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cx-faint);
+}
+
+.cx-chip-title {
+  margin-top: 8px;
+  color: var(--cx-txt);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 34px;
+  letter-spacing: 0.05em;
+  line-height: 0.92;
+}
+
+.cx-chip-sub {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--cx-soft);
+}
+
+.cx-strip {
+  margin-top: 12px;
+  border: 1px solid var(--cx-bd);
+  padding: 10px 14px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cx-faint);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.cx-strip span { margin-right: 24px; }
+
+.cx-grid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cx-card {
+  border: 1px solid var(--cx-bd);
+  background: var(--cx-card);
+  padding: 24px 22px 20px;
+  min-height: 240px;
+  position: relative;
+}
+
+.cx-card.tall {
+  grid-row: span 2;
+  min-height: 492px;
+  background:
+    linear-gradient(160deg, rgba(255, 107, 0, 0.14), transparent 58%),
+    var(--cx-card-2);
+}
+
+.cx-num {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 60px;
+  color: rgba(247, 243, 236, 0.07);
+}
+
+.cx-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  letter-spacing: 0.04em;
+  line-height: 0.9;
+  color: var(--cx-txt);
+  margin: 0;
+}
+
+.cx-name.sm {
+  font-size: 30px;
+}
+
+.cx-line {
+  margin-top: 12px;
+  font-size: 14px;
+  color: var(--cx-soft);
+  line-height: 1.6;
+}
+
+.cx-meta {
+  margin-top: 18px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cx-faint);
+  border-top: 1px solid var(--cx-bd);
+  padding-top: 10px;
+}
+
+.cx-foot {
+  margin-top: 24px;
+  border: 1px solid var(--cx-bd);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+  background: linear-gradient(140deg, rgba(10, 138, 74, 0.1), rgba(255, 255, 255, 0.01));
+}
+
+.cx-foot-title {
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 0.06em;
+  font-size: 34px;
+  color: var(--cx-txt);
+  line-height: 0.9;
+}
+
+.cx-foot-sub {
+  margin-top: 6px;
+  color: var(--cx-soft);
+  font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+  .cx-hero { grid-template-columns: 1fr; }
+  .cx-hero-left { border-right: none; border-bottom: 1px solid var(--cx-bd); }
+  .cx-grid { grid-template-columns: 1fr 1fr; }
+  .cx-card.tall { grid-row: auto; min-height: 260px; }
+}
+
+@media (max-width: 700px) {
+  .cx-wrap { padding: 28px 20px 42px; }
+  .cx-title { font-size: clamp(54px, 20vw, 92px); }
+  .cx-sub { font-size: 17px; }
+  .cx-grid { grid-template-columns: 1fr; }
+  .cx-foot { grid-template-columns: 1fr; }
+}
+
+/* Light mode for collections page */
+html[data-theme="light"] #page-collections {
+  --cx-bg: #f6f2ea;
+  --cx-card: #ffffff;
+  --cx-card-2: #fff9f0;
+  --cx-bd: rgba(31, 25, 19, 0.14);
+  --cx-txt: rgba(31, 25, 19, 0.95);
+  --cx-soft: rgba(31, 25, 19, 0.78);
+  --cx-faint: rgba(31, 25, 19, 0.56);
+  --cx-ac: #e25d00;
+  --cx-gr: #0c7a43;
+  background:
+    radial-gradient(900px 420px at 12% -8%, rgba(226, 93, 0, 0.10), transparent 62%),
+    radial-gradient(760px 360px at 88% 0%, rgba(12, 122, 67, 0.07), transparent 60%),
+    var(--cx-bg);
+}
+
+html[data-theme="light"] #page-collections .cx-hero,
+html[data-theme="light"] #page-collections .cx-card,
+html[data-theme="light"] #page-collections .cx-foot,
+html[data-theme="light"] #page-collections .cx-chip {
+  box-shadow: 0 8px 24px rgba(31, 25, 19, 0.05);
+}
+
+html[data-theme="light"] #page-collections .cx-card .cx-num {
+  color: rgba(31, 25, 19, 0.12);
+}
+
+html[data-theme="light"] #page-collections .cx-btn.primary {
+  color: #ffffff;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="page active" id="page-collections">
-  <div class="coll-hero">
-    <div class="coll-hero-bg">
-      <svg viewBox="0 0 400 600" fill="none">
-        <circle cx="200" cy="200" r="180" stroke="white" stroke-width="1.5"/>
-        <circle cx="200" cy="200" r="20" fill="white"/>
-        <g stroke="white" stroke-width="1">
-          <line x1="200" y1="20"  x2="200" y2="380"/>
-          <line x1="20"  y1="200" x2="380" y2="200"/>
-          <line x1="73"  y1="73"  x2="327" y2="327"/>
-          <line x1="327" y1="73"  x2="73"  y2="327"/>
-          <circle cx="200" cy="200" r="80" stroke-dasharray="5 4"/>
-        </g>
-      </svg>
-    </div>
-    <div class="sec-tag">संग्रह · Collections</div>
-    <div class="sec-head" style="font-size:clamp(44px,6vw,80px)">OUR COLLECTIONS<span class="sec-mr">आमचे संग्रह · हमारे संग्रह</span></div>
-    <p style="font-size:16px;color:rgba(247,243,236,.35);margin-top:14px;max-width:500px;line-height:1.7">Every collection tells the story of a Maharashtrian man. हर संग्रह एक कहानी सुनाता है.</p>
-    <div class="coll-featured">
-      <div class="coll-feat-main">
-        <div class="coll-feat-num">26</div>
-        <div class="coll-feat-tag">Featured Collection · विशेष संग्रह</div>
-        <div class="coll-feat-title">Vसंत<br>COLLECTION</div>
-        <div class="coll-feat-mr">वसंत संग्रह — Spring/Summer 2026</div>
-        <button class="coll-feat-btn" onclick="window.location='{{ url_for('shop.shop_page') }}'">संग्रह पाहा — Shop Now</button>
+  <div class="cx-wrap">
+    <section class="cx-hero">
+      <div class="cx-hero-left">
+        <div class="cx-tag">Collections · संग्रह</div>
+        <h1 class="cx-title">STYLE<br>ARCHIVE</h1>
+        <p class="cx-sub">Designed as complete wardrobes, not random drops. Each collection has one mood, one fit story, and one identity.</p>
+        <div class="cx-hero-cta">
+          <a class="cx-btn primary" href="{{ url_for('shop.shop_page') }}">Shop All</a>
+          <a class="cx-btn" href="{{ url_for('shop.lookbook') }}">View Lookbook</a>
+        </div>
       </div>
-      <div class="coll-feat-side">
-        <div class="coll-side-card"><div class="coll-side-num">01</div><div class="coll-side-title">CITY ESSENTIALS</div><div class="coll-side-mr">शहरी स्टाइल</div><div class="coll-side-count">24 pieces · २४ वस्तू</div><div class="coll-side-bar"></div></div>
-        <div class="coll-side-card"><div class="coll-side-num">02</div><div class="coll-side-title">HERITAGE LINE</div><div class="coll-side-mr">वारसा रेषा</div><div class="coll-side-count">18 pieces · १८ वस्तू</div><div class="coll-side-bar"></div></div>
-        <div class="coll-side-card"><div class="coll-side-num">03</div><div class="coll-side-title">STREET PRIDE</div><div class="coll-side-mr">रस्त्याचा अभिमान</div><div class="coll-side-count">31 pieces · ३१ वस्तू</div><div class="coll-side-bar"></div></div>
+      <div class="cx-hero-right">
+        <div class="cx-chip">
+          <div class="cx-chip-head">Featured Season</div>
+          <div class="cx-chip-title">SS/26<br>URBAN RASA</div>
+          <div class="cx-chip-sub">Lightweight fabrics, sharper shoulders, cleaner drape.</div>
+        </div>
+        <div class="cx-chip">
+          <div class="cx-chip-head">Craft Promise</div>
+          <div class="cx-chip-title">INDIA<br>FIRST</div>
+          <div class="cx-chip-sub">Made in India with modern cuts for Indian body proportions.</div>
+        </div>
       </div>
+    </section>
+
+    <div class="cx-strip">
+      <span>Modern Essentials</span>
+      <span>Structured Casual</span>
+      <span>Minimal Utility</span>
+      <span>Street Formal Hybrid</span>
+      <span>Made In India</span>
     </div>
+
+    <section class="cx-grid">
+      <article class="cx-card tall">
+        <div class="cx-num">01</div>
+        <h2 class="cx-name">VASANT<br>COLLECTION</h2>
+        <div class="cx-line">Spring-led silhouettes with breathable textures and elevated everyday tones.</div>
+        <div class="cx-meta">48 Styles · Signature Drop</div>
+      </article>
+
+      <article class="cx-card">
+        <div class="cx-num">02</div>
+        <h3 class="cx-name sm">CITY ESSENTIALS</h3>
+        <div class="cx-line">Core wardrobe for office-to-evening transitions.</div>
+        <div class="cx-meta">24 Styles · Year Round</div>
+      </article>
+
+      <article class="cx-card">
+        <div class="cx-num">03</div>
+        <h3 class="cx-name sm">HERITAGE LINE</h3>
+        <div class="cx-line">Traditional roots, modern finishing and understated detail language.</div>
+        <div class="cx-meta">18 Styles · Limited</div>
+      </article>
+
+      <article class="cx-card">
+        <div class="cx-num">04</div>
+        <h3 class="cx-name sm">STREET PRIDE</h3>
+        <div class="cx-line">Relaxed fits and bold utility accents for casual movement.</div>
+        <div class="cx-meta">31 Styles · New Arrivals</div>
+      </article>
+
+      <article class="cx-card">
+        <div class="cx-num">05</div>
+        <h3 class="cx-name sm">BOARDROOM EDIT</h3>
+        <div class="cx-line">Formal structure without stiffness, built for high-rotation wear.</div>
+        <div class="cx-meta">19 Styles · Premium Tailored</div>
+      </article>
+    </section>
+
+    <section class="cx-foot">
+      <div>
+        <div class="cx-foot-title">Find Your Uniform</div>
+        <div class="cx-foot-sub">Select a collection and build a look with matching pieces in one flow.</div>
+      </div>
+      <a class="cx-btn primary" href="{{ url_for('shop.shop_page') }}">Explore Products</a>
+    </section>
   </div>
-  <section class="sec-wrap">
-    <div class="sec-top">
-      <div><div class="sec-tag">All Collections · सर्व संग्रह</div><div class="sec-head">BROWSE ALL<span class="sec-mr">सर्व पाहा</span></div></div>
-    </div>
-    <div class="coll-all-grid">
-      <div class="coll-card"><div class="coll-card-num">01</div><div class="coll-card-tag">SS/26</div><div class="coll-card-title">VASANT COLLECTION</div><div class="coll-card-mr">वसंत संग्रह</div><div class="coll-card-sk">।। वसंतः ऋतुराजः ।।</div><div class="coll-card-count">48 styles · ४८ शैली</div><div class="coll-card-bar" style="background:var(--sf)"></div></div>
-      <div class="coll-card"><div class="coll-card-num">02</div><div class="coll-card-tag">Signature</div><div class="coll-card-title">SIGNATURE LINE</div><div class="coll-card-mr">सिग्नेचर शैली</div><div class="coll-card-sk">Premium cuts for daily wear</div><div class="coll-card-count">32 styles · ३२ शैली</div><div class="coll-card-bar" style="background:var(--gold)"></div></div>
-      <div class="coll-card"><div class="coll-card-num">03</div><div class="coll-card-tag">Urban</div><div class="coll-card-title">CITY ESSENTIALS</div><div class="coll-card-mr">शहरी स्टाइल</div><div class="coll-card-sk">Clean pieces for modern routines</div><div class="coll-card-count">24 styles · २४ शैली</div><div class="coll-card-bar" style="background:var(--gr2)"></div></div>
-      <div class="coll-card"><div class="coll-card-num">04</div><div class="coll-card-tag">Formal</div><div class="coll-card-title">BOARDROOM EDIT</div><div class="coll-card-mr">बोर्डरूम</div><div class="coll-card-sk">।। ज्ञानम् शक्तिः ।।</div><div class="coll-card-count">19 styles · १९ शैली</div><div class="coll-card-bar" style="background:var(--blue)"></div></div>
-      <div class="coll-card"><div class="coll-card-num">05</div><div class="coll-card-tag">Casual</div><div class="coll-card-title">SUNDAY MODE</div><div class="coll-card-mr">रविवार शैली</div><div class="coll-card-sk">।। सुखं जीवनम् ।।</div><div class="coll-card-count">27 styles · २७ शैली</div><div class="coll-card-bar" style="background:var(--sf)"></div></div>
-      <div class="coll-card"><div class="coll-card-num">06</div><div class="coll-card-tag">Sale</div><div class="coll-card-title">SALE ARCHIVE</div><div class="coll-card-mr">सेल संग्रह</div><div class="coll-card-sk">।। बचत करा ।।</div><div class="coll-card-count">40% OFF · ४०% सवलत</div><div class="coll-card-bar" style="background:var(--gold)"></div></div>
-    </div>
-  </section>
 </div>
 {% endblock %}

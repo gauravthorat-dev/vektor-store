@@ -1,254 +1,479 @@
 {% extends "base.html" %}
 {% set active_page = "lookbook" %}
-{% block title %}Lookbook SS/26 — VEKTOR{% endblock %}
+{% block title %}Lookbook — VEKTOR{% endblock %}
+
+{% block extra_css %}
+<style>
+#page-lookbook {
+  --lx-bg: #070708;
+  --lx-card: #101117;
+  --lx-card-2: #171922;
+  --lx-bd: rgba(247, 243, 236, 0.1);
+  --lx-txt: rgba(247, 243, 236, 0.94);
+  --lx-soft: rgba(247, 243, 236, 0.66);
+  --lx-faint: rgba(247, 243, 236, 0.4);
+  --lx-ac: #ff6b00;
+  --lx-gr: #0a8a4a;
+  background:
+    radial-gradient(1100px 480px at 14% -8%, rgba(255,107,0,.12), transparent 62%),
+    radial-gradient(900px 420px at 86% 0%, rgba(10,138,74,.08), transparent 58%),
+    var(--lx-bg);
+}
+
+html[data-theme="light"] #page-lookbook {
+  --lx-bg: #f5f1e9;
+  --lx-card: #ffffff;
+  --lx-card-2: #faf8f3;
+  --lx-bd: rgba(31,25,19,.14);
+  --lx-txt: #1A1A18;
+  --lx-soft: #3D3D3B;
+  --lx-faint: #666662;
+  --lx-ac: #e25d00;
+  --lx-gr: #0a8a4a;
+  background:
+    radial-gradient(1100px 480px at 14% -8%, rgba(226,93,0,.12), transparent 62%),
+    radial-gradient(900px 420px at 86% 0%, rgba(10,138,74,.08), transparent 58%),
+    var(--lx-bg);
+}
+
+.lx-wrap { padding: 42px 36px 56px; }
+
+.lx-hero {
+  border: 1px solid var(--lx-bd);
+  background: linear-gradient(145deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+  padding: 34px 30px 22px;
+}
+
+.lx-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--lx-ac);
+  margin-bottom: 10px;
+}
+
+.lx-head-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: end;
+}
+
+.lx-title {
+  margin: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--lx-txt);
+  font-size: clamp(66px, 10.8vw, 148px);
+  line-height: .84;
+  letter-spacing: .01em;
+}
+
+.lx-sub {
+  margin-top: 12px;
+  max-width: 640px;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--lx-soft);
+}
+
+.lx-count {
+  text-align: right;
+  padding-bottom: 10px;
+}
+
+.lx-count-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 58px;
+  line-height: .9;
+  color: var(--lx-ac);
+}
+
+.lx-count-lbl {
+  margin-top: 4px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--lx-faint);
+}
+
+.lx-tabs {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lx-tab {
+  border: 1px solid var(--lx-bd);
+  background: transparent;
+  color: var(--lx-soft);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.lx-tab.active {
+  background: var(--lx-ac);
+  border-color: var(--lx-ac);
+  color: #050505;
+  font-weight: 700;
+}
+
+.lx-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.lx-card {
+  border: 1px solid var(--lx-bd);
+  background: var(--lx-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.lx-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #111216;
+}
+
+.lx-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  display: block;
+}
+
+.lx-vk {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 84px;
+  color: rgba(247,243,236,.08);
+  letter-spacing: .08em;
+}
+
+.lx-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  background: var(--lx-ac);
+  color: #050505;
+  font-weight: 700;
+}
+
+.lx-price-chip {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  padding: 4px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .1em;
+  background: rgba(10,138,74,.9);
+  color: #f7f3ec;
+}
+
+.lx-flag {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 4px;
+  display: flex;
+}
+
+.lx-hover {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 18px 16px;
+  background: linear-gradient(to top, rgba(6,6,8,.92) 0%, rgba(6,6,8,.2) 62%, transparent 100%);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .22s ease, transform .22s ease;
+  pointer-events: none;
+}
+
+.lx-card:hover .lx-hover {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.lx-hover-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #f7f3ec;
+}
+
+.lx-hover-sub {
+  margin-top: 3px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 11px;
+  color: rgba(247,243,236,.74);
+}
+
+.lx-hover-cta {
+  margin-top: 10px;
+  display: inline-block;
+  width: fit-content;
+  border: 1px solid rgba(255,107,0,.5);
+  color: var(--lx-ac);
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  background: rgba(255,107,0,.08);
+}
+
+.lx-info {
+  padding: 14px 14px 16px;
+  min-height: 124px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lx-name {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 1.32;
+  letter-spacing: .01em;
+  color: var(--lx-txt);
+}
+
+.lx-name.sm {
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.lx-subline {
+  margin-top: 6px;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 12px;
+  color: var(--lx-soft);
+}
+
+.lx-meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--lx-bd);
+  padding-top: 10px;
+}
+
+.lx-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  letter-spacing: .14em;
+  color: var(--lx-ac);
+}
+
+.lx-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.lx-btn {
+  text-decoration: none;
+  border: 1px solid var(--lx-bd);
+  padding: 8px 10px;
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lx-txt);
+}
+
+.lx-btn.ac {
+  border-color: var(--lx-ac);
+  color: var(--lx-ac);
+}
+
+.lx-empty {
+  margin-top: 18px;
+  border: 1px solid var(--lx-bd);
+  background: var(--lx-card-2);
+  padding: 42px 22px;
+  text-align: center;
+}
+
+.lx-empty-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: .88;
+  color: rgba(247,243,236,.2);
+}
+
+.lx-empty-txt {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--lx-soft);
+}
+
+html[data-theme="light"] #page-lookbook .lx-hero {
+  background: linear-gradient(145deg, rgba(31,25,19,.02), rgba(31,25,19,.01));
+}
+
+html[data-theme="light"] #page-lookbook .lx-media {
+  background: #f1eee7;
+}
+
+html[data-theme="light"] #page-lookbook .lx-hover {
+  background: linear-gradient(to top, rgba(245,241,233,.95) 0%, rgba(245,241,233,.45) 62%, transparent 100%);
+}
+
+html[data-theme="light"] #page-lookbook .lx-hover-name {
+  color: #1A1A18;
+}
+
+html[data-theme="light"] #page-lookbook .lx-hover-sub {
+  color: #3D3D3B;
+}
+
+html[data-theme="light"] #page-lookbook .lx-tab.active {
+  color: #ffffff;
+}
+
+html[data-theme="light"] #page-lookbook .lx-btn.ac {
+  color: #e25d00;
+  border-color: #e25d00;
+}
+
+@media (max-width: 1100px) {
+  .lx-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  .lx-wrap { padding: 28px 20px 42px; }
+  .lx-head-row { grid-template-columns: 1fr; }
+  .lx-count { text-align: left; padding-bottom: 0; }
+  .lx-grid { grid-template-columns: 1fr; }
+  .lx-media { aspect-ratio: 4 / 5; }
+}
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="page active" id="page-lookbook">
-  <div class="lb-hero">
-    <div>
-      <div class="sec-tag">लुकबुक · Lookbook</div>
-      <div class="sec-head" style="font-size:clamp(44px,6vw,80px)">SS/26 LOOKBOOK<span class="sec-mr">वसंत संग्रह — लुकबुक</span></div>
-    </div>
-    <p style="font-size:16px;color:rgba(247,243,236,.35);margin-top:12px;max-width:480px;line-height:1.7">Every look tells a story. हर Look एक कहानी सुनाता है.</p>
-    <div class="lb-season-tabs" style="margin-top:20px">
-      <button class="lb-tab active" onclick="lbTab(this,'ss26')">SS/26 — वसंत</button>
-      <button class="lb-tab" onclick="lbTab(this,'aw25')">AW/25 — शरद</button>
-      <button class="lb-tab" onclick="lbTab(this,'heritage')">Heritage — वारसा</button>
-      <button class="lb-tab" onclick="lbTab(this,'urban')">Urban — शहरी</button>
-    </div>
-  </div>
+  <div class="lx-wrap">
+    <section class="lx-hero">
+      <div class="lx-tag">Lookbook · लुकबुक</div>
+      <div class="lx-head-row">
+        <div>
+          <h1 class="lx-title">SEASONAL<br>LOOKS</h1>
+          <p class="lx-sub">A curated visual archive of how Vektor is worn. Built as complete looks, not isolated products.</p>
+        </div>
+        <div class="lx-count">
+          <div class="lx-count-num">{{ products|length if products else 0 }}</div>
+          <div class="lx-count-lbl">Featured Looks</div>
+        </div>
+      </div>
+      <div class="lx-tabs">
+        <button class="lx-tab active" onclick="lxTab(this,'all')">All Looks</button>
+        <button class="lx-tab" onclick="lxTab(this,'ss26')">SS/26</button>
+        <button class="lx-tab" onclick="lxTab(this,'aw25')">AW/25</button>
+        <button class="lx-tab" onclick="lxTab(this,'heritage')">Heritage</button>
+        <button class="lx-tab" onclick="lxTab(this,'urban')">Urban</button>
+      </div>
+    </section>
 
-  <div class="lb-live-grid" id="lookbookGrid">
     {% if products %}
+    <section class="lx-grid" id="lxGrid">
       {% for product in products %}
-        {% set season_text = ((product.season or 'SS/26') ~ ' ' ~ (product.collection or '') ~ ' ' ~ (product.category or ''))|lower %}
-        {% set img_h = 'h543' if loop.index == 2 else ('h320' if loop.index is even else 'h260') %}
-        <article class="lb-card lb-live-card"
-                 data-season="{{ season_text|replace('/','') }}"
-                 data-category="{{ (product.category or '')|lower }}">
-          <a class="lb-img {{ img_h }}" href="{{ url_for('shop.product') }}?id={{ product.id }}" aria-label="View {{ product.name }}">
-            {% if product.image %}
-              <img src="{{ url_for('static', filename='uploads/' + product.image) }}"
-                   alt="{{ product.name }}" loading="lazy">
-            {% else %}
-              <div class="lb-img-txt">VK</div>
-            {% endif %}
-            <div class="lb-overlay">
-              <div class="lb-overlay-title">{{ product.name }}</div>
-              <div class="lb-overlay-mr">{{ product.name_mr or product.category or 'Vektor Look' }}</div>
-              <div class="lb-overlay-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
-              <span class="lb-view-btn">View Product</span>
-            </div>
-            <div class="lb-flag-bar">
-              <div class="pfb sf"></div>
-              <div class="pfb wh"></div>
-              <div class="pfb gr"></div>
-            </div>
-          </a>
-
-          <div class="lb-info">
-            <div>
-              <div class="lb-info-title">{{ product.name }}</div>
-              <div class="lb-info-mr">{{ product.name_mr or product.collection or 'Modern everyday fit' }}</div>
-            </div>
-            <div class="lb-info-bot">
-              <div class="lb-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
-              <div class="lb-actions">
-                <a class="btn-view" href="{{ url_for('shop.product') }}?id={{ product.id }}">View</a>
-                <a class="prod-add-mini" href="{{ url_for('shop.add_to_cart', product_id=product.id) }}">+ Cart</a>
-              </div>
+      {% set stext = ((product.season or 'SS/26') ~ ' ' ~ (product.collection or '') ~ ' ' ~ (product.category or ''))|lower %}
+      <article class="lx-card" data-season="{{ stext|replace('/','') }}">
+        <a class="lx-media" href="{{ url_for('shop.product') }}?id={{ product.id }}" aria-label="View {{ product.name }}">
+          <div class="lx-badge">{{ product.badge or 'New' }}</div>
+          <div class="lx-price-chip">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+          {% if product.image %}
+          <img src="{{ url_for('static', filename='uploads/' + product.image) }}" alt="{{ product.name }}" loading="lazy">
+          {% else %}
+          <div class="lx-vk">VK</div>
+          {% endif %}
+          <div class="lx-hover">
+            <div class="lx-hover-name">{{ product.name }}</div>
+            <div class="lx-hover-sub">{{ product.name_mr or product.collection or product.category or 'Vektor Look' }}</div>
+            <span class="lx-hover-cta">Shop Now</span>
+          </div>
+          <div class="lx-flag">
+            <div style="flex:1;background:var(--lx-ac)"></div>
+            <div style="flex:1;background:rgba(247,243,236,.18)"></div>
+            <div style="flex:1;background:var(--lx-gr)"></div>
+          </div>
+        </a>
+        <div class="lx-info">
+          <h3 class="lx-name sm">{{ product.name }}</h3>
+          <div class="lx-subline">{{ product.name_mr or product.collection or product.category or 'Vektor Look' }}</div>
+          <div class="lx-meta">
+            <div class="lx-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+            <div class="lx-actions">
+              <a class="lx-btn" href="{{ url_for('shop.product') }}?id={{ product.id }}">View</a>
+              <a class="lx-btn ac" href="{{ url_for('shop.add_to_cart', product_id=product.id) }}">+ Cart</a>
             </div>
           </div>
-        </article>
+        </div>
+      </article>
       {% endfor %}
+    </section>
     {% else %}
-      <div class="lb-empty">
-        <div class="lb-empty-title">LOOKBOOK IS READY FOR PRODUCTS</div>
-        <div class="lb-empty-text">Add active products from admin and they will appear here automatically.</div>
-        <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">Go to Shop</a>
+    <section class="lx-empty">
+      <div class="lx-empty-title">LOOKBOOK<br>COMING ALIVE</div>
+      <div class="lx-empty-txt">Add active products from admin and your lookbook will auto-populate here.</div>
+      <div style="margin-top:16px">
+        <a class="lx-btn ac" href="{{ url_for('shop.shop_page') }}">Go To Shop</a>
       </div>
+    </section>
     {% endif %}
+
+    <section class="lx-empty" id="lxFilterEmpty" style="display:none">
+      <div class="lx-empty-title">NO LOOKS<br>IN THIS FILTER</div>
+      <div class="lx-empty-txt">Try another season or add matching metadata in products.</div>
+    </section>
   </div>
-
-  <div class="lb-empty" id="lbFilterEmpty" style="display:none">
-    <div class="lb-empty-title">NO LOOKS IN THIS FILTER YET</div>
-    <div class="lb-empty-text">Try SS/26 or add products with matching season, collection, or category data.</div>
-    <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">Browse Shop</a>
-  </div>
-
-  <div class="lb-grid lb-legacy-hidden" aria-hidden="true">
-
-    <!-- CARD 1 -->
-    <div class="prod-card">
-      <div class="prod-img h240">
-        <div class="prod-img-txt">VK</div>
-      </div>
-      <div class="prod-details">
-        <div class="prod-name-en">Oxford Shirt</div>
-        <div class="prod-name-mr">ऑक्सफर्ड शर्ट</div>
-        <div class="prod-rating">
-          <span class="stars">★★★★★</span>
-          <span class="rating-txt">4.8 (234)</span>
-        </div>
-        <div class="prod-bot">
-          <div>
-            <div class="prod-price">₹2,499</div>
-          </div>
-          <div class="action-buttons">
-            <button class="prod-add-mini view-btn" onclick="viewProduct('Oxford Shirt','ऑक्सफर्ड शर्ट',2499)">View</button>
-            <button class="prod-add-mini" onclick="addToCart('Oxford Shirt','ऑक्सफर्ड शर्ट',2499)">+ Cart</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 2 -->
-    <div class="lb-card" style="grid-row:span 2">
-      <div class="lb-img h543" onclick="viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">
-        <div class="lb-img-txt">VK</div>
-        <div class="lb-overlay">
-          <div class="lb-overlay-title">BIKER LOOK 02</div>
-          <div class="lb-overlay-mr">बाइकर लुक — हिरो लुक</div>
-          <div class="lb-overlay-price">₹6,999</div>
-          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">View Product</button>
-          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Biker Jacket','बाइकर जॅकेट',6999)">कार्टमध्ये घाला</button>
-        </div>
-        <div class="lb-flag-bar">
-          <div class="pfb sf"></div>
-          <div class="pfb wh"></div>
-          <div class="pfb gr"></div>
-        </div>
-      </div>
-      <div class="lb-info">
-        <div class="lb-info-title">Biker Jacket — Hero</div>
-        <div class="lb-info-mr">बाइकर जॅकेट · हिरो लुक</div>
-        <div class="lb-info-bot">
-          <div class="lb-price">₹6,999</div>
-          <button class="btn-view" onclick="viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">View</button>
-          <button class="prod-add-mini" onclick="addToCart('Biker Jacket','बाइकर जॅकेट',6999)">+ Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 3 -->
-    <div class="lb-card">
-      <div class="lb-img h260" onclick="viewProduct('Linen Shirt','लिनन शर्ट',1999)">
-        <div class="lb-img-txt">VK</div>
-        <div class="lb-overlay">
-          <div class="lb-overlay-title">LINEN LOOK 03</div>
-          <div class="lb-overlay-mr">लिनन लुक</div>
-          <div class="lb-overlay-price">₹1,999</div>
-          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Linen Shirt','लिनन शर्ट',1999)">View Product</button>
-          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Linen Shirt','लिनन शर्ट',1999)">कार्टमध्ये घाला</button>
-        </div>
-        <div class="lb-flag-bar">
-          <div class="pfb sf"></div>
-          <div class="pfb wh"></div>
-          <div class="pfb gr"></div>
-        </div>
-      </div>
-      <div class="lb-info">
-        <div class="lb-info-title">Linen Shirt — Summer</div>
-        <div class="lb-info-mr">लिनन शर्ट · उन्हाळा</div>
-        <div class="lb-info-bot">
-          <div class="lb-price">₹1,999</div>
-          <button class="btn-view" onclick="viewProduct('Linen Shirt','लिनन शर्ट',1999)">View</button>
-          <button class="prod-add-mini" onclick="addToCart('Linen Shirt','लिनन शर्ट',1999)">+ Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 4 -->
-    <div class="lb-card">
-      <div class="lb-img h320" onclick="viewProduct('Slim Jeans','स्लिम जीन्स',3299)">
-        <div class="lb-img-txt">VK</div>
-        <div class="lb-overlay">
-          <div class="lb-overlay-title">SLIM LOOK 04</div>
-          <div class="lb-overlay-mr">स्लिम जीन्स लुक</div>
-          <div class="lb-overlay-price">₹3,299</div>
-          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Slim Jeans','स्लिम जीन्स',3299)">View Product</button>
-          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Slim Jeans','स्लिम जीन्स',3299)">कार्टमध्ये घाला</button>
-        </div>
-        <div class="lb-flag-bar">
-          <div class="pfb sf"></div>
-          <div class="pfb wh"></div>
-          <div class="pfb gr"></div>
-        </div>
-      </div>
-      <div class="lb-info">
-        <div class="lb-info-title">Slim Fit Jeans — Sharp</div>
-        <div class="lb-info-mr">स्लिम फिट जीन्स</div>
-        <div class="lb-info-bot">
-          <div class="lb-price">₹3,299</div>
-          <button class="btn-view" onclick="viewProduct('Slim Jeans','स्लिम जीन्स',3299)">View</button>
-          <button class="prod-add-mini" onclick="addToCart('Slim Jeans','स्लिम जीन्स',3299)">+ Cart</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CARD 5 -->
-    <div class="lb-card">
-      <div class="lb-img h260" onclick="viewProduct('Polo Tee','पोलो टी',999)">
-        <div class="lb-img-txt">VK</div>
-        <div class="lb-overlay">
-          <div class="lb-overlay-title">POLO LOOK 05</div>
-          <div class="lb-overlay-mr">पोलो लुक</div>
-          <div class="lb-overlay-price">₹999</div>
-          <button class="lb-view-btn" onclick="event.stopPropagation(); viewProduct('Polo Tee','पोलो टी',999)">View Product</button>
-          <button class="lb-overlay-btn" onclick="event.stopPropagation(); addToCart('Polo Tee','पोलो टी',999)">कार्टमध्ये घाला</button>
-        </div>
-        <div class="lb-flag-bar">
-          <div class="pfb sf"></div>
-          <div class="pfb wh"></div>
-          <div class="pfb gr"></div>
-        </div>
-      </div>
-      <div class="lb-info">
-        <div class="lb-info-title">Polo Tee — Weekend</div>
-        <div class="lb-info-mr">पोलो टी-शर्ट · आठवडा शेवट</div>
-        <div class="lb-info-bot">
-          <div class="lb-price">₹999</div>
-          <button class="btn-view" onclick="viewProduct('Polo Tee','पोलो टी',999)">View</button>
-          <button class="prod-add-mini" onclick="addToCart('Polo Tee','पोलो टी',999)">+ Cart</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="lb-editorial lb-legacy-hidden" aria-hidden="true">
-    <div class="lb-ed-left">
-      <div class="lb-ed-sk">SS/26 STYLE NOTES</div>
-      <div class="lb-ed-title">THE MODERN<br>EVERYDAY<br>EDIT</div>
-      <p class="lb-ed-body">This season Vektor focuses on clean fits, breathable fabrics, and modern essentials built for workdays, weekends, and everything between.</p>
-      <a href="{{ url_for('shop.shop_page') }}" class="btn-sf">पूर्ण संग्रह पाहा — Shop All</a>
-    </div>
-    <div class="lb-ed-right">
-      <div class="lb-ed-row"><div class="lb-ed-num">01</div><div><div class="lb-ed-en">Indian-fit cuts for the Indian body</div><div class="lb-ed-mr">भारतीय शरीरासाठी भारतीय कट · भारतीय कद के लिए</div></div></div>
-      <div class="lb-ed-row"><div class="lb-ed-num">02</div><div><div class="lb-ed-en">Handcrafted — every single garment</div><div class="lb-ed-mr">हाताने बनवलेले — प्रत्येक कपडा · हस्तनिर्मित</div></div></div>
-      <div class="lb-ed-row"><div class="lb-ed-num">03</div><div><div class="lb-ed-en">Fabric tested for 5 years, guaranteed</div><div class="lb-ed-mr">५ वर्षांची गॅरंटी · ५ साल की गारंटी</div></div></div>
-    </div>
-  </div>
-  <div style="height:36px"></div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-function lbTab(btn, season) {
-  document.querySelectorAll('.lb-tab').forEach(function(tab){
-    tab.classList.remove('active');
-  });
+function lxTab(btn, season) {
+  document.querySelectorAll('.lx-tab').forEach(function (tab) { tab.classList.remove('active'); });
   btn.classList.add('active');
 
   var visible = 0;
-  document.querySelectorAll('.lb-live-card').forEach(function(card){
-    var haystack = ((card.dataset.season || '') + ' ' + (card.dataset.category || '')).toLowerCase();
-    var show = season === 'ss26' || haystack.indexOf(season) !== -1;
+  document.querySelectorAll('#lxGrid .lx-card').forEach(function (card) {
+    var hay = (card.dataset.season || '').toLowerCase();
+    var show = season === 'all' || hay.indexOf(season) !== -1;
     card.style.display = show ? '' : 'none';
     if (show) visible += 1;
   });
 
-  var empty = document.getElementById('lbFilterEmpty');
-  if (empty) empty.style.display = visible ? 'none' : 'flex';
+  var empty = document.getElementById('lxFilterEmpty');
+  if (empty) empty.style.display = visible ? 'none' : 'block';
 }
 </script>
 {% endblock %}

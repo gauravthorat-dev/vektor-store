@@ -47,6 +47,10 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 .stat:hover::after{transform:scaleX(1)}
 
 .main{max-width:820px;margin:0 auto;padding:24px 16px}
+.dispatch-queue{margin-bottom:14px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dispatch-queue .q-lbl{font-size:9px;letter-spacing:.1em;color:var(--fg3);text-transform:uppercase}
+.dispatch-queue .q-val{font-family:var(--display);font-size:22px;line-height:1;color:var(--amber)}
+.dispatch-queue .q-sub{font-size:10px;color:var(--fg2)}
 
 /* INCOMING CARD */
 .inc-card{background:var(--bg2);border:1px solid var(--amber);border-radius:6px;overflow:hidden;margin-bottom:20px;
@@ -150,6 +154,30 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 .toast.error  {border-color:#7f1d1d44;color:var(--red)}
 .toast.info   {border-color:#1d4ed844;color:var(--blue)}
 @keyframes tin{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+.dispatch-overlay{position:fixed;inset:0;z-index:1200;background:linear-gradient(180deg,#000000dd,#000000f2);display:none;align-items:center;justify-content:center;padding:18px}
+.dispatch-overlay.show{display:flex;animation:ovIn .2s ease}
+@keyframes ovIn{from{opacity:0}to{opacity:1}}
+.dispatch-panel{width:min(760px,96vw);background:var(--bg2);border:1px solid #f59e0b66;border-radius:8px;box-shadow:0 0 0 2px #f59e0b1a,0 30px 90px #000;padding:14px 14px 10px}
+.dispatch-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 8px 10px;border-bottom:1px solid #f59e0b2a}
+.dispatch-tag{font-size:10px;letter-spacing:.15em;color:var(--amber);font-weight:700}
+.dispatch-close{border:1px solid var(--border2);background:transparent;color:var(--fg3);font-size:10px;padding:6px 10px;border-radius:3px;cursor:pointer}
+.dispatch-close:hover{color:var(--fg);border-color:#3b3b3b}
+.dispatch-body{padding:12px 8px 8px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.dispatch-body{grid-template-columns:1fr}}
+.dispatch-k{font-size:9px;color:var(--fg3);letter-spacing:.1em;text-transform:uppercase}
+.dispatch-v{font-size:14px;color:var(--fg);line-height:1.45}
+.dispatch-v.big{font-size:28px;font-family:var(--display);color:var(--amber)}
+.dispatch-countdown{margin-top:6px;display:inline-flex;align-items:center;gap:6px;border:1px solid #f59e0b33;background:#f59e0b10;border-radius:3px;padding:4px 8px}
+.dispatch-countdown b{font-family:var(--display);font-size:20px;line-height:1;color:var(--amber)}
+.dispatch-foot{display:flex;gap:10px;padding:8px}
+.dispatch-accept{flex:1}
+.accept-lock{animation:acceptLock .7s ease}
+@keyframes acceptLock{
+  0%{transform:scale(1);box-shadow:0 0 0 0 #16a34a00}
+  50%{transform:scale(1.01);box-shadow:0 0 0 6px #16a34a22}
+  100%{transform:scale(1);box-shadow:0 0 0 0 #16a34a00}
+}
 </style>
 </head>
 <body>
@@ -180,21 +208,21 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 
 <div class="stats">
   <div class="stat">
-    <div class="stat-n">{{ active_orders|length }}</div>
+    <div class="stat-n" id="cnt-active">{{ active_orders|length }}</div>
     <div class="stat-l">Active Orders</div>
   </div>
   <div class="stat">
-    <div class="stat-n">{{ delivered_today }}</div>
+    <div class="stat-n" id="cnt-today">{{ delivered_today }}</div>
     <div class="stat-l">Delivered Today</div>
   </div>
   <div class="stat">
-    <div class="stat-n">{{ total_delivered }}</div>
+    <div class="stat-n" id="cnt-total">{{ total_delivered }}</div>
     <div class="stat-l">Total Delivered</div>
   </div>
   <div class="stat">
-    <div class="stat-n">{{ acceptance_rate }}%</div>
+    <div class="stat-n" id="cnt-rate">{{ acceptance_rate }}%</div>
     <div class="stat-l">Acceptance Rate</div>
-    <div class="rate-bar"><div class="rate-fill" style="width:{{ acceptance_rate }}%"></div></div>
+    <div class="rate-bar"><div class="rate-fill" id="cnt-rate-fill" style="width:{{ acceptance_rate }}%"></div></div>
   </div>
 </div>
 
@@ -213,6 +241,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 <div class="main">
   <!-- Incoming orders injected here by SocketIO -->
   <div id="inZone"></div>
+  <div class="dispatch-queue" id="dispatchQueue">
+    <div>
+      <div class="q-lbl">Live Dispatch Queue</div>
+      <div class="q-sub">First rider to accept gets the order</div>
+    </div>
+    <div class="q-val" id="incomingCount">0</div>
+  </div>
 
   <div class="tabs">
     <a href="/delivery/dashboard" class="tab {% if not show_history %}active{% endif %}">
@@ -225,7 +260,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
     {% if active_orders %}
     <div class="sec-t">ACTIVE ORDERS <small>· IN PROGRESS</small></div>
     {% for order in active_orders %}
-    <div class="act-card">
+    <div class="act-card" id="order-card-{{ order.id }}" data-order-id="{{ order.id }}">
       <div class="ac-head">
         <div>
           <div class="ac-id">#VK{{ order.id }}</div>
@@ -248,7 +283,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
       {% if order.status == 'Out for Delivery' %}
       <div class="otp-zone">
         <div class="otp-title">⚡ Enter Customer OTP to confirm delivery</div>
-        <form action="/delivery/deliver/{{ order.id }}" method="POST" class="otp-row" onsubmit="return validateOtp(this)">
+        <form action="/delivery/deliver/{{ order.id }}" method="POST" class="otp-row js-deliver-form" onsubmit="return validateOtp(this)">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           {#
             FIX: Changed type="number" → type="text"
             - maxlength now works (was silently ignored on type=number)
@@ -276,7 +312,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 
       <div class="ac-foot">
         {% if order.status == 'Shipped' %}
-        <form action="/delivery/pickup/{{ order.id }}" method="POST" style="display:inline">
+        <form action="/delivery/pickup/{{ order.id }}" method="POST" style="display:inline" class="js-pickup-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <button type="submit" class="btn btn-g">📦 PICKED UP → OUT FOR DELIVERY</button>
         </form>
         {% endif %}
@@ -317,38 +354,92 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
   {% endif %}
 </div>
 
+<div class="dispatch-overlay" id="dispatchOverlay" aria-hidden="true">
+  <div class="dispatch-panel">
+    <div class="dispatch-top">
+      <div class="dispatch-tag">INCOMING DELIVERY REQUEST</div>
+      <button class="dispatch-close" type="button" onclick="hideDispatchOverlay()">MINIMIZE</button>
+    </div>
+    <div class="dispatch-body" id="dispatchBody"></div>
+    <div class="dispatch-foot">
+      <button class="btn-acc dispatch-accept" id="overlayAcceptBtn" type="button">ACCEPT ORDER</button>
+      <button class="btn-rej" id="overlayRejectBtn" type="button">REJECT</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap" id="toastWrap"></div>
 <audio id="ping" preload="auto"><source src="/static/sounds/ping.mp3" type="audio/mpeg"></audio>
 
 <script>
-const socket  = io({ transports: ['websocket'] });
-const TIMEOUT = 60;
+const socket  = io();
+const DEFAULT_TIMEOUT = 90;
+const csrfToken = '{{ csrf_token() }}';
+const currentUserId = Number('{{ session.get("user_id", 0) }}' || 0);
 let isOnline  = true;
 let timers    = {};
+let heartbeatStarted = false;
+let alertLoop = null;
+let overlayOrderId = null;
 
-socket.on('connect',    () => { toast('Dispatch server connected', 'info'); startHeartbeat(); });
-socket.on('disconnect', () => toast('Reconnecting...', 'error'));
+socket.on('connect', () => {
+  socket.emit('join_delivery_room');
+  toast('Dispatch connected', 'success');
+  if (!heartbeatStarted) {
+    startHeartbeat();
+    heartbeatStarted = true;
+  }
+  initDashboardActions();
+});
+
+socket.on('disconnect', () => {
+  toast('Connection lost — reconnecting...', 'error');
+});
+
+socket.on('reconnect', () => {
+  socket.emit('join_delivery_room');
+  toast('Reconnected', 'success');
+});
+
+socket.on('room_joined', (data) => {
+  console.log('Joined room:', data.room, 'uid:', data.uid, 'namespace:', data.namespace);
+});
 
 /* ── NEW ORDER ─────────────────────────────── */
 socket.on('new_order_request', d => {
   if (!isOnline) return;
   playPing(); vibrate();
   showCard(d);
+  showDispatchOverlay(d);
+  ensureAlertLoop();
+  updateIncomingMeta();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* ── ORDER TAKEN ───────────────────────────── */
 socket.on('order_taken', d => {
   removeCard(d.order_id);
+  if (overlayOrderId === Number(d.order_id)) hideDispatchOverlay();
+  if (Number(d.accepted_by_id || 0) === currentUserId) return;
   toast(`Order #VK${d.order_id} taken by ${d.accepted_by}`, 'info');
 });
 
 /* ── ACCEPT RESULT ─────────────────────────── */
 socket.on('accept_result', d => {
-  if (d.ok) { toast('✓ Order accepted!', 'success'); setTimeout(() => location.reload(), 1200); }
-  else toast(`Could not accept: ${d.reason}`, 'error');
+  if (d.ok) {
+    toast('Order accepted!', 'success');
+    if (d.data && d.data.order) mountAssignedOrder(d.data.order);
+  } else {
+    toast(`Could not accept: ${d.message || d.reason || 'Request failed'}`, 'error');
+  }
 });
 
 socket.on('reject_result', () => toast('Order rejected', 'info'));
+socket.on('order_assigned', d => {
+  if (!d || !d.order) return;
+  mountAssignedOrder(d.order);
+  toast(`Order #VK${d.order.id} assigned to you`, 'success');
+});
 
 /* ── CARD ──────────────────────────────────── */
 function showCard(o) {
@@ -367,7 +458,7 @@ function showCard(o) {
           <circle class="t-track2" cx="28" cy="28" r="22"/>
           <circle class="t-fill" id="tf-${o.order_id}" cx="28" cy="28" r="22"/>
         </svg>
-        <div class="t-num" id="tn-${o.order_id}">${TIMEOUT}</div>
+        <div class="t-num" id="tn-${o.order_id}">${Number(o.timeout || DEFAULT_TIMEOUT)}</div>
       </div>
     </div>
     <div class="inc-body">
@@ -391,13 +482,133 @@ function showCard(o) {
     </div>`;
 
   zone.prepend(card);
-  startTimer(o.order_id, TIMEOUT, circ);
+  startTimer(o.order_id, Number(o.timeout || DEFAULT_TIMEOUT), circ);
+  updateIncomingMeta();
 }
+
+function showDispatchOverlay(o) {
+  if (!o || !o.order_id) return;
+  overlayOrderId = Number(o.order_id);
+  const overlay = document.getElementById('dispatchOverlay');
+  const body = document.getElementById('dispatchBody');
+  const acceptBtn = document.getElementById('overlayAcceptBtn');
+  const rejectBtn = document.getElementById('overlayRejectBtn');
+  body.innerHTML = `
+    <div>
+      <div class="dispatch-k">Order</div>
+      <div class="dispatch-v big">#VK${o.order_id}</div>
+    </div>
+    <div>
+      <div class="dispatch-k">Amount</div>
+      <div class="dispatch-v big">Rs ${o.total}</div>
+    </div>
+    <div>
+      <div class="dispatch-k">Payment</div>
+      <div class="dispatch-v">${o.payment_method === 'COD' ? 'Collect cash' : 'Prepaid'}</div>
+    </div>
+    <div>
+      <div class="dispatch-k">Items</div>
+      <div class="dispatch-v">${o.items_count || 0}</div>
+    </div>
+    <div>
+      <div class="dispatch-k">Decision Window</div>
+      <div class="dispatch-countdown"><span>TIME LEFT</span><b id="overlayCountdown">${Number(o.timeout || DEFAULT_TIMEOUT)}</b><span>sec</span></div>
+    </div>
+    <div style="grid-column:1/-1">
+      <div class="dispatch-k">Address</div>
+      <div class="dispatch-v">${o.address || ''}</div>
+    </div>
+  `;
+  acceptBtn.onclick = () => acceptOrder(overlayOrderId);
+  rejectBtn.onclick = () => rejectOrder(overlayOrderId);
+  overlay.classList.add('show');
+}
+
+function hideDispatchOverlay() {
+  const overlay = document.getElementById('dispatchOverlay');
+  overlay.classList.remove('show');
+  overlayOrderId = null;
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideDispatchOverlay();
+});
 
 function removeCard(id) {
   const c = document.getElementById(`ic-${id}`);
   if (c) { c.style.transition='opacity .3s'; c.style.opacity='0'; setTimeout(()=>c.remove(),300); }
+  if (overlayOrderId === Number(id)) hideDispatchOverlay();
   stopTimer(id);
+  maybeStopAlertLoop();
+  updateIncomingMeta();
+}
+
+function removeOrderCard(id) {
+  const card = document.getElementById(`order-card-${id}`);
+  if (!card) return;
+  card.style.transition = 'opacity .25s';
+  card.style.opacity = '0';
+  setTimeout(() => card.remove(), 250);
+}
+
+function mountAssignedOrder(order) {
+  if (!order || !order.id) return;
+  removeCard(order.id);
+  let card = document.getElementById(`order-card-${order.id}`);
+  if (!card) {
+    card = document.createElement('div');
+    card.className = 'act-card';
+    card.id = `order-card-${order.id}`;
+    card.setAttribute('data-order-id', String(order.id));
+    document.getElementById('inZone').appendChild(card);
+  }
+  card.innerHTML = renderAssignedOrder(order);
+  card.classList.add('accept-lock');
+  setTimeout(() => card.classList.remove('accept-lock'), 800);
+  initDashboardActions();
+}
+
+function renderAssignedOrder(o) {
+  const status = o.status || 'Shipped';
+  const isCod = (o.payment_method || 'COD') === 'COD';
+  const addr = `${o.shipping_address || ''}, ${o.shipping_city || ''} - ${o.shipping_pincode || ''}`;
+  const mapsQuery = encodeURIComponent(`${o.shipping_address || ''},${o.shipping_city || ''},${o.shipping_pincode || ''}`);
+  return `
+    <div class="ac-head">
+      <div>
+        <div class="ac-id">#VK${o.id}</div>
+        <div style="font-size:10px;color:var(--fg3);margin-top:2px">
+          Rs ${o.total_price || 0} - ${isCod ? '<span style="color:var(--amber)">COLLECT CASH</span>' : '<span style="color:var(--green)">PREPAID</span>'}
+        </div>
+      </div>
+      <span class="pill ${status === 'Out for Delivery' ? 'p-amber p-pulse' : 'p-blue'}">${status}</span>
+    </div>
+    <div class="ac-body">
+      <div class="kv"><span class="kk">Customer</span><span class="vv">${o.shipping_name || '-'}</span></div>
+      <div class="kv"><span class="kk">Phone</span><span class="vv"><a href="tel:${o.shipping_phone || ''}" style="color:var(--blue);text-decoration:none">${o.shipping_phone || '-'}</a></span></div>
+      <div class="kv" style="grid-column:1/-1"><span class="kk">Address</span><span class="vv" style="font-size:12px">${addr}</span></div>
+    </div>
+    ${status === 'Out for Delivery' ? `
+      <div class="otp-zone">
+        <div class="otp-title">Enter customer OTP to confirm delivery</div>
+        <form action="/delivery/deliver/${o.id}" method="POST" class="otp-row js-deliver-form" onsubmit="return validateOtp(this)">
+          <input type="hidden" name="csrf_token" value="${csrfToken}">
+          <input type="text" name="otp" class="otp-in" placeholder="000000" maxlength="6" minlength="6" pattern="\\d{6}" inputmode="numeric" autocomplete="off" required>
+          <button type="submit" class="btn btn-g">CONFIRM DELIVERED</button>
+        </form>
+      </div>
+    ` : ''}
+    <div class="ac-foot">
+      ${status === 'Shipped' ? `
+      <form action="/delivery/pickup/${o.id}" method="POST" style="display:inline" class="js-pickup-form">
+        <input type="hidden" name="csrf_token" value="${csrfToken}">
+        <button type="submit" class="btn btn-g">PICKED UP -> OUT FOR DELIVERY</button>
+      </form>
+      ` : ''}
+      <a href="https://maps.google.com/?q=${mapsQuery}" target="_blank" class="btn btn-gh">MAPS</a>
+      <a href="tel:${o.shipping_phone || ''}" class="btn btn-gh">CALL</a>
+    </div>
+  `;
 }
 
 /* ── TIMER ─────────────────────────────────── */
@@ -410,6 +621,10 @@ function startTimer(id, secs, circ) {
   timers[id] = setInterval(() => {
     rem--;
     if (num) num.textContent = rem;
+    if (overlayOrderId === Number(id)) {
+      const overlayCountdown = document.getElementById('overlayCountdown');
+      if (overlayCountdown) overlayCountdown.textContent = String(Math.max(rem, 0));
+    }
     if (fill) {
       fill.style.strokeDashoffset = circ * (1 - rem/secs);
       fill.style.stroke = rem > 30 ? '#4ade80' : rem > 10 ? '#f59e0b' : '#f87171';
@@ -429,19 +644,96 @@ function stopTimer(id) {
   delete timers[id];
 }
 
+function updateIncomingMeta() {
+  const count = document.querySelectorAll('.inc-card').length;
+  const countEl = document.getElementById('incomingCount');
+  if (countEl) countEl.textContent = String(count);
+}
+
 /* ── ACCEPT / REJECT ───────────────────────── */
 function acceptOrder(id) {
   const btn = document.getElementById(`acc-${id}`);
   const rej = document.getElementById(`rej-${id}`);
   if (btn) { btn.disabled=true; btn.textContent='Accepting...'; }
   if (rej) rej.disabled = true;
+  if (overlayOrderId === Number(id)) hideDispatchOverlay();
   stopTimer(id);
   socket.emit('accept_order', { order_id: id });
 }
 
 function rejectOrder(id) {
   socket.emit('reject_order', { order_id: id });
+  if (overlayOrderId === Number(id)) hideDispatchOverlay();
   removeCard(id);
+}
+
+function applyStats(stats) {
+  if (!stats) return;
+  const activeEl = document.getElementById('cnt-active');
+  const todayEl = document.getElementById('cnt-today');
+  const totalEl = document.getElementById('cnt-total');
+  const rateEl = document.getElementById('cnt-rate');
+  const rateFillEl = document.getElementById('cnt-rate-fill');
+  if (activeEl && typeof stats.active_orders !== 'undefined') activeEl.textContent = stats.active_orders;
+  if (todayEl && typeof stats.delivered_today !== 'undefined') todayEl.textContent = stats.delivered_today;
+  if (totalEl && typeof stats.total_delivered !== 'undefined') totalEl.textContent = stats.total_delivered;
+  if (rateEl && typeof stats.acceptance_rate !== 'undefined') rateEl.textContent = `${stats.acceptance_rate}%`;
+  if (rateFillEl && typeof stats.acceptance_rate !== 'undefined') rateFillEl.style.width = `${stats.acceptance_rate}%`;
+}
+
+function initDashboardActions() {
+  document.querySelectorAll('.js-pickup-form').forEach(form => {
+    if (form.dataset.bound === '1') return;
+    form.dataset.bound = '1';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitOrderAction(form, null);
+    });
+  });
+
+  document.querySelectorAll('.js-deliver-form').forEach(form => {
+    if (form.dataset.bound === '1') return;
+    form.dataset.bound = '1';
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!validateOtp(form)) return;
+      await submitOrderAction(form, form.querySelector('input[name="otp"]')?.value || '');
+    });
+  });
+}
+
+async function submitOrderAction(form, otpValue) {
+  const url = form.getAttribute('action');
+  const orderCard = form.closest('[data-order-id]');
+  const orderId = orderCard ? Number(orderCard.getAttribute('data-order-id')) : null;
+  const body = new URLSearchParams(new FormData(form));
+  if (typeof otpValue === 'string' && otpValue.length) body.set('otp', otpValue.trim());
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-Requested-With': 'fetch',
+        'X-CSRF-Token': csrfToken,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      },
+      body: body.toString(),
+    });
+    const out = await res.json();
+    if (!out.ok) {
+      toast(out.message || 'Action failed', 'error');
+      return;
+    }
+    toast(out.message || 'Updated', 'success');
+    if (url.includes('/deliver/')) {
+      if (orderId) removeOrderCard(orderId);
+    } else if (url.includes('/pickup/')) {
+      if (out.data && out.data.order) mountAssignedOrder(out.data.order);
+    }
+    applyStats(out.data?.stats);
+  } catch (err) {
+    toast('Network issue. Please retry.', 'error');
+  }
 }
 
 /* ── OTP CLIENT-SIDE VALIDATION ────────────── */
@@ -469,7 +761,27 @@ function toggleOnline(wrap) {
 
 /* ── HEARTBEAT ─────────────────────────────── */
 function startHeartbeat() {
-  setInterval(() => { if (isOnline) socket.emit('heartbeat'); }, 25000);
+  socket.emit('heartbeat');
+  setInterval(() => { if (isOnline) socket.emit('heartbeat'); }, 30000);
+}
+
+function ensureAlertLoop() {
+  if (alertLoop) return;
+  alertLoop = setInterval(() => {
+    if (!document.querySelector('.inc-card')) {
+      maybeStopAlertLoop();
+      return;
+    }
+    playPing();
+    vibrate();
+  }, 1800);
+}
+
+function maybeStopAlertLoop() {
+  if (document.querySelector('.inc-card')) return;
+  if (!alertLoop) return;
+  clearInterval(alertLoop);
+  alertLoop = null;
 }
 
 /* ── UTILS ─────────────────────────────────── */
@@ -488,6 +800,8 @@ function toast(msg, type='info') {
   w.prepend(t);
   setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 3500);
 }
+initDashboardActions();
+updateIncomingMeta();
 </script>
 </body>
 </html>

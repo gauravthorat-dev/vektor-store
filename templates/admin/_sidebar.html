@@ -1,0 +1,82 @@
+<div class="admin-sidebar">
+  <div class="sb-logo">VEKTOR</div>
+
+  <a href="/admin/dashboard" class="sb-btn {% if active_menu == 'dashboard' %}active{% endif %}" title="Dashboard">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+  </a>
+  <a href="/admin/products" class="sb-btn {% if active_menu == 'products' %}active{% endif %}" title="Products">
+    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+  </a>
+  <a href="/admin/orders" class="sb-btn {% if active_menu == 'orders' %}active{% endif %}" title="Orders">
+    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+  </a>
+  <a href="/admin/customers" class="sb-btn {% if active_menu == 'customers' %}active{% endif %}" title="Customers">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+  </a>
+  <a href="/admin/analytics" class="sb-btn {% if active_menu == 'analytics' %}active{% endif %}" title="Analytics">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+  </a>
+  <a href="/admin/settings" class="sb-btn {% if active_menu == 'settings' %}active{% endif %}" title="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21"/></svg>
+  </a>
+
+  {% if session.get('admin_level') == 'superadmin' %}
+  <a href="/admin/manage-admins" class="sb-btn {% if active_menu == 'manage_admins' %}active{% endif %}" title="Manage Admins">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+  </a>
+  {% endif %}
+
+  <button type="button" class="sb-btn" id="themeToggleBtn" title="Toggle Theme" aria-label="Toggle Theme">
+    <svg id="themeIconMoon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+    <svg id="themeIconSun" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.9" y1="4.9" x2="7" y2="7"/><line x1="17" y1="17" x2="19.1" y2="19.1"/><line x1="17" y1="7" x2="19.1" y2="4.9"/><line x1="4.9" y1="19.1" x2="7" y2="17"/></svg>
+  </button>
+
+  <div class="sb-divider"></div>
+  <form method="POST" action="/admin/switch" style="margin:0">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="sb-btn" title="Switch Account" style="background:none">
+      <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+    </button>
+  </form>
+  <form method="POST" action="/admin/logout" style="margin:0">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="sb-btn" title="Logout" style="background:none">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+    </button>
+  </form>
+
+  <div class="sb-spacer"></div>
+  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
+  <div class="sb-spacer"></div>
+</div>
+
+<script>
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById("themeToggleBtn");
+  const moon = document.getElementById("themeIconMoon");
+  const sun = document.getElementById("themeIconSun");
+  const STORAGE_KEY = "vektor_admin_theme";
+
+  function applyTheme(theme) {
+    root.setAttribute("data-theme", theme);
+    if (moon && sun) {
+      const light = theme === "light";
+      moon.style.display = light ? "none" : "block";
+      sun.style.display = light ? "block" : "none";
+    }
+  }
+
+  const saved = localStorage.getItem(STORAGE_KEY);
+  const initial = saved === "light" || saved === "dark" ? saved : "dark";
+  applyTheme(initial);
+
+  if (btn) {
+    btn.addEventListener("click", function () {
+      const next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+      localStorage.setItem(STORAGE_KEY, next);
+      applyTheme(next);
+    });
+  }
+})();
+</script>

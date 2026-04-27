@@ -1,54 +1,35 @@
 {% extends "base.html" %}
 {% set active_page = "home" %}
-{% block title %}VEKTOR — महाराष्ट्रीय पुरुष वस्त्र{% endblock %}
+{% block title %}VEKTOR — Premium Indian Menswear{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home-theme-sync.css') }}">
+{% endblock %}
 
 {% block content %}
 <div class="page active" id="page-home">
 
   <!-- ══ HERO ══ -->
-<!-- ══ HERO v2 ══ -->
   <section class="hero">
- 
-    <!-- Background image -->
     <div class="hero-image">
       <img src="{{ url_for('static', filename='images/hero.png') }}"
-           alt="Vektor — महाराष्ट्रीय पुरुष वस्त्र">
+           alt="Vektor — Premium Indian Menswear">
     </div>
- 
-    <!-- Overlay + diagonal line -->
     <div class="hero-overlay"></div>
- 
-    <!-- Main content — bottom left -->
     <div class="hero-content">
- 
-      <!-- Big brand name -->
       <h1 class="hero-title">
         <span class="white">VEK</span><span class="accent">TOR</span>
       </h1>
- 
-      <!-- Marathi identity line -->
       <div class="hero-marathi">Crafted in India · Since 2019</div>
- 
-      <!-- New tagline — replaces "Crafted for Modern Presence" -->
       <p class="hero-tagline">
         Worn by men who don't explain themselves.<br>
         Made in India. Built to last.
       </p>
- 
-      <!-- CTA buttons — new labels -->
       <div class="hero-buttons">
-  <a href="{{ url_for('shop.shop_page') }}" class="btn-common">
-    संग्रह पाहा →
-  </a>
-
-  <a href="{{ url_for('shop.lookbook') }}" class="btn-common">
-    Lookbook
-  </a>
-</div>
- 
+        <a href="{{ url_for('shop.shop_page') }}" class="btn-common">Shop Now →</a>
+        <a href="{{ url_for('shop.lookbook') }}" class="btn-common">Lookbook</a>
+      </div>
     </div>
- 
-    <!-- Stats strip — bottom right -->
     <div class="hero-stats-strip">
       <div class="hss-item">
         <div class="hss-num">12<span>K+</span></div>
@@ -63,15 +44,11 @@
         <div class="hss-label">Fabric Warranty</div>
       </div>
     </div>
- 
-    <!-- Scroll cue -->
     <div class="hero-scroll">
       <div class="hero-scroll-line"></div>
       <span class="hero-scroll-text">Scroll</span>
     </div>
- 
   </section>
-
 
   <!-- ══ STYLE CODE ══ -->
   <div class="mc-grid">
@@ -82,7 +59,6 @@
       <div class="mc-word">फिट</div>
       <div class="mc-en">TAILORED FIT</div>
       <div class="mc-desc">Sharp silhouettes, clean proportions, and comfort that works through the day.</div>
-      <div class="mc-sk">Everyday staples, refined for Indian men.</div>
     </div>
     <div class="mc-card reveal">
       <div class="mc-icon" style="border-color:rgba(200,148,26,.3)">
@@ -91,7 +67,6 @@
       <div class="mc-word">कापड</div>
       <div class="mc-en">PREMIUM FABRIC</div>
       <div class="mc-desc">Breathable textures, reliable stitching, and pieces that keep their shape.</div>
-      <div class="mc-sk">Made to feel good after more than one wear.</div>
     </div>
     <div class="mc-card reveal">
       <div class="mc-icon" style="border-color:rgba(4,106,56,.5)">
@@ -100,7 +75,6 @@
       <div class="mc-word">शैली</div>
       <div class="mc-en">MODERN STYLE</div>
       <div class="mc-desc">Minimal, versatile clothing that moves from work to weekend without trying too hard.</div>
-      <div class="mc-sk">Quiet details. Strong finish.</div>
     </div>
   </div>
 
@@ -123,82 +97,79 @@
   </div>
 
   <!-- ══ CATEGORIES ══ -->
-  <section class="sec-wrap">
+  <section class="sec-wrap category-sec">
     <div class="sec-top reveal">
       <div>
-        <div class="sec-tag">Category · श्रेणी</div>
-        <div class="sec-head">YOUR UNIFORM<span class="sec-mr">तुमचा पोशाख · आपकी पहचान</span></div>
+        <div class="sec-tag">Category</div>
+        <div class="sec-head">YOUR UNIFORM<span class="sec-mr">तुमचा पोशाख</span></div>
       </div>
-      <a href="{{ url_for('shop.shop_page') }}" class="see-all">सगळ्या श्रेणी ↗</a>
+      <a href="{{ url_for('shop.shop_page') }}" class="see-all">Shop All ↗</a>
     </div>
     <div class="cat-grid">
-      <div class="cat-card" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Shirts'">
+      <div class="cat-card" style="padding:20px 18px;min-height:96px;background:#111111;border:0.5px solid rgba(255,255,255,0.08);transition:border-color 0.2s" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Shirts'">
         <div class="cat-top"><div class="cat-num">01</div><div class="cat-arrow">↗</div></div>
         <div>
-          <div class="cat-en">SHIRTS</div>
-          <div class="cat-mr">शर्ट</div>
-          <div class="cat-hi">कमीज़</div>
-          <div class="cat-count">{{ category_counts.get('Shirts', 0) }} styles available</div>
+          <div class="cat-en" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#F5F0E8;letter-spacing:2px;line-height:1.2;display:block">SHIRTS</div>
+          <div class="cat-mr" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(245,240,232,0.62);display:block;margin-top:3px">शर्ट</div>
+          <div class="cat-count" style="font-size:12px;color:rgba(245,240,232,0.42);letter-spacing:1px;display:block;margin-top:5px">{{ category_counts.get('Shirts', 0) }} styles</div>
         </div>
         <div class="cat-bar"></div>
       </div>
-      <div class="cat-card" onclick="window.location='{{ url_for('shop.shop_page') }}?category=T-Shirts'">
+      <div class="cat-card" style="padding:20px 18px;min-height:96px;background:#111111;border:0.5px solid rgba(255,255,255,0.08);transition:border-color 0.2s" onclick="window.location='{{ url_for('shop.shop_page') }}?category=T-Shirts'">
         <div class="cat-top"><div class="cat-num">02</div><div class="cat-arrow">↗</div></div>
         <div>
-          <div class="cat-en">T-SHIRTS</div>
-          <div class="cat-mr">टी-शर्ट</div>
-          <div class="cat-count">{{ category_counts.get('T-Shirts', 0) }} styles</div>
+          <div class="cat-en" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#F5F0E8;letter-spacing:2px;line-height:1.2;display:block">T-SHIRTS</div>
+          <div class="cat-mr" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(245,240,232,0.62);display:block;margin-top:3px">टी-शर्ट</div>
+          <div class="cat-count" style="font-size:12px;color:rgba(245,240,232,0.42);letter-spacing:1px;display:block;margin-top:5px">{{ category_counts.get('T-Shirts', 0) }} styles</div>
         </div>
         <div class="cat-bar"></div>
       </div>
-      <div class="cat-card" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Jeans'">
+      <div class="cat-card" style="padding:20px 18px;min-height:96px;background:#111111;border:0.5px solid rgba(255,255,255,0.08);transition:border-color 0.2s" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Jeans'">
         <div class="cat-top"><div class="cat-num">03</div><div class="cat-arrow">↗</div></div>
         <div>
-          <div class="cat-en">JEANS</div>
-          <div class="cat-mr">जीन्स</div>
-          <div class="cat-hi">जींस</div>
-          <div class="cat-count">{{ category_counts.get('Jeans', 0) }} styles</div>
+          <div class="cat-en" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#F5F0E8;letter-spacing:2px;line-height:1.2;display:block">JEANS</div>
+          <div class="cat-mr" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(245,240,232,0.62);display:block;margin-top:3px">जीन्स</div>
+          <div class="cat-count" style="font-size:12px;color:rgba(245,240,232,0.42);letter-spacing:1px;display:block;margin-top:5px">{{ category_counts.get('Jeans', 0) }} styles</div>
         </div>
         <div class="cat-bar"></div>
       </div>
-      <div class="cat-card" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Jackets'">
+      <div class="cat-card" style="padding:20px 18px;min-height:96px;background:#111111;border:0.5px solid rgba(255,255,255,0.08);transition:border-color 0.2s" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Jackets'">
         <div class="cat-top"><div class="cat-num">04</div><div class="cat-arrow">↗</div></div>
         <div>
-          <div class="cat-en">JACKETS</div>
-          <div class="cat-mr">जॅकेट</div>
-          <div class="cat-count">{{ category_counts.get('Jackets', 0) }} styles</div>
+          <div class="cat-en" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#F5F0E8;letter-spacing:2px;line-height:1.2;display:block">JACKETS</div>
+          <div class="cat-mr" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(245,240,232,0.62);display:block;margin-top:3px">जॅकेट</div>
+          <div class="cat-count" style="font-size:12px;color:rgba(245,240,232,0.42);letter-spacing:1px;display:block;margin-top:5px">{{ category_counts.get('Jackets', 0) }} styles</div>
         </div>
         <div class="cat-bar"></div>
       </div>
-      <div class="cat-card" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Trousers'">
+      <div class="cat-card" style="padding:20px 18px;min-height:96px;background:#111111;border:0.5px solid rgba(255,255,255,0.08);transition:border-color 0.2s" onclick="window.location='{{ url_for('shop.shop_page') }}?category=Trousers'">
         <div class="cat-top"><div class="cat-num">05</div><div class="cat-arrow">↗</div></div>
         <div>
-          <div class="cat-en">TROUSERS</div>
-          <div class="cat-mr">ट्राउझर्स</div>
-          <div class="cat-count">{{ category_counts.get('Trousers', 0) }} styles</div>
+          <div class="cat-en" style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:#F5F0E8;letter-spacing:2px;line-height:1.2;display:block">TROUSERS</div>
+          <div class="cat-mr" style="font-family:'Tiro Devanagari Sanskrit',serif;font-size:13px;color:rgba(245,240,232,0.62);display:block;margin-top:3px">ट्राउझर्स</div>
+          <div class="cat-count" style="font-size:12px;color:rgba(245,240,232,0.42);letter-spacing:1px;display:block;margin-top:5px">{{ category_counts.get('Trousers', 0) }} styles</div>
         </div>
         <div class="cat-bar"></div>
       </div>
     </div>
   </section>
 
-  <!-- ══ NEW ARRIVALS — Real DB products ══ -->
-  <section class="sec-wrap" style="padding-top:0">
+  <!-- ══ NEW ARRIVALS ══ -->
+  <section class="sec-wrap new-arrivals-sec" style="padding-bottom:40px">
     <div class="reveal">
-      <div class="sec-tag">Just Dropped · नुकतेच आले</div>
-      <div class="sec-head">NEW ARRIVALS<span class="sec-mr">नवीन आगमन · नई पेशकश</span></div>
+      <div class="sec-tag">Just Dropped</div>
+      <div class="sec-head">NEW ARRIVALS<span class="sec-mr">नवीन आगमन</span></div>
     </div>
 
-    <div class="prod-grid-3" style="margin-top:28px">
+    <div class="prod-grid-3" style="margin-bottom:0">
 
       {% if new_arrivals %}
         {% for product in new_arrivals %}
         <div class="prod-card-wrap reveal">
-          <div class="prod-img-area">
+          <div class="prod-img-area" style="height:280px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0F0F0F">
 
             {% if product.image %}
-              <!-- Real product image -->
-              <img class="prod-real-img"
+              <img class="prod-real-img" style="width:100%;height:100%;object-fit:contain;object-position:center"
                    src="{{ url_for('static', filename='uploads/' + product.image) }}"
                    alt="{{ product.name }}"
                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -206,19 +177,20 @@
                 <div class="prod-img-txt">VK</div>
               </div>
             {% else %}
-              <!-- No image fallback -->
               <div class="prod-illustration">
+                <div class="corner-tl"></div>
+                <div class="corner-br"></div>
                 <div class="prod-img-txt">VK</div>
               </div>
             {% endif %}
 
             <div class="prod-badge-wrap">
               {% if loop.first %}
-                <span class="prod-badge-new">नवीन</span>
+                <span class="prod-badge-new">NEW</span>
               {% elif product.discount and product.discount > 20 %}
-                <span class="prod-badge-best">बेस्टसेलर</span>
+                <span class="prod-badge-best">BESTSELLER</span>
               {% else %}
-                <span class="prod-badge-new">नवीन</span>
+                <span class="prod-badge-new">NEW</span>
               {% endif %}
             </div>
 
@@ -231,10 +203,12 @@
             {% endif %}
 
             <div class="prod-img-overlay">
-              <button class="prod-overlay-btn"
-                      onclick="addToCart('{{ product.name }}', '{{ product.name }}', {{ product.final_price }})">
-                + कार्टमध्ये घाला
-              </button>
+              <div class="pio-name">{{ product.name }}</div>
+              <div class="pio-mr">{{ product.category or 'Vektor Collection' }}</div>
+              <div class="pio-divider"></div>
+              <div class="pio-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+              <button class="prod-overlay-btn" onclick="viewProduct('{{ product.id }}')">VIEW PRODUCT</button>
+              <button class="prod-overlay-cart" onclick="addToCart('{{ product.name }}', '{{ product.name }}', {{ product.final_price }})">+ Add to Cart</button>
             </div>
 
             <div class="prod-flag-strip">
@@ -247,7 +221,7 @@
           <div class="prod-info">
             <div>
               <div class="prod-info-name">{{ product.name }}</div>
-              <div class="prod-info-mr">{{ product.description[:40] + '...' if product.description and product.description|length > 40 else product.description or '' }}</div>
+              <div class="prod-info-mr">{{ product.collection or product.category or '' }}</div>
             </div>
             <div>
               <span class="prod-info-stars">★★★★★</span>
@@ -255,17 +229,17 @@
             </div>
             <div class="prod-info-bot">
               <div>
-                <div class="prod-info-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
                 {% if product.discount and product.discount > 0 %}
                   <div class="prod-info-old">₹{{ "{:,.0f}".format(product.price) }}</div>
+                {% endif %}
+                <div class="prod-info-price">₹{{ "{:,.0f}".format(product.final_price) }}</div>
+                {% if product.discount and product.discount > 0 %}
                   <div class="prod-info-save">Save ₹{{ "{:,.0f}".format(product.price - product.final_price) }}</div>
                 {% endif %}
               </div>
               <div class="prod-info-btns">
-                <button class="pib-view"
-                        onclick="viewProduct('{{ product.id }}')">View</button>
-                <button class="pib-cart"
-                        onclick="addToCart('{{ product.name }}', '{{ product.name }}', {{ product.final_price }})">+ Cart</button>
+                <button class="pib-view" onclick="viewProduct('{{ product.id }}')">View</button>
+                <button class="pib-cart" onclick="addToCart('{{ product.name }}', '{{ product.name }}', {{ product.final_price }})">+ Cart</button>
               </div>
             </div>
           </div>
@@ -273,12 +247,11 @@
         {% endfor %}
 
       {% else %}
-        <!-- ══ FALLBACK: No products in DB yet — show illustrated cards ══ -->
-
-        <!-- PRODUCT 1 -->
+        <!-- FALLBACK CARDS -->
         <div class="prod-card-wrap reveal">
-          <div class="prod-img-area">
+          <div class="prod-img-area" style="height:280px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0F0F0F">
             <div class="prod-illustration">
+              <div class="corner-tl"></div><div class="corner-br"></div>
               <svg width="200" height="240" viewBox="0 0 200 240" fill="none">
                 <rect x="45" y="80" width="110" height="145" rx="3" fill="#1a2e4a"/>
                 <path d="M80 80 L100 110 L80 95 Z" fill="#F7F3EC" opacity=".9"/>
@@ -286,38 +259,40 @@
                 <path d="M45 80 L20 130 L35 135 L55 90 Z" fill="#1a2e4a"/>
                 <path d="M155 80 L180 130 L165 135 L145 90 Z" fill="#1a2e4a"/>
                 <line x1="100" y1="110" x2="100" y2="225" stroke="#F7F3EC" stroke-width="1" opacity=".2"/>
-                <circle cx="100" cy="128" r="3" fill="#C8941A"/>
-                <circle cx="100" cy="148" r="3" fill="#C8941A"/>
-                <circle cx="100" cy="168" r="3" fill="#C8941A"/>
-                <circle cx="100" cy="188" r="3" fill="#C8941A"/>
-                <rect x="60" y="100" width="22" height="18" rx="1" fill="none" stroke="#F7F3EC" stroke-width="0.8" opacity=".3"/>
+                <circle cx="100" cy="128" r="3" fill="#C8941A"/><circle cx="100" cy="148" r="3" fill="#C8941A"/>
+                <circle cx="100" cy="168" r="3" fill="#C8941A"/><circle cx="100" cy="188" r="3" fill="#C8941A"/>
                 <text x="100" y="215" font-family="monospace" font-size="7" fill="#FF6B00" text-anchor="middle" opacity=".5" letter-spacing="3">VEKTOR</text>
               </svg>
             </div>
-            <div class="prod-badge-wrap"><span class="prod-badge-new">नवीन</span></div>
+            <div class="prod-badge-wrap"><span class="prod-badge-new">NEW</span></div>
             <div class="prod-stock-badge">Only 8 left</div>
             <div class="prod-img-overlay">
-              <button class="prod-overlay-btn" onclick="addToCart('Classic Oxford Shirt','क्लासिक ऑक्सफर्ड शर्ट',2499)">+ कार्टमध्ये घाला</button>
+              <div class="pio-name">Classic Oxford Shirt</div>
+              <div class="pio-mr">Premium Cotton · Shirts</div>
+              <div class="pio-divider"></div>
+              <div class="pio-price">₹2,499</div>
+              <button class="prod-overlay-btn" onclick="viewProduct('1')">VIEW PRODUCT</button>
+              <button class="prod-overlay-cart" onclick="addToCart('Classic Oxford Shirt','Classic Oxford Shirt',2499)">+ Add to Cart</button>
             </div>
             <div class="prod-flag-strip"><div class="pfs sf"></div><div class="pfs wh"></div><div class="pfs gr"></div></div>
           </div>
           <div class="prod-info">
-            <div><div class="prod-info-name">Classic Oxford Shirt</div><div class="prod-info-mr">क्लासिक ऑक्सफर्ड शर्ट</div></div>
+            <div><div class="prod-info-name">Classic Oxford Shirt</div><div class="prod-info-mr">Vasant Collection</div></div>
             <div><span class="prod-info-stars">★★★★★</span><span class="prod-info-rating-txt"> 4.8 (234)</span></div>
             <div class="prod-info-bot">
-              <div><div class="prod-info-price">₹2,499</div><div class="prod-info-old">₹3,499</div><div class="prod-info-save">Save ₹1,000</div></div>
+              <div><div class="prod-info-old">₹3,499</div><div class="prod-info-price">₹2,499</div><div class="prod-info-save">Save ₹1,000</div></div>
               <div class="prod-info-btns">
-                <button class="pib-view" onclick="viewProduct('Classic Oxford Shirt','क्लासिक ऑक्सफर्ड शर्ट',2499)">View</button>
-                <button class="pib-cart" onclick="addToCart('Classic Oxford Shirt','क्लासिक ऑक्सफर्ड शर्ट',2499)">+ Cart</button>
+                <button class="pib-view" onclick="viewProduct('1')">View</button>
+                <button class="pib-cart" onclick="addToCart('Classic Oxford Shirt','Classic Oxford Shirt',2499)">+ Cart</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- PRODUCT 2 -->
         <div class="prod-card-wrap reveal">
-          <div class="prod-img-area">
+          <div class="prod-img-area" style="height:280px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0F0F0F">
             <div class="prod-illustration">
+              <div class="corner-tl"></div><div class="corner-br"></div>
               <svg width="180" height="240" viewBox="0 0 180 240" fill="none">
                 <rect x="30" y="55" width="120" height="18" rx="2" fill="#2a2a3a"/>
                 <rect x="48" y="52" width="6" height="14" rx="1" fill="#1a1a28"/>
@@ -325,68 +300,70 @@
                 <rect x="126" y="52" width="6" height="14" rx="1" fill="#1a1a28"/>
                 <path d="M30 73 L55 230 L90 230 L90 73 Z" fill="#2c3e6b"/>
                 <path d="M90 73 L90 230 L125 230 L150 73 Z" fill="#253460"/>
-                <line x1="90" y1="73" x2="90" y2="230" stroke="#1a2a50" stroke-width="1.5"/>
-                <circle cx="62" cy="80" r="2.5" fill="#C8941A"/>
-                <circle cx="118" cy="80" r="2.5" fill="#C8941A"/>
-                <ellipse cx="62" cy="155" rx="18" ry="10" fill="#3a4e80" opacity=".3"/>
-                <ellipse cx="118" cy="155" rx="18" ry="10" fill="#3a4e80" opacity=".3"/>
+                <circle cx="62" cy="80" r="2.5" fill="#C8941A"/><circle cx="118" cy="80" r="2.5" fill="#C8941A"/>
               </svg>
             </div>
-            <div class="prod-badge-wrap"><span class="prod-badge-best">बेस्टसेलर</span></div>
+            <div class="prod-badge-wrap"><span class="prod-badge-best">BESTSELLER</span></div>
             <div class="prod-stock-badge">12 left</div>
             <div class="prod-img-overlay">
-              <button class="prod-overlay-btn" onclick="addToCart('Slim Fit Jeans','स्लिम फिट जीन्स',3299)">+ कार्टमध्ये घाला</button>
+              <div class="pio-name">Slim Fit Jeans</div>
+              <div class="pio-mr">Premium Denim · Jeans</div>
+              <div class="pio-divider"></div>
+              <div class="pio-price">₹3,299</div>
+              <button class="prod-overlay-btn" onclick="viewProduct('2')">VIEW PRODUCT</button>
+              <button class="prod-overlay-cart" onclick="addToCart('Slim Fit Jeans','Slim Fit Jeans',3299)">+ Add to Cart</button>
             </div>
             <div class="prod-flag-strip"><div class="pfs sf"></div><div class="pfs wh"></div><div class="pfs gr"></div></div>
           </div>
           <div class="prod-info">
-            <div><div class="prod-info-name">Slim Fit Jeans</div><div class="prod-info-mr">स्लिम फिट जीन्स</div></div>
+            <div><div class="prod-info-name">Slim Fit Jeans</div><div class="prod-info-mr">Vasant Collection</div></div>
             <div><span class="prod-info-stars">★★★★★</span><span class="prod-info-rating-txt"> 4.8 (189)</span></div>
             <div class="prod-info-bot">
-              <div><div class="prod-info-price">₹3,299</div><div class="prod-info-old">₹4,999</div><div class="prod-info-save">Save ₹1,700</div></div>
+              <div><div class="prod-info-old">₹4,999</div><div class="prod-info-price">₹3,299</div><div class="prod-info-save">Save ₹1,700</div></div>
               <div class="prod-info-btns">
-                <button class="pib-view" onclick="viewProduct('Slim Fit Jeans','स्लिम फिट जीन्स',3299)">View</button>
-                <button class="pib-cart" onclick="addToCart('Slim Fit Jeans','स्लिम फिट जीन्स',3299)">+ Cart</button>
+                <button class="pib-view" onclick="viewProduct('2')">View</button>
+                <button class="pib-cart" onclick="addToCart('Slim Fit Jeans','Slim Fit Jeans',3299)">+ Cart</button>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- PRODUCT 3 -->
         <div class="prod-card-wrap reveal">
-          <div class="prod-img-area" style="background:#111;">
+          <div class="prod-img-area" style="height:280px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0F0F0F">
             <div class="prod-illustration">
+              <div class="corner-tl"></div><div class="corner-br"></div>
               <svg width="210" height="240" viewBox="0 0 210 240" fill="none">
                 <path d="M40 85 L40 215 L170 215 L170 85 Q155 78 135 75 L105 95 L75 75 Q55 78 40 85 Z" fill="#1c1c1c"/>
                 <path d="M75 75 L60 95 L90 115 L105 95 Z" fill="#242424"/>
                 <path d="M135 75 L150 95 L120 115 L105 95 Z" fill="#242424"/>
-                <path d="M75 75 Q90 65 105 62 Q120 65 135 75 L120 85 Q105 78 90 85 Z" fill="#2a2a2a"/>
                 <path d="M40 85 L12 160 L28 165 L50 100 Z" fill="#1c1c1c"/>
                 <path d="M170 85 L198 160 L182 165 L160 100 Z" fill="#1c1c1c"/>
-                <line x1="105" y1="95" x2="105" y2="215" stroke="#888" stroke-width="1.5" opacity=".5"/>
-                <rect x="52" y="110" width="32" height="22" rx="2" fill="none" stroke="#444" stroke-width="1"/>
-                <rect x="126" y="110" width="32" height="22" rx="2" fill="none" stroke="#444" stroke-width="1"/>
                 <rect x="80" y="170" width="50" height="20" rx="2" fill="none" stroke="#FF6B00" stroke-width="0.5" opacity=".4"/>
                 <text x="105" y="184" font-family="monospace" font-size="7" fill="#FF6B00" text-anchor="middle" letter-spacing="3" opacity=".8">VEKTOR</text>
                 <rect x="14" y="148" width="22" height="6" rx="1" fill="#FF6B00" opacity=".7"/>
                 <rect x="174" y="148" width="22" height="6" rx="1" fill="#FF6B00" opacity=".7"/>
               </svg>
             </div>
-            <div class="prod-badge-wrap"><span class="prod-badge-ltd">लिमिटेड</span></div>
+            <div class="prod-badge-wrap"><span class="prod-badge-ltd">LIMITED</span></div>
             <div class="prod-stock-badge" style="color:#FF6B00;">Only 3 left!</div>
             <div class="prod-img-overlay">
-              <button class="prod-overlay-btn" onclick="addToCart('Biker Jacket','बाइकर जॅकेट',6999)">+ कार्टमध्ये घाला</button>
+              <div class="pio-name">Biker Jacket</div>
+              <div class="pio-mr">Limited Edition · Jackets</div>
+              <div class="pio-divider"></div>
+              <div class="pio-price">₹6,999</div>
+              <button class="prod-overlay-btn" onclick="viewProduct('3')">VIEW PRODUCT</button>
+              <button class="prod-overlay-cart" onclick="addToCart('Biker Jacket','Biker Jacket',6999)">+ Add to Cart</button>
             </div>
             <div class="prod-flag-strip"><div class="pfs sf"></div><div class="pfs wh"></div><div class="pfs gr"></div></div>
           </div>
           <div class="prod-info">
-            <div><div class="prod-info-name">Biker Jacket</div><div class="prod-info-mr">बाइकर जॅकेट</div></div>
+            <div><div class="prod-info-name">Biker Jacket</div><div class="prod-info-mr">Limited Edition</div></div>
             <div><span class="prod-info-stars">★★★★★</span><span class="prod-info-rating-txt"> 5.0 (67)</span></div>
             <div class="prod-info-bot">
-              <div><div class="prod-info-price">₹6,999</div><div class="prod-info-old">₹9,999</div><div class="prod-info-save">Save ₹3,000</div></div>
+              <div><div class="prod-info-old">₹9,999</div><div class="prod-info-price">₹6,999</div><div class="prod-info-save">Save ₹3,000</div></div>
               <div class="prod-info-btns">
-                <button class="pib-view" onclick="viewProduct('Biker Jacket','बाइकर जॅकेट',6999)">View</button>
-                <button class="pib-cart" onclick="addToCart('Biker Jacket','बाइकर जॅकेट',6999)">+ Cart</button>
+                <button class="pib-view" onclick="viewProduct('3')">View</button>
+                <button class="pib-cart" onclick="addToCart('Biker Jacket','Biker Jacket',6999)">+ Cart</button>
               </div>
             </div>
           </div>
@@ -394,113 +371,138 @@
 
       {% endif %}
     </div>
-      {% if new_arrivals|length < 6 %}
-<div class="prod-fill">
-  <div></div>
-  <div></div>
-  <div></div>
-</div>
-{% endif %}
   </section>
 
-
-
-  <!-- WHY US -->
-<div class="why-grid">
-  <div class="why-item reveal"><div class="why-icon">🛡</div><div class="why-en">100% Made in India</div><div class="why-mr">भारतात बनवलेले</div><div class="why-hi">हिंदुस्तान में बनाया</div></div>
-  <div class="why-item reveal"><div class="why-icon">🪡</div><div class="why-en">Premium Quality Fabric</div><div class="why-mr">उत्तम दर्जाचे कापड</div><div class="why-hi">उच्च गुणवत्ता वाला कपड़ा</div></div>
-  <div class="why-item reveal"><div class="why-icon">🚚</div><div class="why-en">Free Delivery ₹3000+</div><div class="why-mr">मोफत डिलिव्हरी</div><div class="why-hi">मुफ्त डिलीवरी</div></div>
-  <div class="why-item reveal"><div class="why-icon">✨</div><div class="why-en">Limited Edition Designs</div><div class="why-mr">मर्यादित डिझाईन</div><div class="why-hi">सीमित डिज़ाइन</div></div>
-</div>
+  <!-- ══ WHY US ══ -->
+  <div class="why-grid">
+    <div class="why-item reveal"><div class="why-icon">IN</div><div class="why-en" style="font-size:15px;color:#F5F0E8;font-weight:500">100% Made in India</div><div class="why-mr" style="font-size:13px;color:rgba(245,240,232,0.62);line-height:1.6;margin-top:4px">भारतात बनवलेले</div></div>
+    <div class="why-item reveal"><div class="why-icon">PQ</div><div class="why-en" style="font-size:15px;color:#F5F0E8;font-weight:500">Premium Quality Fabric</div><div class="why-mr" style="font-size:13px;color:rgba(245,240,232,0.62);line-height:1.6;margin-top:4px">उत्तम दर्जाचे कापड</div></div>
+    <div class="why-item reveal"><div class="why-icon">FD</div><div class="why-en" style="font-size:15px;color:#F5F0E8;font-weight:500">Free Delivery ₹3000+</div><div class="why-mr" style="font-size:13px;color:rgba(245,240,232,0.62);line-height:1.6;margin-top:4px">मोफत डिलिव्हरी</div></div>
+    <div class="why-item reveal"><div class="why-icon">LE</div><div class="why-en" style="font-size:15px;color:#F5F0E8;font-weight:500">Limited Edition Designs</div><div class="why-mr" style="font-size:13px;color:rgba(245,240,232,0.62);line-height:1.6;margin-top:4px">मर्यादित डिझाईन</div></div>
+  </div>
 
   <!-- ══ IDENTITY STRIP ══ -->
-  <div class="id-strip reveal">
-    <div class="id-label">OUR PROMISE · आमचे वचन</div>
-    <div class="id-big">मराठी माणसाने बनवलेले.<br>मराठी माणसासाठी.</div>
-    <div class="id-en">"Made by a Marathi man. For the Marathi man."</div>
+  <div class="id-strip reveal" style="border-top:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);padding-top:64px;padding-bottom:64px">
+    <div class="id-label">OUR PROMISE</div>
+    <div class="id-big" style="font-size:clamp(28px,4vw,52px);color:#1A1A18;line-height:1.2">मराठी माणसाने बनवलेले.<br>मराठी माणसासाठी.</div>
+    <div class="id-en" style="font-size:14px;color:#444440;line-height:1.6">"Made by a Marathi man. For the Marathi man."</div>
   </div>
 
+  <!-- ══ JOURNEY (redesigned — vertical editorial) ══ -->
+  <section class="vk-journey reveal">
 
-
-  <!-- ══ TIMELINE ══ -->
-  <section class="sec-wrap" style="border-top:1px solid var(--border)">
-    <div class="reveal">
-      <div class="sec-tag">Our Journey · आमचा प्रवास</div>
-      <div class="sec-head">THE VEKTOR STORY<span class="sec-mr">वेक्टरची कहाणी</span></div>
+    <!-- Left: header + big number -->
+    <div class="vkj-left">
+      <div class="vkj-tag">Our Journey</div>
+      <h2 class="vkj-head">THE<br>VEKTOR<br>STORY</h2>
+      <div class="vkj-mr">वेक्टरची कहाणी</div>
+      <div class="vkj-since">Est. <span>2019</span></div>
+      <a href="{{ url_for('shop.story') }}" class="vkj-link">Full Story ↗</a>
     </div>
-    <div class="tl-grid">
-      <div class="tl-item reveal"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2019</div><div class="tl-en">Founded — first shirts stitched by hand</div><div class="tl-mr">सुरुवात — पहिले शर्ट हाताने शिवले</div></div>
-      <div class="tl-item reveal"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">2021</div><div class="tl-en">Launched online — 500 orders in first month</div><div class="tl-mr">ऑनलाईन सुरुवात — पहिल्या महिन्यात ५०० ऑर्डर</div></div>
-      <div class="tl-item reveal"><div class="tl-dot gold"><div class="tl-dot-in"></div></div><div class="tl-year">2023</div><div class="tl-en">10,000 customers — Maharashtra's own brand</div><div class="tl-mr">१०,000 ग्राहक — महाराष्ट्राचा स्वतःचा ब्रँड</div></div>
-      <div class="tl-item reveal"><div class="tl-dot"><div class="tl-dot-in"></div></div><div class="tl-year">2024</div><div class="tl-en">5-year fabric warranty — India first</div><div class="tl-mr">५ वर्ष वॉरंटी — भारतात पहिल्यांदा</div></div>
-      <div class="tl-item reveal"><div class="tl-dot gr"><div class="tl-dot-in"></div></div><div class="tl-year">२०२६</div><div class="tl-en">वसंत संग्रह — SS/26 Live Now</div><div class="tl-mr">वसंत संग्रह आला</div></div>
+
+    <!-- Right: vertical milestone list -->
+    <div class="vkj-right">
+
+      <div class="vkj-item reveal">
+        <div class="vkj-year-block">
+          <span class="vkj-year">2019</span>
+          <div class="vkj-line"></div>
+        </div>
+        <div class="vkj-content">
+          <div class="vkj-title">Founded</div>
+          <div class="vkj-body">First shirts stitched by hand in a small workshop in Pune. No funding. Just craft.</div>
+          <div class="vkj-sub">सुरुवात — पहिले शर्ट हाताने शिवले</div>
+        </div>
+        <div class="vkj-badge" style="background:rgba(255,107,0,.1);color:#FF6B00;border-color:rgba(255,107,0,.25)">Origin</div>
+      </div>
+
+      <div class="vkj-item reveal">
+        <div class="vkj-year-block">
+          <span class="vkj-year" style="color:#0A8A4A">2021</span>
+          <div class="vkj-line" style="background:rgba(10,138,74,.3)"></div>
+        </div>
+        <div class="vkj-content">
+          <div class="vkj-title">Went Online</div>
+          <div class="vkj-body">500 orders in the first month. Maharashtra started wearing Vektor.</div>
+          <div class="vkj-sub">ऑनलाईन सुरुवात — पहिल्या महिन्यात ५०० ऑर्डर</div>
+        </div>
+        <div class="vkj-badge" style="background:rgba(10,138,74,.1);color:#0A8A4A;border-color:rgba(10,138,74,.25)">Growth</div>
+      </div>
+
+      <div class="vkj-item reveal">
+        <div class="vkj-year-block">
+          <span class="vkj-year" style="color:#C8941A">2023</span>
+          <div class="vkj-line" style="background:rgba(200,148,26,.3)"></div>
+        </div>
+        <div class="vkj-content">
+          <div class="vkj-title">10,000 Customers</div>
+          <div class="vkj-body">Maharashtra's own premium menswear brand. Not imported. Ours.</div>
+          <div class="vkj-sub">महाराष्ट्राचा स्वतःचा ब्रँड — १०,000 ग्राहक</div>
+        </div>
+        <div class="vkj-badge" style="background:rgba(200,148,26,.1);color:#C8941A;border-color:rgba(200,148,26,.25)">Milestone</div>
+      </div>
+
+      <div class="vkj-item reveal">
+        <div class="vkj-year-block">
+          <span class="vkj-year">2024</span>
+          <div class="vkj-line"></div>
+        </div>
+        <div class="vkj-content">
+          <div class="vkj-title">5-Year Fabric Warranty</div>
+          <div class="vkj-body">India's first menswear brand to back quality with a 5-year guarantee.</div>
+          <div class="vkj-sub">भारतात प्रथमच — ५ वर्षांची कापड वॉरंटी</div>
+        </div>
+        <div class="vkj-badge" style="background:rgba(255,107,0,.1);color:#FF6B00;border-color:rgba(255,107,0,.25)">India First</div>
+      </div>
+
+      <div class="vkj-item reveal">
+        <div class="vkj-year-block">
+          <span class="vkj-year" style="color:#0A8A4A">2026</span>
+          <div class="vkj-line" style="background:transparent"></div>
+        </div>
+        <div class="vkj-content">
+          <div class="vkj-title">SS/26 Collection — Live Now</div>
+          <div class="vkj-body">Spring/Summer 2026. Our most refined collection yet.</div>
+          <div class="vkj-sub">वसंत संग्रह — आत्ता उपलब्ध</div>
+        </div>
+        <div class="vkj-badge" style="background:rgba(10,138,74,.1);color:#0A8A4A;border-color:rgba(10,138,74,.25)">Now Live</div>
+      </div>
+
     </div>
   </section>
 
-  
-
   <!-- ══ PRIDE ══ -->
-<section class="pride">
-
-  <!-- LEFT -->
-  <div class="pride-l reveal">
-    <div class="pride-sk">NEW EVERYDAY STANDARD</div>
-    <div class="pride-sk-tr">Premium essentials for the way men dress now.</div>
-
-    <h2 class="pride-title">
-      BUILT<br>FOR<br>DAILY WEAR
-    </h2>
-
-    <p class="pride-body">
-      Vektor is built for men who want better basics: clean fits, refined fabrics, and clothes that look current without shouting.
-      <br><br>
-      Made in India. Designed for everyday movement.
-    </p>
-
-    <!-- ✅ LINK BUTTON -->
-    <a href="{{ url_for('shop.story') }}" class="btn-outline-dark pride-btn">
-      आमची कहाणी — Our Story →
-    </a>
-  </div>
-
-  <!-- RIGHT -->
-  <div class="pride-r reveal">
-
-    <div class="pride-row">
-      <div class="pr-icon">🛡</div>
-      <div>
-        <div class="pr-en">Crafted with precision</div>
-        <div class="pr-langs">हाताने तयार केलेले · हाथ से बनाया गया</div>
+  <section class="pride">
+    <div class="pride-l reveal">
+      <div class="pride-sk">NEW EVERYDAY STANDARD</div>
+      <div class="pride-sk-tr">Premium essentials for the way men dress now.</div>
+      <h2 class="pride-title">BUILT<br>FOR<br>DAILY WEAR</h2>
+      <p class="pride-body">
+        Vektor is built for men who want better basics: clean fits, refined fabrics, and clothes that look current without shouting.
+        <br><br>Made in India. Designed for everyday movement.
+      </p>
+      <a href="{{ url_for('shop.story') }}" class="btn-outline-dark pride-btn">Our Story →</a>
+    </div>
+    <div class="pride-r reveal">
+      <div class="pride-row">
+        <div class="pr-icon">🛡</div>
+        <div><div class="pr-en">Crafted with precision</div><div class="pr-langs">हाताने तयार केलेले</div></div>
+      </div>
+      <div class="pride-row">
+        <div class="pr-icon">⚡</div>
+        <div><div class="pr-en">Fast dispatch, zero delay</div><div class="pr-langs">जलद पाठवणी</div></div>
+      </div>
+      <div class="pride-row">
+        <div class="pr-icon">👤</div>
+        <div><div class="pr-en">Designed for the Indian fit</div><div class="pr-langs">भारतीय फिटसाठी</div></div>
+      </div>
+      <div class="pride-row">
+        <div class="pr-icon">🔄</div>
+        <div><div class="pr-en">Easy to style, everyday</div><div class="pr-langs">रोजच्या स्टाइलसाठी</div></div>
       </div>
     </div>
+  </section>
 
-    <div class="pride-row">
-      <div class="pr-icon">⚡</div>
-      <div>
-        <div class="pr-en">Fast dispatch, zero delay</div>
-        <div class="pr-langs">जलद पाठवणी · जल्दी डिलीवरी</div>
-      </div>
-    </div>
-
-    <div class="pride-row">
-      <div class="pr-icon">👤</div>
-      <div>
-        <div class="pr-en">Designed for the Indian fit</div>
-        <div class="pr-langs">भारतीय फिटसाठी · भारतीय शरीर के लिए</div>
-      </div>
-    </div>
-
-    <div class="pride-row">
-      <div class="pr-icon">🔄</div>
-      <div>
-        <div class="pr-en">Easy to style</div>
-        <div class="pr-langs">रोजच्या स्टाइलसाठी · easy everyday outfits</div>
-      </div>
-    </div>
-
-  </div>
-
-</section>
   <!-- ══ CRAFTSMAN ══ -->
   <div class="craftsman reveal">
     <div class="craftsman-icon">
@@ -516,19 +518,19 @@
       <div class="cr-sub">Maharashtra · Handcrafted · Premium Fabric</div>
     </div>
     <div class="cr-stats">
-      <div class="cr-stat"><div class="cr-stat-num">{{ stats.customers }}<span class="sf">K+</span></div><div class="cr-stat-mr">ग्राहक</div></div>
-      <div class="cr-stat"><div class="cr-stat-num">6<span class="sf">yr</span></div><div class="cr-stat-mr">अनुभव</div></div>
-      <div class="cr-stat"><div class="cr-stat-num">{{ stats.products }}<span class="sf">+</span></div><div class="cr-stat-mr">शैली</div></div>
+      <div class="cr-stat"><div class="cr-stat-num">{{ stats.customers }}<span class="sf">K+</span></div><div class="cr-stat-mr">Customers</div></div>
+      <div class="cr-stat"><div class="cr-stat-num">6<span class="sf">yr</span></div><div class="cr-stat-mr">Experience</div></div>
+      <div class="cr-stat"><div class="cr-stat-num">{{ stats.products }}<span class="sf">+</span></div><div class="cr-stat-mr">Styles</div></div>
     </div>
   </div>
 
-  <!-- ══ TESTIMONIALS — Real DB reviews ══ -->
+  <!-- ══ TESTIMONIALS ══ -->
   <section class="sec-wrap">
     <div class="reveal">
-      <div class="sec-tag">Reviews · ग्राहक काय म्हणतात</div>
+      <div class="sec-tag">Customer Reviews</div>
       <div class="sec-head">WORN &amp; APPROVED<span class="sec-mr">परिधान केले, पसंत केले</span></div>
     </div>
-    <div class="testi-grid" style="margin-top:28px">
+    <div class="testi-grid">
 
       {% if reviews %}
         {% for review in reviews %}
@@ -536,18 +538,11 @@
           <div class="testi-flag"><div class="ttf sf"></div><div class="ttf wh"></div><div class="ttf gr"></div></div>
           <div class="testi-body-wrap">
             <span class="testi-quote-mark">"</span>
-            <div class="testi-stars">
-              {% for i in range(review.rating if review.rating else 5) %}★{% endfor %}
-            </div>
+            <div class="testi-stars">{% for i in range(review.rating if review.rating else 5) %}★{% endfor %}</div>
             <p class="testi-en">{{ review.comment or review.body or '' }}</p>
-            {% if review.comment_mr %}
-              <p class="testi-mr">{{ review.comment_mr }}</p>
-            {% endif %}
           </div>
           <div class="testi-meta">
-            <div class="testi-av" style="background:var(--sf)">
-              {{ review.user.name[0].upper() if review.user else 'V' }}
-            </div>
+            <div class="testi-av" style="background:var(--sf)">{{ review.user.name[0].upper() if review.user else 'V' }}</div>
             <div>
               <div class="testi-name">{{ review.user.name if review.user else 'Verified Buyer' }}</div>
               <div class="testi-loc">Maharashtra · Verified Buyer</div>
@@ -555,16 +550,13 @@
           </div>
         </div>
         {% endfor %}
-
       {% else %}
-        <!-- Fallback static reviews -->
         <div class="testi-card reveal">
           <div class="testi-flag"><div class="ttf sf"></div><div class="ttf wh"></div><div class="ttf gr"></div></div>
           <div class="testi-body-wrap">
             <span class="testi-quote-mark">"</span>
             <div class="testi-stars">★★★★★</div>
             <p class="testi-en">The Oxford shirt fits like it was stitched for me. Three strangers asked where I got it the same evening.</p>
-            <p class="testi-mr">शर्ट अगदी माझ्यासाठीच शिवल्यासारखा. तीन अनोळखी लोकांनी विचारलं — हे कुठून घेतलंस?</p>
           </div>
           <div class="testi-meta">
             <div class="testi-av" style="background:var(--sf)">RK</div>
@@ -577,7 +569,6 @@
             <span class="testi-quote-mark">"</span>
             <div class="testi-stars">★★★★★</div>
             <p class="testi-en">Finally a brand that knows Indian men. Quality at this price is honestly unreal.</p>
-            <p class="testi-mr">एक ब्रँड जो भारतीय पुरुषांसाठी आहे. या किमतीत एवढी गुणवत्ता — विश्वास ठेवणं कठीण!</p>
           </div>
           <div class="testi-meta">
             <div class="testi-av" style="background:var(--gr)">AS</div>
@@ -590,7 +581,6 @@
             <span class="testi-quote-mark">"</span>
             <div class="testi-stars">★★★★★</div>
             <p class="testi-en">Wore the biker jacket to a wedding. Everyone thought it was imported. Vektor keeps my secrets.</p>
-            <p class="testi-mr">बाइकर जॅकेट घालून लग्नाला गेलो. सगळ्यांना वाटलं परदेशातून आणलाय!</p>
           </div>
           <div class="testi-meta">
             <div class="testi-av" style="background:var(--gold)">VP</div>
@@ -606,14 +596,13 @@
   <div class="size-cta reveal">
     <div>
       <div class="sc-title">Not Sure About Your Size?</div>
-      <div class="sc-mr">साईझबद्दल खात्री नाही? · साइज़ को लेकर कंफ्यूज़ हो?</div>
+      <div class="sc-mr">साईझबद्दल खात्री नाही?</div>
     </div>
     <div class="sc-btns">
-      <a href="#" class="btn-sf">Size Guide / साईझ गाईड</a>
+      <a href="#" class="btn-sf">Size Guide</a>
       <a href="https://wa.me/919999999999" target="_blank" class="btn-outline">WhatsApp Us</a>
     </div>
   </div>
 
 </div>
 {% endblock %}
-

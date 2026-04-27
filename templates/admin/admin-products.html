@@ -1,169 +1,220 @@
-<!DOCTYPE html>
-<html lang="mr">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEKTOR Admin — Products</title>
+<title>VEKTOR Admin - Products</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
+<style>
+.products-wrap { display: grid; gap: 14px; }
+.products-kpi {
+  border: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(255,107,0,0.08), rgba(255,107,0,0.02), transparent);
+  padding: 12px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--fg2);
+}
+.products-kpi b { color: var(--fg); }
+.products-filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.products-table td { vertical-align: middle; }
+.products-thumb {
+  width: 48px;
+  height: 56px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.products-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.products-name {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: .04em;
+}
+.products-category {
+  font-size: 10px;
+  letter-spacing: .1em;
+  color: var(--sf);
+  background: rgba(255,107,0,0.1);
+  padding: 3px 10px;
+}
+.products-actions { display: flex; gap: 6px; }
+
+/* manage products readability override */
+.admin-sub { font-size: 14px; line-height: 1.6; }
+.products-kpi { font-size: 12px; }
+.panel-title { font-size: 14px; }
+.panel-tag { font-size: 11px; }
+.admin-search input { font-size: 14px; }
+.admin-select { font-size: 13px; }
+.products-table th { font-size: 12px; }
+.products-table td { font-size: 13px; }
+.products-name { font-size: 15px; }
+.products-category { font-size: 11px; }
+.products-table td:nth-child(4) { font-size: 13px !important; }
+.products-table td:nth-child(5) { font-size: 15px !important; }
+.products-table td:nth-child(6) { font-size: 13px !important; }
+.products-table td:nth-child(7) { font-size: 16px !important; }
+.products-table td:nth-child(8) { font-size: 13px !important; }
+.admin-pagination .page-info { font-size: 12px; }
+.admin-pagination .page-btn { font-size: 12px; }
+</style>
 </head>
 <body>
 <div class="admin-shell">
 
-  <!-- TICKER -->
   <div class="admin-ticker">
     <div class="ticker-label">VEKTOR ADMIN</div>
     <div class="ticker-track">
-      <div class="ticker-item"><span>PRODUCTS</span><div class="ticker-dot"></div><span>उत्पादने</span><div class="ticker-dot"></div><span>{{ products.total if products else 0 }} TOTAL</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div></div>
-      <div class="ticker-item"><span>PRODUCTS</span><div class="ticker-dot"></div><span>उत्पादने</span><div class="ticker-dot"></div><span>{{ products.total if products else 0 }} TOTAL</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>PRODUCTS</span><div class="ticker-dot"></div><span>CATALOG CONTROL</span><div class="ticker-dot"></div><span>{{ products.total if products else 0 }} TOTAL</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>PRODUCTS</span><div class="ticker-dot"></div><span>CATALOG CONTROL</span><div class="ticker-dot"></div><span>{{ products.total if products else 0 }} TOTAL</span><div class="ticker-dot"></div><span>SS/26 COLLECTION</span><div class="ticker-dot"></div></div>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </a>
-  <a href="/admin/products" class="sb-btn active" title="Products">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  </a>
-  <a href="/admin/orders" class="sb-btn" title="Orders">
-    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-  </a>
-  <a href="/admin/customers" class="sb-btn" title="Customers">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-  </a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics">
-    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-  </a>
-  <a href="/admin/settings" class="sb-btn" title="Settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-  </a>
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-</a>
-{% endif %}
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-  </a>
-  <a href="/admin/logout" class="sb-btn" title="Logout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  </a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">VK</div>
-</div>
+{% set active_menu = 'products' %}
+{% include 'admin/_sidebar.html' %}
 
-  <!-- MAIN -->
   <div class="admin-main">
 
     <div class="admin-hdr">
       <div>
-        <div class="admin-eyebrow">Products · उत्पादने</div>
+        <div class="admin-eyebrow">Products</div>
         <div class="admin-title">MANAGE <span>PRODUCTS</span></div>
-        <div class="admin-sub">सर्व उत्पादने · All Products in Inventory</div>
+        <div class="admin-sub">All products in your inventory catalog.</div>
       </div>
       <div class="admin-hdr-right">
         <a href="/admin/add-product">
-          <button class="admin-btn admin-btn-sf">＋ ADD PRODUCT</button>
+          <button class="admin-btn admin-btn-sf">+ ADD PRODUCT</button>
         </a>
       </div>
     </div>
 
-    <!-- FILTERS -->
-    <form method="GET" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:16px 0;border-bottom:1px solid var(--border)">
-      <div class="admin-search" style="flex:1;min-width:200px">
-        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" name="q" placeholder="Search products..." value="{{ request.args.get('q','') }}">
+    <div class="products-wrap">
+      <div class="products-kpi">
+        <span>TOTAL PRODUCTS <b>{{ "{:,}".format(products.total if products else 0) }}</b></span>
+        <span>PAGE <b>{{ products.page }}</b></span>
+        <span>VISIBLE NOW <b>{{ products.items|length }}</b></span>
+        <span>FILTER <b>{{ request.args.get('category','All Categories') }}</b></span>
       </div>
-      <select class="admin-select" name="category" style="width:160px">
-        <option value="">All Categories</option>
-        <option value="Shirts" {% if request.args.get('category')=='Shirts' %}selected{% endif %}>Shirts / शर्ट</option>
-        <option value="T-Shirts" {% if request.args.get('category')=='T-Shirts' %}selected{% endif %}>T-Shirts</option>
-        <option value="Hoodies" {% if request.args.get('category')=='Hoodies' %}selected{% endif %}>Hoodies</option>
-        <option value="Jackets" {% if request.args.get('category')=='Jackets' %}selected{% endif %}>Jackets / जॅकेट</option>
-        <option value="Jeans" {% if request.args.get('category')=='Jeans' %}selected{% endif %}>Jeans / जीन्स</option>
-      </select>
-      <select class="admin-select" name="sort" style="width:160px">
-        <option value="">Sort By</option>
-        <option value="low" {% if request.args.get('sort')=='low' %}selected{% endif %}>Price: Low → High</option>
-        <option value="high" {% if request.args.get('sort')=='high' %}selected{% endif %}>Price: High → Low</option>
-      </select>
-      <button type="submit" class="admin-btn admin-btn-sf" style="padding:11px 20px">APPLY</button>
-    </form>
 
-    <!-- TABLE -->
-    <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>IMAGE</th>
-            <th>NAME · नाव</th>
-            <th>CATEGORY</th>
-            <th>DESCRIPTION</th>
-            <th>ORIGINAL</th>
-            <th>DISCOUNT</th>
-            <th>FINAL PRICE</th>
-            <th>STOCK</th>
-            <th>STATUS</th>
-            <th>ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for p in products.items %}
-          <tr>
-            <td>
-              <div style="width:48px;height:56px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden">
-                <img src="{{ url_for('static', filename=p.image or 'images/default.png') }}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.innerHTML='<span style=font-family:var(--font-display);font-size:12px;color:rgba(255,107,0,0.2)>VK</span>'">
-              </div>
-            </td>
-            <td>
-              <div style="font-family:var(--font-display);font-size:13px;letter-spacing:.04em">{{ p.name }}</div>
-            </td>
-            <td>
-              <span style="font-size:10px;letter-spacing:.1em;color:var(--sf);background:rgba(255,107,0,0.1);padding:3px 10px">{{ p.category }}</span>
-            </td>
-            <td style="color:var(--fg3);font-size:11px;max-width:160px">{{ (p.description or '')[:45] }}...</td>
-            <td style="font-family:var(--font-display);font-size:14px">₹{{ p.price }}</td>
-            <td style="color:#ff7070;font-size:12px">{{ p.discount }}% OFF</td>
-            <td style="font-family:var(--font-display);font-size:15px;color:var(--sf)">
-              ₹{{ ((p.price or 0) - ((p.price or 0) * (p.discount or 0) / 100))|int }}
-            </td>
-            <td style="font-size:12px">{{ p.stock }}</td>
-            <td>
-              {% if p.stock and p.stock > 0 %}
-                <span class="badge-instock">● In Stock</span>
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">Product Filters</div>
+          <div class="panel-tag">SEARCH AND SORT</div>
+        </div>
+        <div class="panel-body">
+          <form method="GET" class="products-filter">
+            <div class="admin-search" style="flex:1;min-width:220px">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" name="q" placeholder="Search products..." value="{{ request.args.get('q','') }}">
+            </div>
+            <select class="admin-select" name="category" style="width:170px">
+              <option value="">All Categories</option>
+              <option value="Shirts" {% if request.args.get('category')=='Shirts' %}selected{% endif %}>Shirts</option>
+              <option value="T-Shirts" {% if request.args.get('category')=='T-Shirts' %}selected{% endif %}>T-Shirts</option>
+              <option value="Hoodies" {% if request.args.get('category')=='Hoodies' %}selected{% endif %}>Hoodies</option>
+              <option value="Jackets" {% if request.args.get('category')=='Jackets' %}selected{% endif %}>Jackets</option>
+              <option value="Jeans" {% if request.args.get('category')=='Jeans' %}selected{% endif %}>Jeans</option>
+            </select>
+            <select class="admin-select" name="sort" style="width:170px">
+              <option value="">Sort By</option>
+              <option value="low" {% if request.args.get('sort')=='low' %}selected{% endif %}>Price: Low to High</option>
+              <option value="high" {% if request.args.get('sort')=='high' %}selected{% endif %}>Price: High to Low</option>
+            </select>
+            <button type="submit" class="admin-btn admin-btn-sf" style="padding:11px 20px">APPLY</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-hdr">
+          <div class="panel-title">Product List</div>
+          <div class="panel-tag">LIVE CATALOG</div>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table products-table">
+            <thead>
+              <tr>
+                <th>IMAGE</th>
+                <th>NAME</th>
+                <th>CATEGORY</th>
+                <th>DESCRIPTION</th>
+                <th>ORIGINAL</th>
+                <th>DISCOUNT</th>
+                <th>FINAL PRICE</th>
+                <th>STOCK</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in products.items %}
+              <tr>
+                <td>
+                  <div class="products-thumb">
+                    <img src="{{ url_for('static', filename=(p.image if '/' in p.image else ('uploads/' ~ p.image))) if p.image else url_for('static', filename='images/default.png') }}" onerror="this.parentNode.innerHTML='<span style=font-family:var(--font-display);font-size:12px;color:rgba(255,107,0,0.2)>VK</span>'">
+                  </div>
+                </td>
+                <td>
+                  <div class="products-name">{{ p.name }}</div>
+                </td>
+                <td>
+                  <span class="products-category">{{ p.category }}</span>
+                </td>
+                <td style="color:var(--fg3);font-size:11px;max-width:180px">
+                  {% if p.description %}
+                    {{ p.description[:45] }}{% if p.description|length > 45 %}...{% endif %}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td style="font-family:var(--font-display);font-size:14px">INR {{ p.price }}</td>
+                <td style="color:#ff7070;font-size:12px">{{ p.discount }}% OFF</td>
+                <td style="font-family:var(--font-display);font-size:15px;color:var(--sf)">
+                  INR {{ ((p.price or 0) - ((p.price or 0) * (p.discount or 0) / 100))|int }}
+                </td>
+                <td style="font-size:12px">{{ p.stock }}</td>
+                <td>
+                  {% if p.stock and p.stock > 0 %}
+                    <span class="badge-instock">● In Stock</span>
+                  {% else %}
+                    <span class="badge-outstock">● Out</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="products-actions">
+                    <a href="{{ url_for('admin.edit_product', id=p.id) }}" class="admin-btn admin-btn-edit admin-btn-sm">EDIT</a>
+                    <form method="POST" action="{{ url_for('admin.delete_product', id=p.id) }}" onsubmit="return confirm('Delete this product?')" style="margin:0">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button type="submit" class="admin-btn admin-btn-danger admin-btn-sm">DEL</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
               {% else %}
-                <span class="badge-outstock">● Out</span>
-              {% endif %}
-            </td>
-            <td>
-              <div style="display:flex;gap:6px">
-
-  <a href="{{ url_for('admin.edit_product', id=p.id) }}"
-     class="admin-btn admin-btn-edit admin-btn-sm">
-    EDIT
-  </a>
-
-  <a href="{{ url_for('admin.delete_product', id=p.id) }}"
-     onclick="return confirm('Delete this product?')"
-     class="admin-btn admin-btn-danger admin-btn-sm">
-    DEL
-  </a>
-
-</div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+              <tr>
+                <td colspan="10" style="text-align:center;color:var(--fg3);padding:24px">No products found for this filter.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
-    <!-- PAGINATION -->
     <div class="admin-pagination">
       {% if products.has_prev %}
         <a href="?page={{ products.prev_num }}&q={{ request.args.get('q','') }}&category={{ request.args.get('category','') }}&sort={{ request.args.get('sort','') }}">
@@ -182,3 +233,4 @@
 </div>
 </body>
 </html>
+

@@ -8,6 +8,7 @@ from models.review_model     import Review
 from models.address_model    import Address
 from models.notification_model import Notification
 from database.db             import db
+from services.dispatch_service import broadcast_shipped_order, emit_stats_update
 
 from models.wishlist_model   import Wishlist
 
@@ -567,7 +568,13 @@ def place_order():
 
     # ── New order notification for admin ──────────────────────
     db.session.add(Notification.new_order(new_order))
+
+    # Auto-dispatch flow: move to Shipped immediately so delivery boys get
+    # the live accept request without admin manually changing status.
+    new_order.set_status("Shipped")
     db.session.commit()
+    emit_stats_update()
+    broadcast_shipped_order(new_order.id)
 
     return redirect(f"/success?order_id={new_order.id}")
 

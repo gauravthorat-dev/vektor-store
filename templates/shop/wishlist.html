@@ -2,11 +2,93 @@
 {% set active_page = "" %}
 {% block title %}My Wishlist — VEKTOR{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Wishlist page: unique look + readability */
+  #vk-wishlist {
+    background:
+      radial-gradient(900px 420px at 12% 0%, rgba(255, 107, 0, 0.08), transparent 64%),
+      radial-gradient(860px 380px at 88% 100%, rgba(4, 106, 56, 0.08), transparent 62%),
+      var(--ink);
+  }
+
+  #vk-wishlist .vk-wish-header { backdrop-filter: blur(4px); }
+  #vk-wishlist .vk-wish-grid { gap: 14px !important; }
+
+  #vk-wishlist .vk-wish-card {
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+
+  #vk-wishlist .vk-wish-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ff6b00, #c8941a, #046a38);
+    opacity: .75;
+    z-index: 3;
+  }
+
+  #vk-wishlist .vk-wish-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+  }
+
+  #vk-wishlist .vk-wish-top-link,
+  #vk-wishlist .vk-wish-remove-btn { border-width: 1px !important; }
+
+  #vk-wishlist .vk-wish-add-btn {
+    letter-spacing: 2px !important;
+    font-size: 10px !important;
+  }
+
+  /* Light mode readability fixes for legacy inline dim text */
+  html[data-theme="light"] #vk-wishlist [style*="color:rgba(247,243,236,.35)"] { color: rgba(31,25,19,.76) !important; }
+  html[data-theme="light"] #vk-wishlist [style*="color:rgba(247,243,236,.3)"] { color: rgba(31,25,19,.70) !important; }
+  html[data-theme="light"] #vk-wishlist [style*="color:rgba(247,243,236,.25)"] { color: rgba(31,25,19,.64) !important; }
+  html[data-theme="light"] #vk-wishlist [style*="color:rgba(247,243,236,.2)"] { color: rgba(31,25,19,.58) !important; }
+  html[data-theme="light"] #vk-wishlist [style*="color:rgba(247,243,236,.1)"] { color: rgba(31,25,19,.50) !important; }
+
+  html[data-theme="light"] #vk-wishlist .vk-wish-header {
+    background: rgba(255, 253, 248, 0.92) !important;
+    border-bottom-color: rgba(31,25,19,0.14) !important;
+  }
+
+  html[data-theme="light"] #vk-wishlist .vk-wish-card {
+    background: #fffdf8 !important;
+    border: 1px solid rgba(31,25,19,0.14) !important;
+    box-shadow: 0 10px 24px rgba(31,25,19,0.08);
+  }
+
+  html[data-theme="light"] #vk-wishlist .vk-wish-top-link,
+  html[data-theme="light"] #vk-wishlist .vk-wish-remove-btn {
+    border-color: rgba(31,25,19,0.24) !important;
+    color: rgba(31,25,19,0.78) !important;
+    background: rgba(31,25,19,0.02) !important;
+  }
+
+  html[data-theme="light"] #vk-wishlist .vk-wish-top-link:hover {
+    border-color: var(--sf) !important;
+    color: var(--sf) !important;
+    background: rgba(226,93,0,0.06) !important;
+  }
+
+  html[data-theme="light"] #vk-wishlist .vk-wish-remove-btn:hover {
+    border-color: rgba(224,48,48,.45) !important;
+    color: rgba(224,48,48,.9) !important;
+    background: rgba(224,48,48,.06) !important;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="min-height:80vh;background:var(--ink)">
+<div id="vk-wishlist" style="min-height:80vh;background:var(--ink)">
 
   <!-- PAGE HEADER -->
-  <div style="padding:40px 5% 28px;border-bottom:1px solid var(--border);background:var(--smoke);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
+  <div class="vk-wish-header" style="padding:40px 5% 28px;border-bottom:1px solid var(--border);background:var(--smoke);display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:16px">
     <div>
       <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:5px;color:var(--sf);text-transform:uppercase;margin-bottom:8px">Wishlist · विशलिस्ट</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,64px);letter-spacing:2px;color:var(--white);line-height:.9">
@@ -16,7 +98,7 @@
         </span>
       </div>
     </div>
-    <a href="{{ url_for('shop.shop_page') }}"
+    <a href="{{ url_for('shop.shop_page') }}" class="vk-wish-top-link"
        style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;padding:11px 24px;border:0.5px solid var(--border);color:rgba(247,243,236,.35);text-decoration:none;text-transform:uppercase;transition:all .2s"
        onmouseover="this.style.borderColor='var(--sf)';this.style.color='var(--sf)'"
        onmouseout="this.style.borderColor='rgba(247,243,236,.07)';this.style.color='rgba(247,243,236,.35)'">
@@ -27,11 +109,11 @@
   {% if wishlist_items %}
 
   <div style="padding:36px 5%">
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:3px">
+    <div class="vk-wish-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:3px">
 
       {% for item in wishlist_items %}
       {% set p = item.product %}
-      <div style="background:var(--card);border:0.5px solid var(--border);display:flex;flex-direction:column;transition:border-color .25s"
+      <div class="vk-wish-card" style="background:var(--card);border:0.5px solid var(--border);display:flex;flex-direction:column;transition:border-color .25s"
            onmouseover="this.style.borderColor='rgba(255,107,0,.2)'"
            onmouseout="this.style.borderColor='rgba(247,243,236,.07)'">
 
@@ -95,7 +177,7 @@
           <!-- Action buttons -->
           <div style="display:flex;flex-direction:column;gap:6px;margin-top:auto;padding-top:8px">
             {% if p.in_stock %}
-            <a href="{{ url_for('shop.add_to_cart', product_id=p.id) }}"
+            <a href="{{ url_for('shop.add_to_cart', product_id=p.id) }}" class="vk-wish-add-btn"
                style="display:block;padding:12px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;font-weight:700;text-decoration:none;text-align:center;transition:background .25s"
                onmouseover="this.style.background='var(--sf2)'"
                onmouseout="this.style.background='var(--sf)'">
@@ -108,7 +190,7 @@
             {% endif %}
 
             <!-- Remove from wishlist -->
-            <a href="/wishlist/remove/{{ p.id }}"
+            <a href="/wishlist/remove/{{ p.id }}" class="vk-wish-remove-btn"
                onclick="return confirm('Remove {{ p.name }} from wishlist?')"
                style="display:block;padding:10px;background:transparent;border:0.5px solid var(--border);color:rgba(247,243,236,.25);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;text-align:center;transition:all .25s"
                onmouseover="this.style.borderColor='rgba(255,80,80,.3)';this.style.color='rgba(255,112,112,.8)'"

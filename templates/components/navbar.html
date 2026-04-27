@@ -42,6 +42,20 @@
       Search
     </button>
 
+    <button class="nav-theme-btn" id="themeToggleBtn" type="button" onclick="toggleSiteTheme()" aria-label="Toggle theme">
+      <svg id="themeIconMoon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>
+      </svg>
+      <svg id="themeIconSun" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+        <circle cx="12" cy="12" r="4"/>
+        <line x1="12" y1="2" x2="12" y2="5"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="5" y2="12"/>
+        <line x1="19" y1="12" x2="22" y2="12"/>
+      </svg>
+      <span id="themeLabel">Light</span>
+    </button>
+
     {% if current_user %}
     <!-- ═══ LOGGED IN ═══ -->
     <div class="nav-user-wrap" id="navUserWrap">

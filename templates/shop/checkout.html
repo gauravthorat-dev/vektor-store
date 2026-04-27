@@ -120,6 +120,19 @@
 .co-textarea:focus { border-color: var(--sf); }
 .co-textarea::placeholder { color: rgba(247,243,236,.12); }
 
+/* Delivery estimate visibility */
+.delivery-estimate {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px !important;
+  color: rgba(247,243,236,.82) !important;
+  letter-spacing: .5px;
+  line-height: 1.45;
+}
+.delivery-estimate.success {
+  color: var(--gr2) !important;
+  font-weight: 700;
+}
+
 /* ── PAYMENT OPTIONS ── */
 .pay-opts { display: flex; flex-direction: column; gap: 8px; }
 .pay-opt {
@@ -248,11 +261,140 @@
   .cp-step { padding: 14px 16px; }
   .summary-trust { grid-template-columns: 1fr; }
 }
+/* Readability boost for very small text on checkout */
+.checkout-page [style*="font-size:7px"]  { font-size: 10px !important; }
+.checkout-page [style*="font-size:8px"]  { font-size: 11px !important; }
+.checkout-page [style*="font-size:9px"]  { font-size: 12px !important; }
+.checkout-page [style*="font-size:10px"] { font-size: 13px !important; }
+.checkout-page [style*="font-size:11px"] { font-size: 14px !important; }
+
+.checkout-page .co-label,
+.checkout-page .co-err,
+.checkout-page .cp-label,
+.checkout-page .pb-label,
+.checkout-page .secure-note,
+.checkout-page .st-text,
+.checkout-page .si-meta { font-size: 11px; }
+
+/* Light-mode contrast fix for legacy dim text colors */
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.5)"] { color: rgba(31,25,19,.62) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.4)"] { color: rgba(31,25,19,.58) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.35)"] { color: rgba(31,25,19,.54) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.3)"] { color: rgba(31,25,19,.50) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.28)"] { color: rgba(31,25,19,.48) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.25)"] { color: rgba(31,25,19,.46) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.22)"] { color: rgba(31,25,19,.44) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.2)"] { color: rgba(31,25,19,.42) !important; }
+html[data-theme="light"] .checkout-page [style*="color:rgba(247,243,236,.15)"] { color: rgba(31,25,19,.38) !important; }
+
+/* Explicit checkout readability (class-based, not only inline styles) */
+.checkout-page .cp-label { font-size: 11px; letter-spacing: 2px; }
+.checkout-page .co-label,
+.checkout-page .co-err,
+.checkout-page .pay-tag,
+.checkout-page .si-meta,
+.checkout-page .pb-label,
+.checkout-page .secure-note,
+.checkout-page .st-text,
+.checkout-page .btn-continue-shopping { font-size: 11px; }
+
+html[data-theme="light"] .checkout-page .cp-num {
+  border-color: rgba(31,25,19,.24);
+  color: rgba(31,25,19,.62);
+}
+html[data-theme="light"] .checkout-page .cp-label,
+html[data-theme="light"] .checkout-page .co-section-mr,
+html[data-theme="light"] .checkout-page .summary-mr,
+html[data-theme="light"] .checkout-page .si-meta,
+html[data-theme="light"] .checkout-page .pay-sub,
+html[data-theme="light"] .checkout-page .co-label,
+html[data-theme="light"] .checkout-page .pb-label,
+html[data-theme="light"] .checkout-page .pb-val,
+html[data-theme="light"] .checkout-page .st-text,
+html[data-theme="light"] .checkout-page .secure-note,
+html[data-theme="light"] .checkout-page .btn-continue-shopping {
+  color: rgba(31,25,19,.64);
+}
+html[data-theme="light"] .checkout-page .co-input::placeholder,
+html[data-theme="light"] .checkout-page .co-textarea::placeholder {
+  color: rgba(31,25,19,.44);
+}
+html[data-theme="light"] .checkout-page .pay-label { color: rgba(31,25,19,.76); }
+html[data-theme="light"] .checkout-page .pay-opt.selected .pay-label { color: var(--white); }
+html[data-theme="light"] .checkout-page .co-input,
+html[data-theme="light"] .checkout-page .co-select,
+html[data-theme="light"] .checkout-page .co-textarea {
+  border-color: rgba(31,25,19,.16);
+  background: rgba(31,25,19,.02);
+}
+
+/* Final checkout readability pass (sizes + contrast) */
+.checkout-page .co-label,
+.checkout-page .co-err,
+.checkout-page .cp-label,
+.checkout-page .pay-label,
+.checkout-page .pay-sub,
+.checkout-page .pay-tag,
+.checkout-page .si-meta,
+.checkout-page .pb-label,
+.checkout-page .pb-val,
+.checkout-page .st-text,
+.checkout-page .secure-note,
+.checkout-page .btn-continue-shopping,
+.checkout-page .co-section-mr,
+.checkout-page .summary-mr {
+  font-size: 12px !important;
+  letter-spacing: 1px !important;
+  line-height: 1.5 !important;
+}
+
+.checkout-page .co-input,
+.checkout-page .co-select,
+.checkout-page .co-textarea {
+  font-size: 14px !important;
+}
+
+.checkout-page .cp-num,
+.checkout-page .si-qty-badge {
+  font-size: 11px !important;
+}
+
+.checkout-page .btn-place-order {
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+}
+
+html[data-theme="light"] .checkout-page .co-label,
+html[data-theme="light"] .checkout-page .co-section-mr,
+html[data-theme="light"] .checkout-page .summary-mr,
+html[data-theme="light"] .checkout-page .si-meta,
+html[data-theme="light"] .checkout-page .pay-sub,
+html[data-theme="light"] .checkout-page .pb-label,
+html[data-theme="light"] .checkout-page .pb-val,
+html[data-theme="light"] .checkout-page .st-text,
+html[data-theme="light"] .checkout-page .secure-note,
+html[data-theme="light"] .checkout-page .btn-continue-shopping {
+  color: rgba(31,25,19,.76) !important;
+}
+
+html[data-theme="light"] .checkout-page .co-err {
+  color: #c7362d !important;
+}
+
+html[data-theme="light"] .checkout-page .pay-label {
+  color: rgba(31,25,19,.88) !important;
+}
+html[data-theme="light"] .checkout-page .delivery-estimate {
+  color: rgba(31,25,19,.86) !important;
+}
+html[data-theme="light"] .checkout-page .delivery-estimate.success {
+  color: #0A8A4A !important;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="checkout-wrap">
+<div class="checkout-wrap checkout-page">
 
   <!-- PROGRESS -->
   <div class="checkout-progress">
@@ -400,9 +542,9 @@
             </div>
             <div class="co-field">
               <label class="co-label">Delivery Estimate</label>
-              <div id="deliveryEstimate"
+              <div id="deliveryEstimate" class="delivery-estimate"
                    style="padding:12px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);font-family:'Space Mono',monospace;font-size:10px;color:rgba(247,243,236,.3);letter-spacing:1px">
-                Enter pincode above ↑
+                Enter pincode above
               </div>
             </div>
           </div>
@@ -618,11 +760,13 @@ function checkDelivery() {
     const from = new Date(); from.setDate(from.getDate() + 2);
     const to   = new Date(); to.setDate(to.getDate() + 4);
     const opts = { day: 'numeric', month: 'short' };
-    el.innerHTML = `<span style="color:var(--gr2)">✓</span> Arrives ${from.toLocaleDateString('en-IN', opts)} – ${to.toLocaleDateString('en-IN', opts)}`;
+    el.textContent = `Arrives ${from.toLocaleDateString('en-IN', opts)} - ${to.toLocaleDateString('en-IN', opts)}`;
     el.style.borderColor = 'rgba(10,138,74,.3)';
+    el.classList.add('success');
   } else {
-    el.textContent = 'Enter pincode above ↑';
+    el.textContent = 'Enter pincode above';
     el.style.borderColor = 'var(--border)';
+    el.classList.remove('success');
   }
 }
 
@@ -688,3 +832,5 @@ function submitOrder() {
 });
 </script>
 {% endblock %}
+
+

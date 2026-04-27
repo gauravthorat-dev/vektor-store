@@ -3,8 +3,25 @@
 {% set show_back = true %}
 {% block title %}Order #VK{{ order.id }} — VEKTOR{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Light-mode readability fix for legacy inline dim colors on this page */
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.55)"] { color: rgba(31,25,19,.82) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.5)"]  { color: rgba(31,25,19,.78) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.45)"] { color: rgba(31,25,19,.74) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.4)"]  { color: rgba(31,25,19,.70) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.35)"] { color: rgba(31,25,19,.66) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.3)"]  { color: rgba(31,25,19,.62) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.25)"] { color: rgba(31,25,19,.58) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.22)"] { color: rgba(31,25,19,.56) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.2)"]  { color: rgba(31,25,19,.52) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(247,243,236,.15)"] { color: rgba(31,25,19,.48) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:rgba(255,255,255,.06)"] { color: rgba(31,25,19,.28) !important; }
+  html[data-theme="light"] #vk-order-details [style*="color:#7aacff"] { color: #1e5fb0 !important; }
+</style>
+{% endblock %}
 {% block content %}
-<div style="min-height:80vh;padding:48px 5%;background:var(--ink)">
+<div id="vk-order-details" style="min-height:80vh;padding:48px 5%;background:var(--ink)">
 
   <!-- BREADCRUMB -->
   <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(247,243,236,.22);text-transform:uppercase;margin-bottom:32px;display:flex;align-items:center;gap:8px">

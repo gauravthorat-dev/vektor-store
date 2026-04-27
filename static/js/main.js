@@ -49,9 +49,44 @@ setTimeout(() => {
 /* ─────────────────────────────────────
    CUSTOM CURSOR
 ───────────────────────────────────── */
-const cur = null;
-const ring = null;
-const lbl = null;
+const cur = document.querySelector('.cursor');
+const ring = document.querySelector('.cursor-ring');
+const lbl = document.querySelector('.cursor-label');
+const hasCustomCursor = Boolean(cur && ring);
+
+function enableNativeCursorFallback() {
+  document.documentElement.classList.add('vk-native-cursor');
+  if (document.getElementById('vk-native-cursor-fallback')) return;
+
+  const style = document.createElement('style');
+  style.id = 'vk-native-cursor-fallback';
+  style.textContent = `
+    html.vk-native-cursor,
+    html.vk-native-cursor body,
+    html.vk-native-cursor * { cursor: auto !important; }
+    html.vk-native-cursor a,
+    html.vk-native-cursor button,
+    html.vk-native-cursor [role="button"],
+    html.vk-native-cursor [type="submit"],
+    html.vk-native-cursor [type="button"] { cursor: pointer !important; }
+    html.vk-native-cursor input,
+    html.vk-native-cursor textarea,
+    html.vk-native-cursor [contenteditable="true"] { cursor: text !important; }
+  `;
+  document.head.appendChild(style);
+}
+
+if (!hasCustomCursor) {
+  // If custom cursor DOM is missing, never hide the real OS cursor.
+  enableNativeCursorFallback();
+} else {
+  document.addEventListener('mousemove', (e) => {
+    cur.style.left = `${e.clientX}px`;
+    cur.style.top = `${e.clientY}px`;
+    ring.style.left = `${e.clientX}px`;
+    ring.style.top = `${e.clientY}px`;
+  });
+}
 
 /* Hover effects — product cards show "ADD TO CART" label */
 document.querySelectorAll('.prod-card, .prod-qa, .prod-add-mini, .lb-card, .lb-overlay-btn').forEach(el => {
@@ -63,6 +98,19 @@ document.querySelectorAll('.prod-card, .prod-qa, .prod-add-mini, .lb-card, .lb-o
 document.querySelectorAll('a, button, .cat-card, .why-item, .mc-card, .coll-card, .coll-side-card, .story-val, .story-team-card, .testi-card, .pride-row, .sidebar-opt').forEach(el => {
   el.addEventListener('mouseenter', () => { cur?.classList.add('hover'); ring?.classList.add('hover'); });
   el.addEventListener('mouseleave', () => { cur?.classList.remove('hover'); ring?.classList.remove('hover'); });
+});
+
+/* Product cards: temporarily switch to native pointer for cleaner hover feel */
+document.querySelectorAll('#page-home .prod-card-wrap, #page-home .prod-img-area, #page-home .prod-overlay-btn, #page-home .prod-overlay-cart, #page-home .pib-view, #page-home .pib-cart').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    document.documentElement.classList.add('vk-product-native-cursor');
+    cur?.classList.remove('hover');
+    ring?.classList.remove('hover');
+    lbl?.classList.remove('show');
+  });
+  el.addEventListener('mouseleave', () => {
+    document.documentElement.classList.remove('vk-product-native-cursor');
+  });
 });
 
 /* ─────────────────────────────────────

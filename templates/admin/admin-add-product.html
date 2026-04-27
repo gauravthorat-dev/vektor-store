@@ -566,7 +566,39 @@
 
 /* ── DELIVERY TIMING ── */
 .delivery-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+/* add product readability override */
+.admin-sub { font-size: 14px; line-height: 1.6; }
+.admin-label { font-size: 12px; }
+.admin-input,
+.admin-select,
+.admin-textarea { font-size: 13px; }
+.panel-title { font-size: 14px; }
+.panel-tag { font-size: 11px; }
+.ap-section-tag { font-size: 10px; }
+.ap-section-chevron { font-size: 12px; }
+.color-hex-input,
+.color-name-input { font-size: 13px; }
+.add-color-btn, .add-img-btn { font-size: 11px; }
+.size-label { font-size: 12px; }
+.img-slot .slot-label { font-size: 10px; }
+.highlight-entry input,
+.spec-entry input,
+.care-item input,
+.review-entry input,
+.review-entry textarea,
+.review-entry select,
+.offer-entry input { font-size: 13px; }
+.badge-opt-label { font-size: 12px; }
+.submit-bar-info { font-size: 12px; }
+.char-counter { font-size: 11px; }
+
+.admin-main [style*="font-size:8px"] { font-size: 11px !important; }
+.admin-main [style*="font-size:9px"] { font-size: 12px !important; }
+.admin-main [style*="font-size:10px"] { font-size: 12px !important; }
+.admin-main [style*="font-size:11px"] { font-size: 13px !important; }
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 <div class="admin-shell">
@@ -580,44 +612,8 @@
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </a>
-  <a href="/admin/products" class="sb-btn active" title="Products">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  </a>
-  <a href="/admin/orders" class="sb-btn" title="Orders">
-    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-  </a>
-  <a href="/admin/customers" class="sb-btn" title="Customers">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-  </a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics">
-    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-  </a>
-  <a href="/admin/settings" class="sb-btn" title="Settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-  </a>
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-</a>
-{% endif %}
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-  </a>
-  <a href="/admin/logout" class="sb-btn" title="Logout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  </a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">VK</div>
-</div>
+  {% set active_menu = 'products' %}
+  {% include 'admin/_sidebar.html' %}
 
 
   <!-- MAIN -->
@@ -643,7 +639,8 @@
     {% endwith %}
 
     <!-- MAIN GRID -->
-    <form method="POST" action="/admin/add-product" id="addProductForm" enctype="multipart/form-data">
+      <form method="POST" action="/admin/add-product" id="addProductForm" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;align-items:start">
 
       <!-- ═══════════════ LEFT: ALL FORM SECTIONS ═══════════════ -->

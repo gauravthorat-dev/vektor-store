@@ -20,12 +20,43 @@
   --orange:#fb923c;--orangeDim:#fb923c14;
   --mono:'Space Mono',monospace;
   --display:'Bebas Neue',sans-serif;
+  --sb-w:52px;
+  --ticker-h:34px;
+}
+html[data-theme="light"]{
+  --bg:#f6f2ea;--bg2:#ffffff;--bg3:#f3ece1;--bg4:#ede3d5;
+  --border:#d9cbbc;--border2:#ccb9a4;--border3:#b8a188;
+  --fg:#1f1913;--fg2:#4f4336;--fg3:#7a6d5f;--fg4:#a19283;
+}
+html[data-theme="light"] .eyebrow,
+html[data-theme="light"] .page-sub,
+html[data-theme="light"] th,
+html[data-theme="light"] .order-sub,
+html[data-theme="light"] .cust-phone,
+html[data-theme="light"] .pip-tip,
+html[data-theme="light"] .pop-sub,
+html[data-theme="light"] .pop-sec-title,
+html[data-theme="light"] .pop-k,
+html[data-theme="light"] .tl-ts2,
+html[data-theme="light"] .otp-info,
+html[data-theme="light"] .search-box input::placeholder{
+  color: rgba(31,25,19,.74) !important;
+}
+html[data-theme="light"] .fchip{
+  color: rgba(31,25,19,.78);
+}
+html[data-theme="light"] .btn-view{
+  color: rgba(31,25,19,.78);
+  border-color: rgba(31,25,19,.24);
+}
+html[data-theme="light"] .t-track span{
+  color: rgba(0,0,0,.82);
 }
 
 body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100vh;overflow-x:hidden}
 
 /* ── TICKER ─────────────────────────────────────── */
-.ticker{height:28px;background:var(--amber);display:flex;align-items:center;overflow:hidden;position:sticky;top:0;z-index:300}
+.ticker{height:var(--ticker-h);background:var(--amber);display:flex;align-items:center;overflow:hidden;position:fixed;top:0;left:0;right:0;z-index:300}
 .t-label{flex-shrink:0;background:#000;color:var(--amber);font-size:8px;font-weight:700;letter-spacing:.25em;padding:0 14px;height:100%;display:flex;align-items:center;text-transform:uppercase}
 .t-track{display:flex;animation:tick 24s linear infinite;white-space:nowrap}
 .t-item{display:flex;align-items:center;gap:0}
@@ -34,21 +65,22 @@ body{background:var(--bg);color:var(--fg);font-family:var(--mono);min-height:100
 @keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ── SHELL ──────────────────────────────────────── */
-.shell{display:flex;min-height:calc(100vh - 28px)}
+.shell{display:flex;min-height:100vh;padding-top:var(--ticker-h)}
 
 /* ── SIDEBAR ────────────────────────────────────── */
-.sidebar{width:52px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:4px;flex-shrink:0;position:sticky;top:28px;height:calc(100vh - 28px);overflow:hidden}
-.sb-logo{font-family:var(--display);font-size:11px;color:var(--amber);letter-spacing:.2em;writing-mode:vertical-rl;transform:rotate(180deg);padding:10px 0 14px;border-bottom:1px solid var(--border);margin-bottom:6px;width:100%;text-align:center}
-.sb-btn{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:var(--fg3);transition:all .15s;text-decoration:none;border:1px solid transparent}
+.sidebar,.admin-sidebar{width:var(--sb-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:16px 0;gap:4px;flex-shrink:0;position:fixed;left:0;top:var(--ticker-h);height:calc(100vh - var(--ticker-h));overflow:hidden;z-index:100}
+.sb-logo{font-family:var(--display);font-size:11px;color:var(--amber);letter-spacing:.32em;writing-mode:vertical-lr;transform:rotate(180deg);margin:0 0 16px;line-height:1}
+.sb-btn{width:38px;height:38px;border-radius:0;display:flex;align-items:center;justify-content:center;color:var(--fg3);transition:all .15s;text-decoration:none;border:1px solid transparent;position:relative;background:transparent}
 .sb-btn:hover{color:var(--fg2);background:var(--bg3);border-color:var(--border)}
 .sb-btn.active{color:var(--amber);background:var(--amberDim);border-color:#f59e0b22}
+.sb-btn.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--amber)}
 .sb-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.sb-div{width:28px;height:1px;background:var(--border);margin:6px 0}
+.sb-div,.sb-divider{width:26px;height:1px;background:var(--border);margin:8px 0}
 .sb-spacer{flex:1}
-.sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--amberDim);border:1px solid #f59e0b33;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--amber);letter-spacing:.05em}
+.sb-avatar{width:32px;height:32px;border-radius:0;background:var(--amber);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--display);font-weight:400;color:#000;letter-spacing:.08em}
 
 /* ── MAIN ───────────────────────────────────────── */
-.main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0;margin-left:var(--sb-w);min-height:calc(100vh - var(--ticker-h))}
 
 /* ── HEADER ─────────────────────────────────────── */
 .hdr{padding:20px 24px 0;border-bottom:1px solid var(--border);background:var(--bg2)}
@@ -217,11 +249,51 @@ td{padding:14px 12px;vertical-align:middle}
 .flash.error  {color:var(--red);  border-color:#f8717133;background:var(--redDim)}
 .flash.info   {color:var(--blue); border-color:#60a5fa33;background:var(--blueDim)}
 
+/* manage orders readability override */
+.eyebrow{font-size:11px}
+.page-sub{font-size:13px;line-height:1.5}
+.search-box input{font-size:13px}
+.live-badge{font-size:11px}
+.sstat-l{font-size:10px}
+.fchip{font-size:11px}
+th{font-size:11px}
+.order-sub{font-size:11px}
+.cust-name{font-size:14px}
+.cust-phone{font-size:12px}
+.amt-sub{font-size:11px}
+.ppill{font-size:11px}
+.dboy{font-size:11px}
+.btn-regen{font-size:10px}
+.assign-sel{font-size:11px}
+.btn-assign{font-size:10px}
+.ssel{font-size:11px}
+.pip-tip{font-size:10px}
+.btn-view{font-size:10px}
+.empty-s{font-size:12px}
+
+.pop-sub{font-size:12px}
+.pop-sec-title{font-size:11px}
+.pop-k{font-size:11px}
+.pop-v{font-size:13px}
+.prod-name{font-size:13px}
+.prod-qty{font-size:12px}
+.tl-ts2{font-size:11px}
+.otp-info{font-size:11px}
+
+tbody td:nth-child(3){font-size:13px !important}
+tbody td:nth-child(3) span{font-size:12px !important}
+.otp-row > span:first-child{font-size:11px !important}
+#popOtpWrap > div:first-child{font-size:11px !important}
+#popBoyName{font-size:12px !important}
+#pEmail{font-size:13px !important}
+#pAddr{font-size:13px !important}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 
@@ -248,39 +320,8 @@ td{padding:14px 12px;vertical-align:middle}
 
 <div class="shell">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="sb-logo">VEKTOR</div>
-    <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    </a>
-    <a href="/admin/products" class="sb-btn" title="Products">
-      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-    </a>
-    <a href="/admin/orders" class="sb-btn active" title="Orders">
-      <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    </a>
-    <a href="/admin/customers" class="sb-btn" title="Customers">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-    </a>
-    <a href="/admin/analytics" class="sb-btn" title="Analytics">
-      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    </a>
-    <a href="/admin/settings" class="sb-btn" title="Settings">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06-.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-    </a>
-    {% if session.get('admin_level') == 'superadmin' %}
-    <a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-    </a>
-    {% endif %}
-    <div class="sb-div"></div>
-    <a href="/admin/logout" class="sb-btn" title="Logout">
-      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    </a>
-    <div class="sb-spacer"></div>
-    <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  </div>
+  {% set active_menu = 'orders' %}
+  {% include 'admin/_sidebar.html' %}
 
   <!-- MAIN -->
   <div class="main">
@@ -308,30 +349,30 @@ td{padding:14px 12px;vertical-align:middle}
       <!-- STAT STRIP -->
       <div class="stat-strip">
         <div class="sstat">
-          <div class="sstat-n amber" id="cnt-all">{{ orders|length }}</div>
+          <div class="sstat-n amber" id="cnt-all">{{ stats.total }}</div>
           <div class="sstat-l">Total Orders</div>
         </div>
         <div class="sstat">
           <div class="sstat-n amber" id="cnt-active">
-            {{ orders|selectattr('status','in',['Pending','Confirmed','Processing','Shipped','Out for Delivery'])|list|length }}
+            {{ stats.active }}
           </div>
           <div class="sstat-l">Active</div>
         </div>
         <div class="sstat">
-          <div class="sstat-n" style="color:var(--orange)">
-            {{ orders|selectattr('status','equalto','Out for Delivery')|list|length }}
+          <div class="sstat-n" id="cnt-od" style="color:var(--orange)">
+            {{ stats.out_for_delivery }}
           </div>
           <div class="sstat-l">Out for Delivery</div>
         </div>
         <div class="sstat">
-          <div class="sstat-n green">
-            {{ orders|selectattr('status','equalto','Delivered')|list|length }}
+          <div class="sstat-n green" id="cnt-del">
+            {{ stats.delivered }}
           </div>
           <div class="sstat-l">Delivered</div>
         </div>
         <div class="sstat">
-          <div class="sstat-n red">
-            {{ orders|selectattr('status','equalto','Cancelled')|list|length }}
+          <div class="sstat-n red" id="cnt-can">
+            {{ stats.cancelled }}
           </div>
           <div class="sstat-l">Cancelled</div>
         </div>
@@ -431,7 +472,7 @@ td{padding:14px 12px;vertical-align:middle}
                     <span class="otp-verified">✓ VERIFIED</span>
                   {% else %}
                     <span class="otp-val">{{ order.delivery_otp }}</span>
-                    <form action="/admin/regenerate-otp/{{ order.id }}" method="POST" style="display:inline">
+                    <form action="/admin/resend-otp/{{ order.id }}" method="POST" style="display:inline"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                       <button class="btn-regen" title="Regenerate OTP">↺</button>
                     </form>
                   {% endif %}
@@ -439,15 +480,7 @@ td{padding:14px 12px;vertical-align:middle}
                 {% endif %}
               {% else %}
                 {% if order.status not in ['Delivered','Cancelled'] %}
-                <form action="/admin/assign-delivery/{{ order.id }}" method="POST" class="assign-row" onsubmit="return validateAssign(this)">
-                  <select name="delivery_boy_id" class="assign-sel">
-                    <option value="">Select boy...</option>
-                    {% for boy in delivery_boys %}
-                    <option value="{{ boy.id }}">{{ boy.name }}</option>
-                    {% endfor %}
-                  </select>
-                  <button type="submit" class="btn-assign">ASSIGN</button>
-                </form>
+                <span style="font-size:10px;color:var(--fg3)">Auto-dispatch running</span>
                 {% else %}
                 <span style="font-size:10px;color:var(--fg3)">—</span>
                 {% endif %}
@@ -584,6 +617,7 @@ td{padding:14px 12px;vertical-align:middle}
 </div>
 
 
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
 /* ── ALL ORDERS DATA ─────────────────────────────────── */
 const ALL_ORDERS = {{ orders | tojson }};
@@ -619,7 +653,15 @@ function updateStatus(id, status){
     });
     return;
   }
-  window.location.href = `/admin/update-order/${id}/${encodeURIComponent(status)}`;
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = `/admin/update-order/${id}`;
+  form.innerHTML = `
+    <input type="hidden" name="status" value="${status}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  `;
+  document.body.appendChild(form);
+  form.submit();
 }
 
 /* ── VALIDATE ASSIGN ─────────────────────────────────── */
@@ -628,6 +670,22 @@ function validateAssign(form){
   if(!sel || !sel.value){ alert('Select a delivery boy first.'); return false; }
   return true;
 }
+
+const socket = io({ transports: ['websocket'] });
+socket.on('stats_update', function(data){
+  if(!data) return;
+  const map = {
+    'cnt-all': data.total,
+    'cnt-active': data.active,
+    'cnt-od': data.out_for_delivery,
+    'cnt-del': data.delivered,
+    'cnt-can': data.cancelled
+  };
+  Object.keys(map).forEach(id => {
+    const el = document.getElementById(id);
+    if(el && typeof map[id] !== 'undefined') el.textContent = map[id];
+  });
+});
 
 /* ── OPEN POPUP ──────────────────────────────────────── */
 function openOrder(row){

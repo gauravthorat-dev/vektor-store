@@ -12,11 +12,11 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/home-extra.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/premium..css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/vektor-typography-fix.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/vektor-premium.css') }}">
+  {% if active_page == "home" %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/home-extra.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/hero-v2.css') }}">
+  {% endif %}
 
   {% block extra_css %}{% endblock %}
 </head>
@@ -62,18 +62,41 @@
       <button class="cart-close-btn" onclick="closeCart()">✕</button>
     </div>
     <div class="cart-body" id="cartBody">
+      {% if minicart_items %}
+      {% for i in minicart_items %}
+      <div class="cart-item">
+        <div class="cart-item-img">
+          {% if i.image %}
+          <img src="{{ url_for('static', filename='uploads/' + i.image) }}" alt="{{ i.name }}" onerror="this.style.display='none';this.parentElement.textContent='VK';">
+          {% else %}
+          VK
+          {% endif %}
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">{{ i.name }}</div>
+          {% if i.name_mr %}
+          <div class="cart-item-mr">{{ i.name_mr }}</div>
+          {% endif %}
+          <div class="cart-item-price">₹{{ "{:,}".format(i.line_total|int) }}</div>
+          <div class="cart-item-size">Qty: {{ i.qty }}{% if i.size %} · Size: {{ i.size }}{% endif %}</div>
+        </div>
+        <button class="cart-item-remove" onclick="window.location.href='{{ url_for('shop.remove_from_cart', product_id=i.product_id) }}'">✕</button>
+      </div>
+      {% endfor %}
+      {% else %}
       <div class="cart-empty">
         <div class="cart-empty-sk">कार्ट रिकामी आहे</div>
         <div class="cart-empty-en">Your cart is empty</div>
         <button class="cart-empty-btn" onclick="closeCart()">खरेदी करा — Shop Now</button>
       </div>
+      {% endif %}
     </div>
-    <div class="cart-foot" id="cartFoot" style="display:none">
+    <div class="cart-foot" id="cartFoot" {% if not minicart_items %}style="display:none"{% endif %}>
       <div class="cart-total-row">
         <div><div class="cart-total-label">Total / एकूण</div></div>
-        <div class="cart-total-amt" id="cartTotal">₹0</div>
+        <div class="cart-total-amt" id="cartTotal">₹{{ "{:,}".format(minicart_total|int) }}</div>
       </div>
-      <button class="cart-checkout" onclick="checkout()">CHECKOUT — चेकआउट करा</button>
+      <button class="cart-checkout" onclick="window.location.href='{{ url_for('shop.checkout') }}'">CHECKOUT — चेकआउट करा</button>
       <button class="cart-continue" onclick="closeCart()">CONTINUE SHOPPING / खरेदी सुरू ठेवा</button>
     </div>
   </div>
@@ -118,6 +141,32 @@
   {% block extra_js %}{% endblock %}
 
   <script>
+  (function () {
+    var root = document.documentElement;
+    var STORAGE_KEY = "vektor_site_theme";
+
+    function applyTheme(theme) {
+      root.setAttribute("data-theme", theme);
+      var moon = document.getElementById("themeIconMoon");
+      var sun = document.getElementById("themeIconSun");
+      var label = document.getElementById("themeLabel");
+      var isLight = theme === "light";
+      if (moon) moon.style.display = isLight ? "none" : "block";
+      if (sun) sun.style.display = isLight ? "block" : "none";
+      if (label) label.textContent = isLight ? "Dark" : "Light";
+    }
+
+    var saved = localStorage.getItem(STORAGE_KEY);
+    var initial = (saved === "light" || saved === "dark") ? saved : "dark";
+    applyTheme(initial);
+
+    window.toggleSiteTheme = function () {
+      var next = root.getAttribute("data-theme") === "light" ? "dark" : "light";
+      localStorage.setItem(STORAGE_KEY, next);
+      applyTheme(next);
+    };
+  })();
+
   (function(){
 
     /* ── 1. TOP PROGRESS BAR ── */
@@ -193,14 +242,22 @@
     }
 
     document.querySelectorAll('.prod-grid-3, .prod-grid-4').forEach(function(grid){
-      /* How many columns does this grid have? */
+      /* Match skeleton count to current grid columns for better mobile/desktop fit */
       var cols = grid.classList.contains('prod-grid-4') ? 4 : 3;
+      var templateCols = window.getComputedStyle(grid).gridTemplateColumns;
+      if(templateCols && templateCols !== 'none'){
+        var detectedCols = templateCols.split(' ').filter(Boolean).length;
+        if(detectedCols > 0){ cols = detectedCols; }
+      }
       /* Detect image height from first real card if it exists */
       var h = 'h240';
       var firstImg = grid.querySelector('.prod-img');
       if(firstImg){
         if(firstImg.classList.contains('h200')) h = 'h200';
         if(firstImg.classList.contains('h280')) h = 'h280';
+      } else {
+        var firstImgArea = grid.querySelector('.prod-img-area');
+        if(firstImgArea && firstImgArea.offsetHeight >= 300){ h = 'h320'; }
       }
       grid.classList.add('vk-skeleton-active');
       /* Inject skeleton cards BEFORE real cards */
@@ -218,7 +275,7 @@
       }
 
       function waitForGridImages(done){
-        var imgs = Array.prototype.slice.call(grid.querySelectorAll('.prod-card img'));
+        var imgs = Array.prototype.slice.call(grid.querySelectorAll('.prod-card img, .prod-card-wrap img'));
         if(!imgs.length){ done(); return; }
         var remaining = imgs.length;
         var settled = false;
@@ -245,7 +302,7 @@
       }
 
       /* Once the grid's real product cards are visible, remove skeletons */
-      var realCards = grid.querySelectorAll('.prod-card');
+      var realCards = grid.querySelectorAll('.prod-card, .prod-card-wrap');
       if(realCards.length){
         /* Real cards already in DOM — remove skeletons immediately after paint */
         setTimeout(function(){
@@ -254,7 +311,7 @@
       } else {
         /* Real cards injected later (e.g. via JS fetch) — watch for them */
         var mo = new MutationObserver(function(){
-          if(grid.querySelector('.prod-card')){
+          if(grid.querySelector('.prod-card, .prod-card-wrap')){
             mo.disconnect();
             setTimeout(function(){
               waitForGridImages(finishSkeleton);

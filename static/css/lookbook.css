@@ -1,34 +1,184 @@
-
 /* ══════════════════════════════
    LOOKBOOK PAGE
 ══════════════════════════════ */
 .lb-hero{padding:64px 36px 48px;border-bottom:1px solid var(--border)}
 .lb-season-tabs{display:flex;gap:0;border:0.5px solid var(--border);margin-top:24px;width:fit-content}
-.lb-tab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;padding:10px 22px;cursor:none;border-right:0.5px solid var(--border);background:none;transition:all .25s}
+.lb-tab{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:3px;color:rgba(247,243,236,.3);text-transform:uppercase;padding:10px 22px;cursor:pointer;border-right:0.5px solid var(--border);background:none;transition:all .25s}
 .lb-tab:last-child{border-right:none}
 .lb-tab.active,.lb-tab:hover{background:var(--sf);color:var(--ink);font-weight:700}
+
+/* ── GRIDS ── */
 .lb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:36px}
-.lb-card{background:var(--card);border:0.5px solid var(--border);position:relative;overflow:hidden;cursor:none}
+.lb-live-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:36px}
+.lb-live-card:nth-child(2){grid-row:span 2}
+
+/* ── CARD ── */
+.lb-card{background:var(--card);border:0.5px solid var(--border);position:relative;overflow:hidden;cursor:pointer;transition:border-color .3s,transform .35s ease,box-shadow .35s ease}
 .lb-card:nth-child(2){grid-row:span 2}
-.lb-img{background:var(--mid);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.lb-card:hover{border-color:rgba(255,107,0,.3);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 0 0.5px rgba(255,107,0,.15)}
+
+/* ── IMAGE AREA ── */
+.lb-img{background:var(--mid);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;cursor:pointer}
 .lb-img.h320{height:320px}.lb-img.h260{height:260px}.lb-img.h543{height:543px}
-.lb-img-txt{font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,255,255,.04);letter-spacing:4px;user-select:none;transition:transform .6s}
-.lb-card:hover .lb-img-txt{transform:scale(1.06)}
-.lb-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,6,.85) 0%,transparent 60%);display:flex;flex-direction:column;justify-content:flex-end;padding:20px;opacity:0;transition:opacity .4s}
-.lb-card:hover .lb-overlay{opacity:1}
-.lb-overlay-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;color:var(--white);margin-bottom:4px}
-.lb-overlay-mr{font-family:'Tiro Devanagari Sanskrit',serif;font-size:12px;color:rgba(247,243,236,.5);margin-bottom:10px}
-.lb-overlay-price{font-family:'Space Mono',monospace;font-size:12px;color:var(--sf);letter-spacing:2px;margin-bottom:10px}
-.lb-overlay-btn{display:inline-block;padding:8px 18px;background:var(--sf);color:var(--ink);font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2px;text-transform:uppercase;cursor:none;font-weight:700;border:none;transition:background .2s}
-.lb-overlay-btn:hover{background:var(--sf2)}
-.lb-flag-bar{position:absolute;bottom:0;left:0;right:0;height:4px;display:flex}
+
+/* Real image zoom */
+.lb-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;position:relative;z-index:1}
+.lb-img:hover img{transform:scale(1.04)}
+
+/* VK placeholder text */
+.lb-img-txt{font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(255,255,255,.04);letter-spacing:4px;user-select:none;transition:transform .6s,color .3s;position:relative;z-index:1}
+.lb-card:hover .lb-img-txt{transform:scale(1.06);color:rgba(255,107,0,.08)}
+
+/* ══ OVERLAY — full dark cover, centred, like home page ══ */
+.lb-overlay{
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  background:rgba(6,6,6,.82);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:20px;
+  opacity:0;
+  transition:opacity .32s ease;
+  z-index:10;
+  pointer-events:none;
+}
+.lb-img:hover .lb-overlay{opacity:1;pointer-events:auto}
+
+/* Divider line */
+.lb-overlay::before{
+  content:'';
+  width:36px;height:1px;
+  background:rgba(255,107,0,.4);
+  margin:2px 0;
+}
+
+/* Product name */
+.lb-overlay-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:3px;
+  color:var(--white);
+  text-align:center;
+  transform:translateY(10px);
+  transition:transform .35s ease;
+  margin:0;
+}
+/* Marathi subtitle */
+.lb-overlay-mr{
+  font-family:'Tiro Devanagari Sanskrit',serif;
+  font-size:11px;
+  color:rgba(247,243,236,.45);
+  text-align:center;
+  transform:translateY(10px);
+  transition:transform .35s ease .04s;
+  margin:0;
+}
+/* Price */
+.lb-overlay-price{
+  font-family:'Space Mono',monospace;
+  font-size:13px;
+  color:var(--sf);
+  letter-spacing:2px;
+  text-align:center;
+  transform:translateY(10px);
+  transition:transform .35s ease .08s;
+  margin:0;
+}
+/* Slide all up on hover */
+.lb-img:hover .lb-overlay-title,
+.lb-img:hover .lb-overlay-mr,
+.lb-img:hover .lb-overlay-price{transform:translateY(0)}
+
+/* VIEW PRODUCT — white button */
+.lb-view-btn{
+  display:inline-block;
+  padding:11px 22px;
+  background:var(--white);
+  color:var(--ink);
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  font-weight:700;
+  border:none;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .2s,color .2s;
+  margin-top:6px;
+}
+.lb-view-btn:hover{background:var(--sf);color:var(--ink)}
+
+/* + कार्टमध्ये घाला — orange button */
+.lb-overlay-btn{
+  display:inline-block;
+  padding:11px 22px;
+  background:var(--sf);
+  color:var(--ink);
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-weight:700;
+  border:none;
+  text-decoration:none;
+  cursor:pointer;
+  transition:background .2s;
+}
+.lb-overlay-btn:hover{background:#e05e00}
+
+/* ── FLAG BAR ── */
+.lb-flag-bar,.pfb-bar{position:absolute;bottom:0;left:0;right:0;height:4px;display:flex;z-index:11}
+.pfb,.pfs{flex:1}
+.pfb.sf,.pfs.sf{background:var(--sf)}
+.pfb.wh,.pfs.wh{background:rgba(247,243,236,.25)}
+.pfb.gr,.pfs.gr{background:var(--gr)}
+
+/* ── INFO BELOW IMAGE ── */
 .lb-info{padding:14px 16px}
 .lb-info-title{font-size:16px;font-weight:300;color:var(--white);margin-bottom:2px}
 .lb-info-mr{font-family:'Tiro Devanagari Sanskrit',serif;font-size:11px;color:rgba(247,243,236,.25)}
 .lb-info-bot{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .lb-price{font-family:'Space Mono',monospace;font-size:13px;color:var(--sf);letter-spacing:2px}
+.lb-actions{display:flex;gap:8px;align-items:center}
+
+/* View button */
+.btn-view{
+  padding:7px 14px;
+  font-family:'Space Mono',monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  background:transparent;
+  color:rgba(247,243,236,.55);
+  border:0.5px solid rgba(247,243,236,.15);
+  text-decoration:none;
+  cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.btn-view:hover{color:var(--white);border-color:rgba(247,243,236,.4)}
+
+/* Cart button */
+.prod-add-mini{
+  padding:7px 14px;
+  font-family:'Space Mono',monospace;
+  font-size:8px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  background:var(--sf);
+  color:var(--ink);
+  border:none;
+  text-decoration:none;
+  cursor:pointer;
+  font-weight:700;
+  transition:background .2s;
+}
+.prod-add-mini:hover{background:#e05e00}
+
+/* ── EDITORIAL SECTION ── */
 .lb-editorial{background:var(--mid);margin:0 36px;padding:48px 44px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;border:0.5px solid var(--border)}
-.lb-ed-left{}
 .lb-ed-sk{font-family:'Tiro Devanagari Sanskrit',serif;font-size:18px;color:var(--gold);line-height:1.7;margin-bottom:10px}
 .lb-ed-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,4vw,60px);letter-spacing:2px;color:var(--white);line-height:.9;margin-bottom:16px}
 .lb-ed-body{font-size:15px;line-height:1.8;color:rgba(247,243,236,.38);margin-bottom:24px}
@@ -37,3 +187,8 @@
 .lb-ed-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--sf);line-height:1;min-width:36px}
 .lb-ed-en{font-size:14px;color:var(--white);margin-bottom:2px}
 .lb-ed-mr{font-family:'Tiro Devanagari Sanskrit',serif;font-size:11px;color:rgba(247,243,236,.25);line-height:1.6}
+
+/* ── EMPTY STATE ── */
+.lb-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:80px 36px;text-align:center}
+.lb-empty-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:rgba(247,243,236,.2)}
+.lb-empty-text{font-size:13px;color:rgba(247,243,236,.25);max-width:360px;line-height:1.7}

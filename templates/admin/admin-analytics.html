@@ -1,234 +1,475 @@
 <!DOCTYPE html>
-<html lang="mr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VEKTOR Admin — Analytics</title>
+<title>VEKTOR Admin - Analytics</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Tiro+Devanagari+Sanskrit&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin-shared.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
+<style>
+.analytics-wrap { display: grid; gap: 16px; }
+.range-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.range-chip-set { display: flex; gap: 8px; flex-wrap: wrap; }
+.range-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--border2);
+  color: var(--fg3);
+  font-size: 10px;
+  letter-spacing: .1em;
+  transition: var(--t);
+}
+.range-chip:hover { border-color: var(--sf); color: var(--sf); }
+.range-chip.active {
+  background: var(--sf);
+  border-color: var(--sf);
+  color: #000;
+}
+.kpi-strip {
+  border: 1px solid var(--border);
+  background: linear-gradient(120deg, rgba(255,107,0,0.08), rgba(255,107,0,0.02), transparent);
+  padding: 12px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  color: var(--fg2);
+}
+.kpi-strip b { color: var(--fg); }
+.delta { font-size: 11px; letter-spacing: .06em; }
+.delta.up { color: var(--gr2); }
+.delta.down { color: #ff7070; }
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 16px;
+}
+.analytics-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.chart-canvas { height: 280px; }
+.chart-canvas-sm { height: 240px; }
+.insight-list { display: grid; gap: 8px; }
+.insight-item {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  padding: 12px;
+}
+.insight-k { font-size: 9px; letter-spacing: .14em; color: var(--fg3); margin-bottom: 5px; }
+.insight-v { font-family: var(--font-display); font-size: 21px; line-height: .95; color: var(--sf); }
+.product-chip {
+  display: inline-block;
+  border: 1px solid rgba(255,107,0,0.25);
+  background: rgba(255,107,0,0.1);
+  color: var(--sf2);
+  font-size: 9px;
+  letter-spacing: .1em;
+  padding: 3px 8px;
+}
+.product-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: .04em;
+}
+.top-products-wrap { overflow-x: auto; }
+.top-products-table {
+  width: 100%;
+  min-width: 0;
+  table-layout: fixed;
+}
+.top-products-table th,
+.top-products-table td {
+  white-space: nowrap;
+}
+.top-products-table .col-rank { width: 84px; }
+.top-products-table .col-product { width: 44%; }
+.top-products-table .col-category { width: 24%; }
+.top-products-table .col-sold { width: 90px; text-align: right; }
+.top-products-table .col-revenue { width: 170px; text-align: right; }
+.top-products-table .product-name {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-theme="light"] .panel-tag,
+html[data-theme="light"] .insight-k,
+html[data-theme="light"] .kpi-strip,
+html[data-theme="light"] .range-row > div:last-child {
+  color: rgba(31, 25, 19, 0.76) !important;
+}
+html[data-theme="light"] .range-chip {
+  color: rgba(31, 25, 19, 0.78);
+  border-color: rgba(31, 25, 19, 0.24);
+}
+@media (max-width: 1080px) {
+  .analytics-grid { grid-template-columns: 1fr; }
+  .analytics-grid-2 { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .top-products-table { min-width: 640px; }
+}
+</style>
 </head>
 <body>
 <div class="admin-shell">
-
   <div class="admin-ticker">
     <div class="ticker-label">VEKTOR ADMIN</div>
     <div class="ticker-track">
-      <div class="ticker-item"><span>ANALYTICS</span><div class="ticker-dot"></div><span>विश्लेषण</span><div class="ticker-dot"></div><span>REVENUE ₹2.4L</span><div class="ticker-dot"></div><span>128 ORDERS</span><div class="ticker-dot"></div></div>
-      <div class="ticker-item"><span>ANALYTICS</span><div class="ticker-dot"></div><span>विश्लेषण</span><div class="ticker-dot"></div><span>REVENUE ₹2.4L</span><div class="ticker-dot"></div><span>128 ORDERS</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>ANALYTICS</span><div class="ticker-dot"></div><span>{{ range_label|upper }}</span><div class="ticker-dot"></div><span>REVENUE INR {{ "{:,.0f}".format(period_revenue) }}</span><div class="ticker-dot"></div><span>ORDERS {{ period_orders }}</span><div class="ticker-dot"></div><span>AOV INR {{ "{:,.0f}".format(avg_order_value) }}</span><div class="ticker-dot"></div></div>
+      <div class="ticker-item"><span>ANALYTICS</span><div class="ticker-dot"></div><span>{{ range_label|upper }}</span><div class="ticker-dot"></div><span>REVENUE INR {{ "{:,.0f}".format(period_revenue) }}</span><div class="ticker-dot"></div><span>ORDERS {{ period_orders }}</span><div class="ticker-dot"></div><span>AOV INR {{ "{:,.0f}".format(avg_order_value) }}</span><div class="ticker-dot"></div></div>
     </div>
   </div>
 
-  <!-- SIDEBAR -->
-<div class="admin-sidebar">
-  <div class="sb-logo">VEKTOR</div>
-  <a href="/admin/dashboard" class="sb-btn" title="Dashboard">
-    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-  </a>
-  <a href="/admin/products" class="sb-btn active" title="Products">
-    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-  </a>
-  <a href="/admin/orders" class="sb-btn" title="Orders">
-    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-  </a>
-  <a href="/admin/customers" class="sb-btn" title="Customers">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-  </a>
-  <a href="/admin/analytics" class="sb-btn" title="Analytics">
-    <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-  </a>
-  <a href="/admin/settings" class="sb-btn" title="Settings">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-  </a>
-  {% if session.get('admin_level') == 'superadmin' %}
-<a href="/admin/manage-admins" class="sb-btn" title="Manage Admins">
-  <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-</a>
-{% endif %}
-  <div class="sb-divider"></div>
-  <a href="/admin/switch" class="sb-btn" title="Switch Account">
-    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
-  </a>
-  <a href="/admin/logout" class="sb-btn" title="Logout">
-    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-  </a>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">{{ session.get('admin_name', 'VK')[:2].upper() }}</div>
-  <div class="sb-spacer"></div>
-  <div class="sb-avatar">VK</div>
-</div>
+  {% set active_menu = 'analytics' %}
+  {% include 'admin/_sidebar.html' %}
 
-
-  <div class="admin-main">
-
-    <div class="admin-hdr">
+  <main class="admin-main">
+    <section class="admin-hdr">
       <div>
-        <div class="admin-eyebrow">Analytics · विश्लेषण</div>
+        <div class="admin-eyebrow">Performance Intelligence</div>
         <div class="admin-title">STORE <span>ANALYTICS</span></div>
-        <div class="admin-sub">दुकान विश्लेषण · Revenue, Orders & Customer Insights</div>
+        <div class="admin-sub">Dynamic commerce metrics powered by live order activity.</div>
       </div>
-      <button class="admin-btn admin-btn-ghost" onclick="window.print()">↓ EXPORT</button>
-    </div>
+      <button class="admin-btn admin-btn-ghost" onclick="window.location.reload()">REFRESH DATA</button>
+    </section>
 
-    <!-- STAT CARDS -->
-    <div class="stat-grid">
-      <div class="stat-card" style="--accent:var(--sf)">
-        <div class="stat-label">Total Revenue · एकूण महसूल</div>
-        <div class="stat-num" style="color:var(--sf)">₹2.4L</div>
-        <div class="stat-sub">All time</div>
-      </div>
-      <div class="stat-card" style="--accent:var(--gold)">
-        <div class="stat-label">Total Orders · ऑर्डर</div>
-        <div class="stat-num" style="color:var(--gold)">128</div>
-        <div class="stat-sub">This month</div>
-      </div>
-      <div class="stat-card" style="--accent:var(--gr2)">
-        <div class="stat-label">Customers · ग्राहक</div>
-        <div class="stat-num" style="color:var(--gr2)">1,204</div>
-        <div class="stat-sub">Registered</div>
-      </div>
-      <div class="stat-card" style="--accent:#7aacff">
-        <div class="stat-label">Products · उत्पादने</div>
-        <div class="stat-num" style="color:#7aacff">54</div>
-        <div class="stat-sub">In catalog</div>
-      </div>
-    </div>
-
-    <!-- CHARTS ROW -->
-    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px">
-
-      <div class="chart-box">
-        <div class="chart-title">Monthly Revenue · मासिक महसूल</div>
-        <div style="height:220px"><canvas id="revenueChart"></canvas></div>
-      </div>
-
-      <div class="chart-box">
-        <div class="chart-title">Orders by Status · ऑर्डर स्थिती</div>
-        <div style="height:220px"><canvas id="orderChart"></canvas></div>
-      </div>
-
-    </div>
-
-    <!-- CATEGORY CHART + TOP PRODUCTS -->
-    <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:16px">
-
-      <div class="chart-box">
-        <div class="chart-title">Sales by Category · श्रेणीनुसार</div>
-        <div style="height:200px"><canvas id="catChart"></canvas></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-hdr">
-          <div class="panel-title">Top Selling Products · सर्वाधिक विकले</div>
-          <div class="panel-tag">BY REVENUE</div>
+    <div class="analytics-wrap">
+      <div class="range-row">
+        <div class="range-chip-set">
+          <a class="range-chip {% if selected_range == '7d' %}active{% endif %}" href="/admin/analytics?range=7d">LAST 7 DAYS</a>
+          <a class="range-chip {% if selected_range == '30d' %}active{% endif %}" href="/admin/analytics?range=30d">LAST 30 DAYS</a>
+          <a class="range-chip {% if selected_range == '90d' %}active{% endif %}" href="/admin/analytics?range=90d">LAST 90 DAYS</a>
+          <a class="range-chip {% if selected_range == '365d' %}active{% endif %}" href="/admin/analytics?range=365d">LAST 365 DAYS</a>
         </div>
-        <div class="admin-table-wrap" style="border:none">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>PRODUCT · उत्पादन</th>
-                <th>SOLD · विकले</th>
-                <th>REVENUE · महसूल</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="color:var(--sf);font-family:var(--font-display)">01</td>
-                <td>Biker Jacket · बाइकर जॅकेट</td>
-                <td style="color:var(--gold)">320</td>
-                <td style="font-family:var(--font-display);color:var(--sf)">₹4,15,000</td>
-              </tr>
-              <tr>
-                <td style="color:var(--sf);font-family:var(--font-display)">02</td>
-                <td>Oxford Shirt · ऑक्सफर्ड शर्ट</td>
-                <td style="color:var(--gold)">210</td>
-                <td style="font-family:var(--font-display);color:var(--sf)">₹3,10,000</td>
-              </tr>
-              <tr>
-                <td style="color:var(--sf);font-family:var(--font-display)">03</td>
-                <td>Slim Fit Jeans · स्लिम जीन्स</td>
-                <td style="color:var(--gold)">180</td>
-                <td style="font-family:var(--font-display);color:var(--sf)">₹2,60,000</td>
-              </tr>
-              <tr>
-                <td style="color:var(--sf);font-family:var(--font-display)">04</td>
-                <td>Linen Shirt · लिनन शर्ट</td>
-                <td style="color:var(--gold)">145</td>
-                <td style="font-family:var(--font-display);color:var(--sf)">₹1,90,000</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div style="font-size:10px;letter-spacing:.1em;color:var(--fg3)">{{ range_label|upper }} SNAPSHOT</div>
       </div>
 
-    </div>
+      <div class="kpi-strip">
+        <span>PERIOD REVENUE <b>INR {{ "{:,.0f}".format(period_revenue) }}</b></span>
+        <span>TOTAL STORE REVENUE <b>INR {{ "{:,.0f}".format(total_revenue) }}</b></span>
+        <span>TOTAL ORDERS <b>{{ "{:,}".format(total_orders) }}</b></span>
+        <span>ACTIVE PRODUCTS <b>{{ "{:,}".format(total_products) }}</b></span>
+      </div>
 
-  </div>
+      <div class="stat-grid">
+        <article class="stat-card" style="--accent:var(--sf)">
+          <div class="stat-label">Revenue ({{ range_label }})</div>
+          <div class="stat-num" style="color:var(--sf)">INR {{ "{:,.0f}".format(period_revenue) }}</div>
+          <div class="delta {% if revenue_growth >= 0 %}up{% else %}down{% endif %}">
+            {% if revenue_growth >= 0 %}+{% endif %}{{ revenue_growth }}% vs previous period
+          </div>
+        </article>
+        <article class="stat-card" style="--accent:var(--gold)">
+          <div class="stat-label">Orders ({{ range_label }})</div>
+          <div class="stat-num" style="color:var(--gold)">{{ "{:,}".format(period_orders) }}</div>
+          <div class="delta {% if orders_growth >= 0 %}up{% else %}down{% endif %}">
+            {% if orders_growth >= 0 %}+{% endif %}{{ orders_growth }}% vs previous period
+          </div>
+        </article>
+        <article class="stat-card" style="--accent:var(--gr2)">
+          <div class="stat-label">Average Order Value</div>
+          <div class="stat-num" style="color:var(--gr2)">INR {{ "{:,.0f}".format(avg_order_value) }}</div>
+          <div class="stat-sub">Period spend per order</div>
+        </article>
+        <article class="stat-card" style="--accent:var(--blue)">
+          <div class="stat-label">Total Customers</div>
+          <div class="stat-num" style="color:var(--blue)">{{ "{:,}".format(total_customers) }}</div>
+          <div class="stat-sub">Registered users</div>
+        </article>
+      </div>
+
+      <div class="analytics-grid">
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Revenue + Orders Trend</div>
+            <div class="panel-tag">{{ range_days }} DAYS</div>
+          </div>
+          <div class="panel-body chart-canvas">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Order Status Mix</div>
+            <div class="panel-tag">LIVE DISTRIBUTION</div>
+          </div>
+          <div class="panel-body chart-canvas">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <div class="analytics-grid-2">
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Category Performance</div>
+            <div class="panel-tag">UNITS SOLD</div>
+          </div>
+          <div class="panel-body chart-canvas-sm">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Top Shipping Cities</div>
+            <div class="panel-tag">ORDER VOLUME</div>
+          </div>
+          <div class="panel-body chart-canvas-sm">
+            <canvas id="cityChart"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <div class="analytics-grid-2">
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Top Products</div>
+            <div class="panel-tag">BY REVENUE</div>
+          </div>
+          <div class="admin-table-wrap top-products-wrap" style="border:none">
+            <table class="admin-table top-products-table">
+              <thead>
+                <tr>
+                  <th class="col-rank">RANK</th>
+                  <th class="col-product">PRODUCT</th>
+                  <th class="col-category">CATEGORY</th>
+                  <th class="col-sold">SOLD</th>
+                  <th class="col-revenue">REVENUE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for p in top_products %}
+                <tr>
+                  <td class="col-rank" style="font-family:var(--font-display);color:var(--sf)">{{ "%02d"|format(loop.index) }}</td>
+                  <td class="col-product"><span class="product-name">{{ p.name }}</span></td>
+                  <td class="col-category"><span class="product-chip">{{ p.category }}</span></td>
+                  <td class="col-sold" style="color:var(--gold)">{{ "{:,}".format(p.sold) }}</td>
+                  <td class="col-revenue" style="font-family:var(--font-display);font-size:18px;color:var(--sf)">INR {{ "{:,.0f}".format(p.revenue) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" style="color:var(--fg3)">No sales in this range yet.</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel">
+          <div class="panel-hdr">
+            <div class="panel-title">Quick Insights</div>
+            <div class="panel-tag">AUTO SUMMARY</div>
+          </div>
+          <div class="panel-body">
+            <div class="insight-list">
+              <div class="insight-item">
+                <div class="insight-k">Revenue Direction</div>
+                <div class="insight-v">
+                  {% if revenue_growth > 0 %}Momentum Up{% elif revenue_growth < 0 %}Needs Attention{% else %}Stable{% endif %}
+                </div>
+              </div>
+              <div class="insight-item">
+                <div class="insight-k">Best Product</div>
+                <div class="insight-v">
+                  {% if top_products %}{{ top_products[0].name }}{% else %}No Leader Yet{% endif %}
+                </div>
+              </div>
+              <div class="insight-item">
+                <div class="insight-k">Top City</div>
+                <div class="insight-v">
+                  {% if city_labels and city_labels[0] != "No Data" %}{{ city_labels[0] }}{% else %}No Data{% endif %}
+                </div>
+              </div>
+              <div class="insight-item">
+                <div class="insight-k">Current Window</div>
+                <div class="insight-v">{{ range_label }}</div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
 </div>
 
 <script>
-const chartOpts = {
-  plugins:{legend:{labels:{color:'#555',font:{size:10,family:'Space Mono'},boxWidth:10}}},
-  scales:{
-    x:{ticks:{color:'#333',font:{size:10}},grid:{color:'rgba(255,255,255,0.03)'},border:{color:'transparent'}},
-    y:{ticks:{color:'#333',font:{size:10}},grid:{color:'rgba(255,255,255,0.04)'},border:{color:'transparent'}}
-  }
-};
+const trendLabels = {{ trend_labels|tojson }};
+const trendRevenue = {{ trend_revenue|tojson }};
+const trendOrders = {{ trend_orders|tojson }};
+const statusCounts = {{ status_counts|tojson }};
+const categoryLabels = {{ category_labels|tojson }};
+const categoryUnits = {{ category_units|tojson }};
+const cityLabels = {{ city_labels|tojson }};
+const cityCounts = {{ city_counts|tojson }};
 
-/* REVENUE */
-const rCtx=document.getElementById('revenueChart').getContext('2d');
-const rGrad=rCtx.createLinearGradient(0,0,0,200);
-rGrad.addColorStop(0,'rgba(255,107,0,0.3)');
-rGrad.addColorStop(1,'rgba(255,107,0,0)');
-new Chart(rCtx,{
-  type:'line',
-  data:{
-    labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'],
-    datasets:[{
-      label:'Revenue ₹',
-      data:[12000,18000,15000,22000,30000,26000,35000,42000],
-      borderColor:'#FF6B00', backgroundColor:rGrad,
-      tension:.4, fill:true, borderWidth:2,
-      pointBackgroundColor:'#FF6B00', pointBorderColor:'#0a0a0a', pointRadius:4
-    }]
+const money = (v) => "INR " + Number(v || 0).toLocaleString("en-IN");
+const lightMode = document.documentElement.getAttribute("data-theme") === "light";
+const cText = lightMode ? "#2a221a" : "#d0cbc4";
+const cMuted = lightMode ? "rgba(42,34,26,.78)" : "#a49e96";
+const cSoft = lightMode ? "rgba(42,34,26,.68)" : "#d7d1c8";
+const cGrid = lightMode ? "rgba(31,25,19,.12)" : "rgba(255,255,255,.04)";
+const cGridSoft = lightMode ? "rgba(31,25,19,.15)" : "rgba(255,255,255,.05)";
+const tooltipBg = lightMode ? "#ffffff" : "#0f0f0f";
+const tooltipBody = lightMode ? "#1f1913" : "#f7f3ec";
+const doughnutBorder = lightMode ? "#f3efe8" : "#121212";
+
+const trendCtx = document.getElementById("trendChart").getContext("2d");
+const revenueGrad = trendCtx.createLinearGradient(0, 0, 0, 300);
+revenueGrad.addColorStop(0, "rgba(255,107,0,.30)");
+revenueGrad.addColorStop(1, "rgba(255,107,0,0)");
+
+new Chart(trendCtx, {
+  data: {
+    labels: trendLabels,
+    datasets: [
+      {
+        type: "line",
+        label: "Revenue",
+        data: trendRevenue,
+        borderColor: "#ff6b00",
+        backgroundColor: revenueGrad,
+        fill: true,
+        tension: .32,
+        borderWidth: 2,
+        pointRadius: 1.5,
+        yAxisID: "yRevenue"
+      },
+      {
+        type: "bar",
+        label: "Orders",
+        data: trendOrders,
+        backgroundColor: "rgba(106,168,255,.45)",
+        borderColor: "rgba(106,168,255,.95)",
+        borderWidth: 1,
+        yAxisID: "yOrders"
+      }
+    ]
   },
-  options:{...chartOpts,responsive:true,maintainAspectRatio:false,
-    plugins:{...chartOpts.plugins,tooltip:{
-      backgroundColor:'#1a1a1a',borderColor:'rgba(255,107,0,0.3)',borderWidth:1,
-      titleColor:'#FF6B00',bodyColor:'#f7f3ec',cornerRadius:0,padding:10,
-      callbacks:{label:c=>' ₹'+c.raw.toLocaleString('en-IN')}
-    }}
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: "index", intersect: false },
+    plugins: {
+      legend: {
+        labels: { color: cText, font: { size: 10, family: "Space Mono" }, boxWidth: 10 }
+      },
+      tooltip: {
+        backgroundColor: tooltipBg,
+        borderColor: "rgba(255,107,0,.3)",
+        borderWidth: 1,
+        titleColor: "#ff6b00",
+        bodyColor: tooltipBody,
+        callbacks: {
+          label: (ctx) => ctx.dataset.label === "Revenue" ? money(ctx.raw) : `Orders ${ctx.raw}`
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: cMuted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10 },
+        grid: { color: cGrid }
+      },
+      yRevenue: {
+        position: "left",
+        ticks: { color: "#ff6b00", callback: (v) => "INR " + Number(v).toLocaleString("en-IN") },
+        grid: { color: cGridSoft }
+      },
+      yOrders: {
+        position: "right",
+        ticks: { color: "#7aacff", precision: 0 },
+        grid: { drawOnChartArea: false }
+      }
+    }
   }
 });
 
-/* ORDER STATUS */
-new Chart(document.getElementById('orderChart'),{
-  type:'doughnut',
-  data:{
-    labels:['Pending','Shipped','Delivered','Cancelled'],
-    datasets:[{
-      data:[25,35,55,13],
-      backgroundColor:['rgba(200,148,26,0.8)','rgba(59,125,216,0.8)','rgba(13,184,95,0.8)','rgba(224,48,48,0.8)'],
-      borderColor:'#0a0a0a', borderWidth:3
+new Chart(document.getElementById("statusChart"), {
+  type: "doughnut",
+  data: {
+    labels: ["Pending", "Shipped", "Delivered", "Cancelled"],
+    datasets: [{
+      data: [
+        statusCounts.Pending || 0,
+        statusCounts.Shipped || 0,
+        statusCounts.Delivered || 0,
+        statusCounts.Cancelled || 0
+      ],
+      backgroundColor: [
+        "rgba(200,148,26,.88)",
+        "rgba(59,125,216,.88)",
+        "rgba(13,184,95,.88)",
+        "rgba(224,48,48,.88)"
+      ],
+      borderColor: doughnutBorder,
+      borderWidth: 3
     }]
   },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#555',font:{size:10,family:'Space Mono'},boxWidth:10}}}}
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "68%",
+    plugins: {
+      legend: { labels: { color: cText, font: { family: "Space Mono", size: 10 } } }
+    }
+  }
 });
 
-/* CATEGORY */
-new Chart(document.getElementById('catChart'),{
-  type:'bar',
-  data:{
-    labels:['Shirts','Jeans','Jackets','T-Shirts','Trousers'],
-    datasets:[{
-      label:'Units Sold',
-      data:[320,210,180,145,90],
-      backgroundColor:['rgba(255,107,0,0.7)','rgba(200,148,26,0.7)','rgba(13,184,95,0.7)','rgba(59,125,216,0.7)','rgba(120,80,200,0.7)'],
-      borderWidth:0, borderRadius:0
+new Chart(document.getElementById("categoryChart"), {
+  type: "bar",
+  data: {
+    labels: categoryLabels,
+    datasets: [{
+      label: "Units",
+      data: categoryUnits,
+      backgroundColor: [
+        "rgba(255,107,0,.85)",
+        "rgba(200,148,26,.85)",
+        "rgba(13,184,95,.85)",
+        "rgba(59,125,216,.85)",
+        "rgba(145,145,145,.85)",
+        "rgba(220,88,40,.85)"
+      ],
+      borderRadius: 0
     }]
   },
-  options:{...chartOpts,responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: "y",
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: cMuted, precision: 0 }, grid: { color: cGrid } },
+      y: { ticks: { color: cSoft }, grid: { display: false } }
+    }
+  }
+});
+
+new Chart(document.getElementById("cityChart"), {
+  type: "bar",
+  data: {
+    labels: cityLabels,
+    datasets: [{
+      label: "Orders",
+      data: cityCounts,
+      backgroundColor: "rgba(255,107,0,.75)",
+      borderColor: "#ff6b00",
+      borderWidth: 1.2,
+      borderRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: cSoft }, grid: { color: cGrid } },
+      y: { ticks: { color: cMuted, precision: 0 }, grid: { color: cGrid } }
+    }
+  }
 });
 </script>
 </body>

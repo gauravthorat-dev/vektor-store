@@ -321,7 +321,7 @@
 .cat-top { display: flex; justify-content: space-between; align-items: flex-start; }
 .cat-num { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(247,243,236,.2); letter-spacing: .1em; }
 .cat-arrow { font-size: 18px; color: rgba(247,243,236,.2); transition: color .25s, transform .25s; }
-.cat-en { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .06em; }
+.cat-en { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: .06em; letter-spacing: 1px; }
 .cat-mr { font-family: 'Tiro Devanagari Sanskrit', serif; font-size: 12px; color: rgba(247,243,236,.3); margin-top: 3px; }
 .cat-hi { font-size: 10px; color: rgba(247,243,236,.18); margin-top: 2px; }
 .cat-count { font-family: 'Space Mono', monospace; font-size: 8px; letter-spacing: 1px; color: var(--sf); margin-top: 6px; }
@@ -357,18 +357,40 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  cursor: pointer;
 }
 
-/* Real product image */
+/* Real product image — z-index 1 so overlay can sit above */
 .prod-real-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  position: relative;
+  z-index: 1;
   transition: transform .5s ease;
 }
-.prod-card-wrap:hover .prod-real-img { transform: scale(1.04); }
+.prod-img-area:hover .prod-real-img { transform: scale(1.04); }
 
-/* Fallback when no image */
+/* ── PRODUCT OVERLAY — full dark cover, centered, triggers on image hover ── */
+.prod-img-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(6,6,6,.82);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  opacity: 0;
+  transition: opacity .32s ease;
+  z-index: 10;
+  pointer-events: none;
+}
+.prod-img-area:hover .prod-img-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
 .prod-img-fallback {
   position: absolute;
   inset: 0;
@@ -386,6 +408,119 @@
   transition: color .3s;
 }
 .prod-card-wrap:hover .prod-img-txt { color: rgba(255,107,0,.12); }
+
+/* ══ 3D ILLUSTRATION CARD ══ */
+.prod-card-wrap {
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.prod-illustration {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(255,107,0,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(200,148,26,0.06) 0%, transparent 50%),
+    linear-gradient(145deg, #181818 0%, #111111 40%, #0e0e0e 100%);
+  transform-style: preserve-3d;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+/* Top-left shine sweep */
+.prod-illustration::before {
+  content: '';
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 140%;
+  height: 140%;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.055) 0%,
+    rgba(255,255,255,0.01) 40%,
+    transparent 60%
+  );
+  transform: rotate(0deg);
+  transition: transform 0.6s ease, opacity 0.4s;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Bottom edge depth line */
+.prod-illustration::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, rgba(255,107,0,0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: 2;
+}
+
+/* 3D tilt on card hover */
+.prod-card-wrap:hover .prod-illustration {
+  transform: rotateX(6deg) rotateY(-4deg) translateZ(8px);
+}
+.prod-card-wrap:hover .prod-illustration::before {
+  transform: rotate(10deg) translateX(10%);
+  opacity: 0.8;
+}
+.prod-card-wrap:hover .prod-illustration::after {
+  opacity: 1;
+}
+
+/* Layered depth shadow on the card itself */
+.prod-card-wrap {
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.3),
+    0 8px 16px rgba(0,0,0,0.2);
+  transition:
+    border-color 0.3s,
+    transform 0.45s cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 0.45s ease;
+}
+.prod-card-wrap:hover {
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.4),
+    0 16px 40px rgba(0,0,0,0.45),
+    0 32px 70px rgba(255,107,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  transform: translateY(-8px) rotateX(2deg);
+}
+
+/* Floating SVG inside illustration */
+.prod-illustration svg {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 8px 24px rgba(255,107,0,0.15));
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), filter 0.4s;
+}
+.prod-card-wrap:hover .prod-illustration svg {
+  transform: translateZ(20px) translateY(-6px);
+  filter: drop-shadow(0 16px 36px rgba(255,107,0,0.28));
+}
+
+/* Corner accent dots — 3D depth detail */
+.prod-illustration .corner-tl,
+.prod-illustration .corner-br {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,107,0,0.25);
+  z-index: 3;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+.prod-illustration .corner-tl { top: 12px; left: 12px; }
+.prod-illustration .corner-br { bottom: 12px; right: 12px; }
+.prod-card-wrap:hover .prod-illustration .corner-tl,
+.prod-card-wrap:hover .prod-illustration .corner-br { opacity: 1; }
 
 /* Badges */
 .prod-badge-wrap { position: absolute; top: 10px; left: 10px; z-index: 2; }
@@ -416,20 +551,49 @@
   z-index: 2;
 }
 
-/* Hover overlay */
-.prod-img-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(6,6,6,.72);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity .3s;
-  z-index: 3;
-}
-.prod-card-wrap:hover .prod-img-overlay { opacity: 1; }
+/* ── OVERLAY INNER ELEMENTS ── */
 
+/* Product name — slides up */
+.pio-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 3px;
+  color: var(--white);
+  text-align: center;
+  transform: translateY(10px);
+  transition: transform .35s ease;
+}
+/* Marathi subtitle */
+.pio-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 11px;
+  color: rgba(247,243,236,.45);
+  text-align: center;
+  transform: translateY(10px);
+  transition: transform .35s ease .04s;
+}
+/* Price */
+.pio-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--sf);
+  letter-spacing: 2px;
+  text-align: center;
+  transform: translateY(10px);
+  transition: transform .35s ease .08s;
+}
+.prod-img-area:hover .pio-name,
+.prod-img-area:hover .pio-mr,
+.prod-img-area:hover .pio-price { transform: translateY(0); }
+
+.pio-divider {
+  width: 36px;
+  height: 1px;
+  background: rgba(255,107,0,.4);
+  margin: 2px 0;
+}
+
+/* VIEW PRODUCT — white button */
 .prod-overlay-btn {
   background: var(--white);
   color: var(--ink);
@@ -444,8 +608,25 @@
   display: inline-block;
   cursor: pointer;
   transition: background .2s, color .2s;
+  margin-top: 4px;
 }
 .prod-overlay-btn:hover { background: var(--sf); color: var(--ink); }
+
+/* + कार्टमध्ये घाला — orange button */
+.prod-overlay-cart {
+  background: var(--sf);
+  color: var(--ink);
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 11px 22px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background .2s;
+}
+.prod-overlay-cart:hover { background: #e05e00; }
 
 /* Flag strip */
 .prod-flag-strip {
@@ -2004,30 +2185,20 @@ button:hover{
 }
 
 
+/* ── PROD-FILL: Hidden — no empty placeholder boxes ── */
 .prod-fill {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-  margin-top: 20px;
-}
-
-.prod-fill div {
-  height: 260px;
-  background: linear-gradient(135deg, #161616, #1e1e1e);
-  border: 1px dashed rgba(255,255,255,0.08);
-  border-radius: 12px;
+  display: none;
 }
 
 .prod-grid-3 {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
 }
 
 .prod-card-wrap {
-  min-width: 280px;
-  scroll-snap-align: start;
+  min-width: unset;
+  scroll-snap-align: unset;
 }
 
 .prod-card-wrap:hover {
@@ -2603,4 +2774,627 @@ nav { background: rgba(0,0,0,0.6); }  ❌ LAST ONE OVERRIDES
 
 .accent {
   color: #FF6B00;
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  border: 0.5px solid var(--border);
+
+  align-items: stretch; /* 🔥 ADD THIS */
+}
+
+.cat-card {
+  height: 100%; /* 🔥 ADD THIS */
+}
+
+.cat-card {
+  height: 180px; /* fixed height */
+}
+
+.cat-en {
+  display: inline-block;
+  min-width: 90px;   /* 🔥 FORCE SAME WIDTH */
+}
+
+.cat-card:first-child .cat-en {
+  font-size: 18px;   /* slightly smaller */
+}
+
+.sec-wrap {
+  padding-bottom: 30px;   /* reduce space */
+}
+
+.sec-wrap {
+  min-height: auto;   /* 🔥 ADD THIS */
+  height: auto;
+}
+
+.cat-grid {
+  align-items: start;   /* 🔥 VERY IMPORTANT */
+}
+
+.sec-wrap {
+  padding-bottom: 30px;
+  min-height: auto;
+  height: auto;
+}
+
+.cat-grid {
+  align-items: start;
+}
+
+.sec-wrap {
+  height: fit-content;
+  padding-bottom: 20px;
+}
+
+.cat-grid {
+  align-items: start;
+  margin-bottom: 0;
+}
+
+section {
+  padding: 60px 32px;   /* 🔥 reduce space */
+}
+
+section {
+  padding: 60px 32px;
+}
+
+.sec-wrap {
+  padding: 40px 32px;
+}
+
+section + section {
+  margin-top: 0;
+}
+
+.sec-wrap {
+  padding-bottom: 20px !important;
+}
+
+.cat-grid {
+  margin-bottom: 0 !important;
+}
+
+section {
+  padding-bottom: 40px !important;
+}
+
+/* ===== FIX CATEGORY EMPTY SPACE ISSUE ===== */
+
+/* 1. REMOVE FIXED HEIGHT PROBLEM */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+
+  height: auto !important;        /* 🔥 IMPORTANT */
+  min-height: unset !important;   /* 🔥 IMPORTANT */
+  align-items: start;
+}
+
+/* 2. FIX EACH CARD HEIGHT */
+.cat-card {
+  height: auto !important;
+  min-height: 140px;   /* optional clean size */
+}
+
+/* 3. FIX SECTION WRAPPER */
+.sec-wrap {
+  height: auto !important;
+  min-height: unset !important;
+  padding-bottom: 20px !important;
+}
+
+/* 4. REMOVE GLOBAL SECTION EXTRA SPACE */
+section {
+  padding-bottom: 40px !important;
+}
+
+/* 5. REMOVE EXTRA GAP BETWEEN SECTIONS */
+section + section {
+  margin-top: 0 !important;
+}
+
+/* 6. SAFETY FIX (if any container causing issue) */
+.page,
+.container {
+  height: auto !important;
+  min-height: unset !important;
+}
+
+/* 7. REMOVE ANY FAKE OVERLAY HEIGHT ISSUE */
+section::after {
+  display: none !important;
+}
+
+/* ═════════════════════════════
+   🔥 FINAL CATEGORY SECTION FIX
+═════════════════════════════ */
+
+/* 1. FIX GLOBAL SECTION SPACING */
+section {
+  padding: 60px 32px;   /* reduced from 100px */
+}
+
+section + section {
+  margin-top: 10px;     /* remove big gap */
+}
+
+/* 2. FIX SEC-WRAP (REMOVE BOX + EXTRA SPACE) */
+.sec-wrap {
+  padding: 60px 32px 20px;
+  border: none;              /* remove big box */
+  height: auto !important;
+  min-height: unset !important;
+}
+
+/* 3. FIX CATEGORY SECTION ONLY */
+.category-sec {
+  padding-bottom: 10px !important;
+}
+
+/* 4. FIX GRID (NO STRETCH) */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+
+  height: auto !important;
+  align-items: start;
+  margin-bottom: 0;
+}
+
+/* 5. FIX CARDS */
+.cat-card {
+  padding: 24px 18px;
+  min-height: 140px;
+  height: auto;
+}
+
+/* 6. REMOVE FAKE HEIGHT OVERLAY */
+section::after {
+  display: none !important;
+}
+
+/* 🚀 FINAL FORCE FIX */
+section {
+  padding-bottom: 20px !important;
+}
+
+section::after {
+  display: none !important;
+}
+
+.cat-grid {
+  border: 0.5px solid var(--border);
+}
+
+/* ═════════════════════════════
+   🔥 PREMIUM CATEGORY SECTION
+═════════════════════════════ */
+
+/* Section spacing (clean & tight) */
+.category-sec {
+  padding: 50px 32px 20px;
+}
+
+/* GRID — clean, no box */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;                 /* 🔥 spacing instead of border */
+}
+
+/* CARD — premium look */
+.cat-card {
+  background: #141414;
+  padding: 24px 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+
+  min-height: 140px;
+  text-decoration: none;
+  color: var(--white);
+
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+/* HOVER EFFECT (premium) */
+.cat-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+  background: #181818;
+}
+
+/* TOP ROW */
+.cat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cat-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+}
+
+.cat-arrow {
+  font-size: 16px;
+  color: rgba(255,255,255,0.2);
+  transition: 0.3s;
+}
+
+.cat-card:hover .cat-arrow {
+  color: #FF6B00;
+  transform: translate(3px,-3px);
+}
+
+/* TITLE */
+.cat-en {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.cat-mr {
+  font-family: 'Tiro Devanagari Sanskrit', serif;
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+}
+
+/* COUNT */
+.cat-count {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: #FF6B00;
+  margin-top: 6px;
+}
+
+/* REMOVE OLD BAR */
+.cat-bar {
+  display: none;
+}
+
+/* ═════════════════════════════
+   🔥 CATEGORY SECTION (FINAL PREMIUM)
+═════════════════════════════ */
+
+/* SECTION — clean spacing */
+.category-sec {
+  padding: 70px 40px 30px;
+}
+
+/* GRID — modern layout (NO BOX) */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+
+  border: none !important;          /* remove old box */
+}
+
+/* CARD — premium style */
+.cat-card {
+  background: linear-gradient(145deg, #121212, #0c0c0c);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+
+  padding: 22px 18px;
+  min-height: 140px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* HOVER — lift + glow */
+.cat-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  border-color: rgba(255,107,0,0.4);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+/* GLOW EFFECT */
+.cat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left,
+      rgba(255,107,0,0.15),
+      transparent 70%);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.cat-card:hover::before {
+  opacity: 1;
+}
+
+/* TOP ROW */
+.cat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cat-num {
+  font-size: 10px;
+  color: rgba(255,255,255,0.25);
+}
+
+.cat-arrow {
+  font-size: 16px;
+  color: rgba(255,255,255,0.2);
+  transition: 0.3s;
+}
+
+.cat-card:hover .cat-arrow {
+  transform: translate(4px, -4px);
+  color: #FF6B00;
+}
+
+/* TEXT */
+.cat-en {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+
+.cat-mr {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+  margin-top: 3px;
+}
+
+.cat-count {
+  font-size: 10px;
+  color: #FF6B00;
+  margin-top: 6px;
+}
+
+/* REMOVE OLD DESIGN ELEMENTS */
+.cat-bar {
+  display: none;
+}
+
+/* FORCE REMOVE OLD BORDER (IMPORTANT) */
+#page-home .cat-grid {
+  border: none !important;
+}
+
+/* add space above NEW ARRIVALS */
+.category-sec + .sec-wrap {
+  padding-top: 60px;
+}
+
+/* ═════════════════════════════
+   🔥 SECTION SPACING (PREMIUM)
+═════════════════════════════ */
+
+/* Base section spacing */
+section {
+  position: relative;
+  padding: 70px 40px;
+}
+
+/* Space between sections */
+section + section {
+  margin-top: 10px;
+}
+
+
+/* ═════════════════════════════
+   🔥 FIX DIVIDER LINE (IMPORTANT)
+═════════════════════════════ */
+
+section::before {
+  content: "";
+  position: absolute;
+  top: 20px;   /* 🔥 moved down (main fix) */
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 102, 0, 0.3),
+    transparent
+  );
+  pointer-events: none;
+}
+
+
+/* ═════════════════════════════
+   🔥 CATEGORY SECTION (TIGHT)
+═════════════════════════════ */
+
+.category-sec {
+  padding-bottom: 20px;
+}
+
+
+/* ═════════════════════════════
+   🔥 NEW ARRIVALS SPACING FIX
+═════════════════════════════ */
+
+.category-sec + .sec-wrap {
+  margin-top: 20px;     /* space ABOVE "JUST DROPPED" */
+  padding-top: 30px;    /* breathing space inside */
+}
+
+
+/* ═════════════════════════════
+   🔥 OPTIONAL: REMOVE DIVIDER FROM FIRST SECTION
+═════════════════════════════ */
+
+section:first-of-type::before {
+  display: none;
+}
+
+section::before {
+    content: "";
+    position: absolute;
+    top: 20px;   /* 🔥 THIS IS THE FIX */
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255, 102, 0, 0.3),
+        transparent
+    );
+}
+
+section {
+  position: relative;
+  padding-top: 20px;
+}
+
+.category-sec + .sec-wrap {
+  padding-top: 40px;
+}
+/* ══ NEW ARRIVALS — remove gap above, sit tight under categories ══ */
+.sec-wrap[style*="padding-top:0"],
+.sec-wrap[style*="padding-top: 0"] {
+  padding-top: 0 !important;
+}
+
+/* Target the new arrivals section specifically via adjacent sibling */
+.cat-grid + * ,
+.cat-grid {
+  margin-bottom: 0 !important;
+}
+
+/* The categories sec-wrap bottom — zero out */
+.sec-wrap:has(.cat-grid) {
+  padding-bottom: 0 !important;
+}
+
+/* New arrivals sec-wrap top — zero out */
+.sec-wrap:has(.prod-grid-3) {
+  padding-top: 0 !important;
+}
+
+/* ══ DIRECT CLASS FIX — New Arrivals tight under categories ══ */
+.new-arrivals-sec {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ══════════════════════════════════════════
+   FINAL OVERRIDE — Zero gap above New Arrivals
+══════════════════════════════════════════ */
+.category-sec + .sec-wrap,
+.category-sec + .new-arrivals-sec,
+.new-arrivals-sec {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+.category-sec {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+section::before {
+  display: none !important;
+}
+
+/* ══ ABSOLUTE FINAL FIX — category bottom + new arrivals top gap ══ */
+section.category-sec {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+section.new-arrivals-sec {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+section.category-sec + section.new-arrivals-sec {
+  padding-top: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* ══ FINAL FIX — padding-top:72px on category-sec is the culprit ══ */
+section.sec-wrap.category-sec {
+  padding-top: 24px !important;
+}
+
+/* ══ FINAL FIX — category-sec shrinks to content, no extra height ══ */
+section.sec-wrap.category-sec {
+  padding-top: 24px !important;
+  padding-bottom: 0px !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+/* sec-top inside category — remove bottom margin/padding */
+section.sec-wrap.category-sec .sec-top {
+  margin-bottom: 12px !important;
+  padding-bottom: 0 !important;
+}
+
+/* cat-grid — no bottom gap */
+section.sec-wrap.category-sec .cat-grid {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* ══ Small breathing space above NEW ARRIVALS ══ */
+section.sec-wrap.new-arrivals-sec {
+  padding-top: 32px !important;
+}
+
+/* ══ GUARANTEED WIN — highest specificity possible ══ */
+section.sec-wrap.category-sec + section.sec-wrap.new-arrivals-sec {
+  padding-top: 32px !important;
+  margin-top: 0 !important;
+}
+
+/* ── HERO TEXT: always light regardless of theme ──
+   The hero sits on a dark background image, so text
+   must stay light even in light mode               */
+
+html[data-theme="light"] .hero-eyebrow,
+html[data-theme="light"] .hero-title,
+html[data-theme="light"] .hero-subtitle,
+html[data-theme="light"] .hero-tagline,
+html[data-theme="light"] .hero-scroll,
+html[data-theme="light"] .hero-section .stat-label,
+html[data-theme="light"] .hero-section [class*="hero"] {
+  color: inherit !important;
+}
+
+/* Force the entire hero overlay section to keep dark-mode text */
+html[data-theme="light"] .hero-section,
+html[data-theme="light"] .hero-overlay,
+html[data-theme="light"] [class*="hero-"] {
+  --white:      #F7F3EC;
+  --txt-hi:     #F7F3EC;
+  --txt-mid:    rgba(247,243,236,0.78);
+  --txt-soft:   rgba(247,243,236,0.58);
+  --txt-faint:  rgba(247,243,236,0.42);
 }

@@ -274,6 +274,7 @@ body::after {
 ::-webkit-scrollbar-thumb { background:var(--sf); }
 option { background:var(--bg3); color:var(--fg); }
 </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin-contrast-fix.css') }}">
 </head>
 <body>
 
@@ -349,6 +350,7 @@ option { background:var(--bg3); color:var(--fg); }
            FORM
            ════════════════════════════════════ -->
       <form method="POST" id="createForm" autocomplete="off" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
         <!-- Autofill decoys -->
         <input type="text"     name="fakeuser" style="display:none" tabindex="-1" aria-hidden="true">
