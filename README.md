@@ -17,3 +17,6 @@ Vektor Store is a full-stack e-commerce web application built using Python Flask
 
 ## Note
 ⚠️ This is a demo version. Full project is private.
+
+## License
+This project is protected under a custom license. Unauthorized use is not allowed.
