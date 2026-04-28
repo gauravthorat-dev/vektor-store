@@ -1,29 +1,31 @@
 # Vektor Store 🛍️
 
-🚀 A full-stack e-commerce application built with Flask, featuring complete shopping flow, admin panel, and analytics.
+> 🚀 A full-stack e-commerce application built with Flask, featuring complete shopping flow, admin panel, and analytics.
 
-Vektor Store is a full-stack e-commerce web application built using Python Flask and MySQL, designed to simulate a real-world online shopping platform.
+Vektor Store is a full-stack e-commerce web application built using **Python Flask** and **MySQL**, designed to simulate a real-world online shopping platform.
 
 ---
 
 ## 🚀 Features
 
-* Product listing with filters (price, size, category)
-* Product detail page with size & color selection
-* Add to cart functionality
-* Checkout system (Cash on Delivery / UPI)
-* User dashboard with order tracking
-* Admin panel for product & order management
-* Analytics dashboard for business insights
+- Product listing with filters (price, size, category)
+- Product detail page with size & color selection
+- Add to cart functionality
+- Checkout system (Cash on Delivery / UPI)
+- User dashboard with order tracking
+- Admin panel for product & order management
+- Analytics dashboard for business insights
 
 ---
 
 ## 🛠 Tech Stack
 
-* Backend: Python (Flask)
-* Database: MySQL
-* Frontend: HTML, CSS, JavaScript
-* Version Control: Git & GitHub
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python (Flask) |
+| Database | MySQL |
+| Frontend | HTML, CSS, JavaScript |
+| Version Control | Git & GitHub |
 
 ---
 
@@ -56,12 +58,15 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-* Copy `.env.example` to `.env`
-* Update values like database URL, secret key
+- Copy `.env.example` to `.env`
+- Update values like database URL, secret key
 
 ```bash
-copy .env.example .env   # Windows
-cp .env.example .env     # Mac/Linux
+# Windows
+copy .env.example .env
+
+# Mac/Linux
+cp .env.example .env
 ```
 
 ### 5. Run the application
@@ -72,40 +77,31 @@ python app.py
 
 ### 6. Open in browser
 
-```text
-http://127.0.0.1:5000/
-```
 
 ---
 
 ## 📸 Screenshots
 
 ### 🏠 Homepage
-
 ![Homepage](./newhomepage.png)
 
 ### 🛍️ Product Listing
-
 ![Product Listing](./newproductpage.png)
 
 ### 📦 Product Detail
-
 ![Product Detail](./newviewproductpage.png)
 
 ### 🛒 Cart Page
-
 ![Cart](./newcartpage.png)
 
 ### 📊 Admin Dashboard
-
-![Admin](./admindashbordpage.png)
+![Admin Dashboard](./admindashbordpage.png)
 
 ---
 
 ## ⚠️ Note
 
-This is a **demo version** of the project.
-Full production code is kept private.
+This is a **demo version** of the project. Full production code is kept private.
 
 ---
 
@@ -117,4 +113,6 @@ This project is protected under a custom license. Unauthorized use is not allowe
 
 ## 👨‍💻 Author
 
-Gaurav Thorat
+**Gaurav Thorat**
+
+[![GitHub](https://img.shields.io/badge/GitHub-gauravthorat--dev-181717?style=flat&logo=github)](https://github.com/gauravthorat-dev)
