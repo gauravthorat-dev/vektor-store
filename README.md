@@ -76,26 +76,26 @@ python app.py
 ```
 
 ### 6. Open in browser
-
+http://127.0.0.1:5000/
 
 ---
 
 ## 📸 Screenshots
 
 ### 🏠 Homepage
-![Homepage](./newhomepage.png)
+![Homepage](newhomepage.png)
 
 ### 🛍️ Product Listing
-![Product Listing](./newproductpage.png)
+![Product Listing](newproductpage.png)
 
 ### 📦 Product Detail
-![Product Detail](./newviewproductpage.png)
+![Product Detail](newviewproductpage.png)
 
 ### 🛒 Cart Page
-![Cart](./newcartpage.png)
+![Cart](newcartpage.png)
 
 ### 📊 Admin Dashboard
-![Admin Dashboard](./admindashbordpage.png)
+![Admin Dashboard](admindashbordpage.png)
 
 ---
 
