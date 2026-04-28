@@ -44,6 +44,25 @@ This project is protected under a custom license. Unauthorized use is not allowe
 
 ---
 
+## 📸 Screenshots
+
+### 🏠 Homepage
+![Homepage](newhomepage.png)
+
+### 🛍️ Product Listing
+![Product](newproductpage.png)
+
+### 📦 Product Detail
+![Product Detail](newviewproductpage.png)
+
+### 🛒 Cart Page
+![Cart](newcartpage.png)
+
+### 📊 Admin Dashboard
+![Admin](admindashbordpage.png)
+
+---
+
 ## 👨‍💻 Author
 
 Gaurav Thorat  
