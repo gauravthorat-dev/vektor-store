@@ -80,22 +80,23 @@ http://127.0.0.1:5000/
 
 ---
 
+
 ## 📸 Screenshots
 
 ### 🏠 Homepage
-![Homepage](https://raw.githubusercontent.com/gauravthorat-dev/vektor-store/main/newhomepage.png)
+![Homepage](./newhomepage.png)
 
 ### 🛍️ Product Listing
-![Product Listing](https://raw.githubusercontent.com/gauravthorat-dev/vektor-store/main/newproductpage.png)
+![Product Listing](./newproductpage.png)
 
 ### 📦 Product Detail
-![Product Detail](https://raw.githubusercontent.com/gauravthorat-dev/vektor-store/main/newviewproductpage.png)
+![Product Detail](./newviewproductpage.png)
 
 ### 🛒 Cart Page
-![Cart](https://raw.githubusercontent.com/gauravthorat-dev/vektor-store/main/newcartpage.png)
+![Cart](./newcartpage.png)
 
 ### 📊 Admin Dashboard
-![Admin Dashboard](https://raw.githubusercontent.com/gauravthorat-dev/vektor-store/main/admindashbordpage.png)
+![Admin Dashboard](./admindashbordpage.png)
 ---
 
 ## ⚠️ Note
