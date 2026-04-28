@@ -1,5 +1,7 @@
 # Vektor Store 🛍️
 
+🚀 A full-stack e-commerce application built with Flask, featuring complete shopping flow, admin panel, and analytics.
+
 Vektor Store is a full-stack e-commerce web application built using Python Flask and MySQL, designed to simulate a real-world online shopping platform.
 
 ---
@@ -29,40 +31,50 @@ Vektor Store is a full-stack e-commerce web application built using Python Flask
 
 ### 1. Clone the repository
 
+```bash
 git clone https://github.com/gauravthorat-dev/vektor-store.git
 cd vektor-store
+```
 
 ### 2. Create and activate virtual environment
 
+```bash
 python -m venv venv
 
 # Windows
-
 venv\Scripts\activate
 
 # Mac/Linux
-
 source venv/bin/activate
+```
 
 ### 3. Install dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
 ### 4. Configure environment variables
 
 * Copy `.env.example` to `.env`
 * Update values like database URL, secret key
 
-copy .env.example .env   (Windows)
-cp .env.example .env     (Mac/Linux)
+```bash
+copy .env.example .env   # Windows
+cp .env.example .env     # Mac/Linux
+```
 
 ### 5. Run the application
 
+```bash
 python app.py
+```
 
 ### 6. Open in browser
 
+```text
 http://127.0.0.1:5000/
+```
 
 ---
 
